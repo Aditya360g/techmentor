@@ -1,0 +1,121 @@
+﻿export const tests = [
+  {
+    id: "TEST-101",
+    title: "Java DSA Mock Test",
+    course: "Java + DSA",
+    duration: 20,
+    questionsCount: 5,
+    attempts: 0,
+    status: "Available",
+    questions: [
+      {
+        id: 1,
+        question: "What is the time complexity of binary search?",
+        options: ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+        answer: 1,
+      },
+      {
+        id: 2,
+        question: "Which data structure follows LIFO?",
+        options: ["Queue", "Tree", "Stack", "Graph"],
+        answer: 2,
+      },
+      {
+        id: 3,
+        question: "Which traversal uses a queue?",
+        options: ["DFS", "BFS", "Inorder", "Postorder"],
+        answer: 1,
+      },
+      {
+        id: 4,
+        question: "Average lookup time in HashMap is?",
+        options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+        answer: 0,
+      },
+      {
+        id: 5,
+        question: "Which structure is used for recursion?",
+        options: ["Queue", "Stack", "Heap", "Array only"],
+        answer: 1,
+      },
+    ],
+  },
+  {
+    id: "TEST-102",
+    title: "Python Fundamentals Test",
+    course: "Python & AI",
+    duration: 15,
+    questionsCount: 4,
+    attempts: 0,
+    status: "Available",
+    questions: [
+      {
+        id: 1,
+        question: "Which keyword defines a function in Python?",
+        options: ["func", "define", "def", "function"],
+        answer: 2,
+      },
+      {
+        id: 2,
+        question: "Which collection is immutable?",
+        options: ["List", "Tuple", "Set", "Dictionary"],
+        answer: 1,
+      },
+      {
+        id: 3,
+        question: "Pandas DataFrame is mainly used for?",
+        options: [
+          "Structured data",
+          "Networking",
+          "CSS",
+          "Compilation",
+        ],
+        answer: 0,
+      },
+      {
+        id: 4,
+        question: "Which operator represents exponentiation?",
+        options: ["^", "**", "//", "%%"],
+        answer: 1,
+      },
+    ],
+  },
+  {
+    id: "TEST-090",
+    title: "Git & GitHub Quiz",
+    course: "Full Stack",
+    duration: 10,
+    questionsCount: 10,
+    attempts: 1,
+    status: "Completed",
+    score: 90,
+    questions: [],
+  },
+];
+
+export const previousResults = [
+  {
+    id: "RES-01",
+    test: "Git & GitHub Quiz",
+    course: "Full Stack",
+    date: "19 Sep 2026",
+    score: 90,
+    grade: "A",
+  },
+  {
+    id: "RES-02",
+    test: "Java Collections Quiz",
+    course: "Java + DSA",
+    date: "15 Sep 2026",
+    score: 84,
+    grade: "A",
+  },
+  {
+    id: "RES-03",
+    test: "Python Basics Test",
+    course: "Python & AI",
+    date: "10 Sep 2026",
+    score: 72,
+    grade: "B",
+  },
+];
