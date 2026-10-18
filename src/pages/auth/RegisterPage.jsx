@@ -142,11 +142,10 @@ export default function RegisterPage() {
                 key={key}
                 type="button"
                 onClick={() => setRole(key)}
-                className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${
-                  role === key
-                    ? "bg-violet-600 text-white"
-                    : "text-slate-500 hover:text-white"
-                }`}
+                className={`flex items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-medium transition-all ${role === key
+                  ? "bg-violet-600 text-white"
+                  : "text-slate-500 hover:text-white"
+                  }`}
               >
                 <Icon size={14} />
                 {label}

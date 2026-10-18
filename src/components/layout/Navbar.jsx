@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import {
   Menu,
@@ -34,6 +34,36 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loadUser = () => {
+      try {
+        const savedUser = localStorage.getItem("codefaculty_user");
+        setUser(savedUser ? JSON.parse(savedUser) : null);
+      } catch {
+        setUser(null);
+      }
+    };
+
+    loadUser();
+
+    window.addEventListener("storage", loadUser);
+    window.addEventListener("focus", loadUser);
+
+    return () => {
+      window.removeEventListener("storage", loadUser);
+      window.removeEventListener("focus", loadUser);
+    };
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("codefaculty_user");
+    setUser(null);
+    setOpen(false);
+    window.location.href = "/";
+  };
 
   return (
     <header
@@ -185,45 +215,37 @@ export default function Navbar() {
             RIGHT LOGIN BUTTON
         ================================= */}
 
-        <div
-          className="
-            hidden
-            items-center
-            gap-4
-            xl:flex
-          "
-        >
-          <div className="h-7 w-px bg-white/[0.08]" />
+        {user?.isLoggedIn ? (
+          <div className="flex items-center gap-3">
+            <Link
+              to={user.dashboard || "/student"}
+              className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white transition hover:bg-white/10"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-600 font-bold uppercase">
+                {(user.name || user.email || "U").charAt(0)}
+              </span>
 
+              <span className="max-w-28 truncate">
+                {user.name || user.email}
+              </span>
+            </Link>
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-full border border-white/10 px-4 py-2 text-sm text-slate-300 transition hover:bg-white/10 hover:text-white"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
           <Link
             to="/login"
-            className="
-              relative
-              overflow-hidden
-              rounded-full
-              border
-              border-violet-400/20
-              bg-gradient-to-r
-              from-violet-600
-              to-indigo-600
-              px-6
-              py-2.5
-              text-[13px]
-              font-semibold
-              text-white
-              shadow-[0_0_18px_rgba(124,58,237,0.30)]
-              transition-all
-              duration-200
-
-              hover:-translate-y-[1px]
-              hover:border-violet-300/40
-              hover:shadow-[0_0_12px_rgba(139,92,246,0.55),0_0_28px_rgba(99,102,241,0.25)]
-            "
+            className="relative overflow-hidden rounded-full border border-violet-400/20 bg-gradient-to-r from-violet-600 to-indigo-600 px-6 py-2.5 text-[13px] font-semibold text-white shadow-[0_0_18px_rgba(124,58,237,0.30)] transition-all duration-200 hover:-translate-y-[1px] hover:shadow-[0_0_12px_rgba(139,92,246,0.55),0_0_28px_rgba(99,102,241,0.25)]"
           >
             Login
           </Link>
-        </div>
-
+        )}
 
         {/* ================================
             MOBILE BUTTON
@@ -309,25 +331,42 @@ export default function Navbar() {
             <div className="my-2 h-px bg-white/[0.07]" />
 
 
-            <Link
-              to="/login"
-              onClick={() => setOpen(false)}
-              className="
-                rounded-xl
-                bg-gradient-to-r
-                from-violet-600
-                to-indigo-600
-                px-5
-                py-3.5
-                text-center
-                text-sm
-                font-semibold
-                text-white
-                shadow-[0_0_18px_rgba(124,58,237,0.25)]
-              "
-            >
-              Login
-            </Link>
+            {user?.isLoggedIn ? (
+              <div className="space-y-2">
+                <Link
+                  to={user.dashboard || "/student"}
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 rounded-xl bg-white/[0.05] px-4 py-3.5 text-sm text-white"
+                >
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-violet-600 font-bold uppercase">
+                    {(user.name || user.email || "U").charAt(0)}
+                  </span>
+
+                  <span className="min-w-0">
+                    <span className="block font-semibold">My Profile</span>
+                    <span className="block truncate text-xs text-slate-400">
+                      {user.name || user.email}
+                    </span>
+                  </span>
+                </Link>
+
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full rounded-xl border border-white/10 px-5 py-3.5 text-sm font-semibold text-slate-300 hover:bg-white/[0.05] hover:text-white"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setOpen(false)}
+                className="block rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-5 py-3.5 text-center text-sm font-semibold text-white shadow-[0_0_18px_rgba(124,58,237,0.25)]"
+              >
+                Login
+              </Link>
+            )}
 
           </div>
         </div>

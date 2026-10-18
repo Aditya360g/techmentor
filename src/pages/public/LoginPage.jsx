@@ -57,39 +57,42 @@ export default function LoginPage() {
       password: "",
     });
 
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (
-      !form.email.trim() ||
-      !form.password.trim()
-    ) {
-      setError(
-        "Please enter email and password."
-      );
+    const email = form.email.trim();
+    const password = form.password.trim();
 
+    if (!email || !password) {
+      setError("Please enter email and password.");
       return;
     }
 
-    setError("");
+    const dashboardRoutes = {
+      student: "/student",
+      college: "/college",
+      trainer: "/trainer",
+      admin: "/admin",
+    };
 
-    if (role === "student") {
-      navigate("/student");
-      return;
+    const user = {
+      email,
+      name: email.split("@")[0],
+      role,
+      dashboard: dashboardRoutes[role],
+      isLoggedIn: true,
+    };
+
+    try {
+      localStorage.setItem("codefaculty_user", JSON.stringify(user));
+      setError("");
+      navigate("/");
+    } catch {
+      setError("Unable to save login details. Please try again.");
     }
-
-    if (role === "admin") {
-      navigate("/admin");
-      return;
-    }
-
-    if (role === "trainer") {
-      navigate("/trainer");
-      return;
-    }
-
-    navigate("/college");
   };
+
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#08070f] px-6 py-12 text-white">
@@ -166,11 +169,10 @@ export default function LoginPage() {
                   onClick={() =>
                     setRole(key)
                   }
-                  className={`flex items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 text-xs font-medium transition-all ${
-                    role === key
-                      ? "bg-violet-600 text-white"
-                      : "text-slate-500 hover:text-white"
-                  }`}
+                  className={`flex items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 text-xs font-medium transition-all ${role === key
+                    ? "bg-violet-600 text-white"
+                    : "text-slate-500 hover:text-white"
+                    }`}
                 >
                   <Icon size={14} />
                   {label}
@@ -293,6 +295,18 @@ export default function LoginPage() {
 
           </form>
 
+          {/* Create Account Option */}
+          {["student", "college", "trainer"].includes(role) && (
+            <p className="mt-4 text-center text-sm text-slate-500">
+              Don't have an account?{" "}
+              <Link
+                to="/register"
+                className="font-semibold text-violet-400 transition hover:text-violet-300"
+              >
+                Create Account
+              </Link>
+            </p>
+          )}
 
           <p className="mt-6 text-center text-xs leading-6 text-slate-600">
             Demo frontend login. Enter any non-empty email and password.

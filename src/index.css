@@ -53,7 +53,7 @@ body {
    LONG PAGE PERFORMANCE
 ================================ */
 
-main > section {
+main>section {
   content-visibility: auto;
   contain-intrinsic-size: 1px 700px;
 }
@@ -97,7 +97,7 @@ button {
 
 @media (max-width: 768px) {
 
-  main > section {
+  main>section {
     contain-intrinsic-size: 1px 600px;
   }
 
@@ -170,11 +170,9 @@ button {
   border-color: rgba(167, 139, 250, 0.95);
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       rgba(124, 58, 237, 0.12),
-      rgba(79, 70, 229, 0.08)
-    );
+      rgba(79, 70, 229, 0.08));
 
   box-shadow:
     0 0 5px rgba(139, 92, 246, 0.8),
@@ -215,11 +213,9 @@ button {
   border-color: rgba(167, 139, 250, 0.95);
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       rgba(124, 58, 237, 0.10),
-      rgba(79, 70, 229, 0.06)
-    );
+      rgba(79, 70, 229, 0.06));
 
   box-shadow:
     0 0 6px rgba(139, 92, 246, 0.75),
@@ -241,11 +237,9 @@ button {
 
   color: #ffffff;
 
-  background: linear-gradient(
-    135deg,
-    #7c3aed,
-    #4f46e5
-  );
+  background: linear-gradient(135deg,
+      #7c3aed,
+      #4f46e5);
 
   box-shadow:
     0 0 10px rgba(139, 92, 246, 0.5),
@@ -286,11 +280,9 @@ button {
   border-color: rgba(167, 139, 250, 0.95);
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       rgba(124, 58, 237, 0.10),
-      rgba(79, 70, 229, 0.06)
-    );
+      rgba(79, 70, 229, 0.06));
 
   box-shadow:
     0 0 6px rgba(139, 92, 246, 0.75),
@@ -312,11 +304,9 @@ button {
 
   color: #ffffff;
 
-  background: linear-gradient(
-    135deg,
-    #7c3aed,
-    #4f46e5
-  );
+  background: linear-gradient(135deg,
+      #7c3aed,
+      #4f46e5);
 
   box-shadow:
     0 0 10px rgba(139, 92, 246, 0.5),
@@ -357,11 +347,9 @@ button {
   border-color: rgba(167, 139, 250, 0.95);
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       rgba(124, 58, 237, 0.10),
-      rgba(79, 70, 229, 0.06)
-    );
+      rgba(79, 70, 229, 0.06));
 
   box-shadow:
     0 0 6px rgba(139, 92, 246, 0.75),
@@ -383,11 +371,9 @@ button {
 
   color: #ffffff;
 
-  background: linear-gradient(
-    135deg,
-    #7c3aed,
-    #4f46e5
-  );
+  background: linear-gradient(135deg,
+      #7c3aed,
+      #4f46e5);
 
   box-shadow:
     0 0 10px rgba(139, 92, 246, 0.5),
@@ -428,11 +414,9 @@ button {
   border-color: rgba(167, 139, 250, 0.95);
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       rgba(124, 58, 237, 0.10),
-      rgba(79, 70, 229, 0.06)
-    );
+      rgba(79, 70, 229, 0.06));
 
   box-shadow:
     0 0 6px rgba(139, 92, 246, 0.75),
@@ -454,11 +438,9 @@ button {
 
   color: #ffffff;
 
-  background: linear-gradient(
-    135deg,
-    #7c3aed,
-    #4f46e5
-  );
+  background: linear-gradient(135deg,
+      #7c3aed,
+      #4f46e5);
 
   box-shadow:
     0 0 10px rgba(139, 92, 246, 0.5),
@@ -487,11 +469,9 @@ button {
   border-color: rgba(167, 139, 250, 0.95);
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       rgba(124, 58, 237, 0.12),
-      rgba(79, 70, 229, 0.08)
-    );
+      rgba(79, 70, 229, 0.08));
 
   box-shadow:
     0 0 8px rgba(139, 92, 246, 0.75),
@@ -548,11 +528,9 @@ button {
   border-color: rgba(167, 139, 250, 0.95);
 
   background:
-    linear-gradient(
-      135deg,
+    linear-gradient(135deg,
       rgba(124, 58, 237, 0.10),
-      rgba(79, 70, 229, 0.06)
-    );
+      rgba(79, 70, 229, 0.06));
 
   box-shadow:
     0 0 6px rgba(139, 92, 246, 0.70),
@@ -567,6 +545,7 @@ button {
 ========================================== */
 
 @media (hover: none) {
+
   .why-neon-card:hover,
   .trainer-neon-card:hover,
   .institution-neon-card:hover {
@@ -582,3 +561,23 @@ button {
   }
 }
 
+/* ==========================================
+   FIX WHITE BACKGROUND ON FORM AUTOFILL
+========================================== */
+
+input,
+textarea,
+select {
+  color: #ffffff;
+  caret-color: #ffffff;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0 1000px #08070f inset !important;
+  box-shadow: 0 0 0 1000px #08070f inset !important;
+  transition: background-color 9999s ease-in-out 0s;
+}

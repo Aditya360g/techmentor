@@ -19,9 +19,9 @@ export default function NotificationsPage() {
       current.map((item) =>
         item.id === id
           ? {
-              ...item,
-              read: true,
-            }
+            ...item,
+            read: true,
+          }
           : item
       )
     );
@@ -42,9 +42,7 @@ export default function NotificationsPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 
         <div>
-          <h2 className="text-2xl font-bold">
-            Notifications
-          </h2>
+
 
           <p className="mt-2 text-sm text-slate-500">
             {unread} unread notification{unread !== 1 ? "s" : ""}
