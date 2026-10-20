@@ -1,5 +1,4 @@
-﻿
-import { Route, Routes } from "react-router";
+﻿import { Route, Routes } from "react-router";
 
 /* LAYOUTS */
 import MainLayout from "../components/layout/MainLayout";
@@ -44,14 +43,17 @@ import TrainerDashboardPage from "../pages/trainer/TrainerDashboardPage";
 import TrainerProfilePage from "../pages/trainer/TrainerProfilePage";
 import TrainerAvailabilityPage from "../pages/trainer/TrainerAvailabilityPage";
 import TrainerAssignmentsPage from "../pages/trainer/TrainerAssignmentsPage";
+import TrainerAssignmentDetailsPage from "../pages/trainer/TrainerAssignmentDetailsPage";
 import TrainerSchedulePage from "../pages/trainer/TrainerSchedulePage";
 import TrainerNotificationsPage from "../pages/trainer/TrainerNotificationsPage";
 import TrainerPaymentsPage from "../pages/trainer/TrainerPaymentsPage";
 
-/* NEW TRAINER PAGES */
+/* ADDITIONAL TRAINER PAGES */
 import TrainerCoursesPage from "../pages/trainer/TrainerCoursesPage";
 import TrainerLiveClassesPage from "../pages/trainer/TrainerLiveClassesPage";
 import TrainerStudentProgressPage from "../pages/trainer/TrainerStudentProgressPage";
+import TrainerHelpSupportPage from "../pages/trainer/TrainerHelpSupportPage";
+import TrainerSettingsPage from "../pages/trainer/TrainerSettingsPage";
 
 /* COLLEGE */
 import CollegeDashboardPage from "../pages/college/CollegeDashboardPage";
@@ -84,48 +86,60 @@ import ResourcesPage from "../pages/student/ResourcesPage";
 import SupportPage from "../pages/student/SupportPage";
 import SettingsPage from "../pages/student/SettingsPage";
 
+/* NOT FOUND */
 import NotFoundPage from "../pages/NotFoundPage";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* PUBLIC */}
+      {/* ================= PUBLIC ================= */}
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/trainers" element={<TrainersPage />} />
+
         <Route
           path="/trainers/:trainerId"
           element={<TrainerDetailsPage />}
         />
+
         <Route path="/institutions" element={<InstitutionsPage />} />
+
         <Route
           path="/request-guest-faculty"
           element={<RequestGuestFacultyPage />}
         />
+
         <Route path="/contact" element={<ContactPage />} />
       </Route>
 
-      {/* AUTHENTICATION */}
+      {/* ================= AUTHENTICATION ================= */}
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+
       <Route
         path="/registration-success"
         element={<RegistrationSuccessPage />}
       />
+
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-      {/* ADMIN */}
+      {/* ================= ADMIN ================= */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboardPage />} />
         <Route path="trainers" element={<ManageTrainersPage />} />
         <Route path="colleges" element={<ManageCollegesPage />} />
         <Route path="requests" element={<ManageRequestsPage />} />
-        <Route path="assignments" element={<AdminTrainerAssignmentsPage />} />
+
+        <Route
+          path="assignments"
+          element={<AdminTrainerAssignmentsPage />}
+        />
+
         <Route path="demos" element={<DemoSchedulesPage />} />
         <Route path="notifications" element={<NotificationsPage />} />
         <Route path="payments" element={<PaymentsPage />} />
@@ -133,27 +147,56 @@ export default function AppRoutes() {
         <Route path="analytics" element={<AnalyticsPage />} />
       </Route>
 
-      {/* TRAINER */}
+      {/* ================= TRAINER ================= */}
       <Route path="/trainer" element={<TrainerLayout />}>
         <Route index element={<TrainerDashboardPage />} />
 
         <Route path="profile" element={<TrainerProfilePage />} />
         <Route path="availability" element={<TrainerAvailabilityPage />} />
-        <Route path="assignments" element={<TrainerAssignmentsPage />} />
+
+        <Route
+          path="assignments"
+          element={<TrainerAssignmentsPage />}
+        />
+
+        {/* TRAINER ASSIGNMENT DETAILS */}
+        <Route
+          path="assignments/:assignmentId"
+          element={<TrainerAssignmentDetailsPage />}
+        />
+
         <Route path="schedule" element={<TrainerSchedulePage />} />
-        <Route path="notifications" element={<TrainerNotificationsPage />} />
+
+        <Route
+          path="notifications"
+          element={<TrainerNotificationsPage />}
+        />
+
         <Route path="payments" element={<TrainerPaymentsPage />} />
 
-        {/* NEW TRAINER ROUTES */}
+        {/* ADDITIONAL TRAINER PAGES */}
         <Route path="courses" element={<TrainerCoursesPage />} />
         <Route path="live-classes" element={<TrainerLiveClassesPage />} />
+
         <Route
           path="student-progress"
           element={<TrainerStudentProgressPage />}
         />
+
+        {/* HELP & SUPPORT */}
+        <Route
+          path="help"
+          element={<TrainerHelpSupportPage />}
+        />
+
+        {/* TRAINER SETTINGS */}
+        <Route
+          path="settings"
+          element={<TrainerSettingsPage />}
+        />
       </Route>
 
-      {/* COLLEGE */}
+      {/* ================= COLLEGE ================= */}
       <Route path="/college" element={<CollegeLayout />}>
         <Route index element={<CollegeDashboardPage />} />
         <Route path="profile" element={<CollegeProfilePage />} />
@@ -161,43 +204,59 @@ export default function AppRoutes() {
         <Route path="requests" element={<CollegeRequestsPage />} />
         <Route path="assignments" element={<CollegeAssignmentsPage />} />
         <Route path="demo-schedule" element={<DemoSchedulePage />} />
-        <Route path="notifications" element={<CollegeNotificationsPage />} />
+
+        <Route
+          path="notifications"
+          element={<CollegeNotificationsPage />}
+        />
+
         <Route path="payments" element={<CollegePaymentsPage />} />
         <Route path="feedback" element={<CollegeFeedbackPage />} />
       </Route>
 
-      {/* STUDENT */}
+      {/* ================= STUDENT ================= */}
       <Route path="/student" element={<StudentLayout />}>
         <Route index element={<StudentDashboardPage />} />
         <Route path="profile" element={<StudentProfilePage />} />
         <Route path="courses" element={<MyCoursesPage />} />
+
         <Route
           path="courses/:courseId"
           element={<CourseDetailsPage />}
         />
+
         <Route path="live-classes" element={<LiveClassesPage />} />
         <Route path="schedule" element={<SchedulePage />} />
         <Route path="assignments" element={<AssignmentsPage />} />
+
         <Route
           path="assignments/:assignmentId"
           element={<AssignmentDetailsPage />}
         />
+
         <Route path="tests" element={<CodingTestsPage />} />
         <Route path="tests/:testId" element={<TestDetailsPage />} />
+
         <Route
           path="tests/:testId/result"
           element={<TestResultPage />}
         />
+
         <Route path="progress" element={<ProgressPage />} />
         <Route path="results" element={<ResultsPage />} />
         <Route path="certificates" element={<CertificatesPage />} />
-        <Route path="notifications" element={<StudentNotificationsPage />} />
+
+        <Route
+          path="notifications"
+          element={<StudentNotificationsPage />}
+        />
+
         <Route path="resources" element={<ResourcesPage />} />
         <Route path="support" element={<SupportPage />} />
         <Route path="settings" element={<SettingsPage />} />
       </Route>
 
-      {/* NOT FOUND */}
+      {/* ================= NOT FOUND ================= */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

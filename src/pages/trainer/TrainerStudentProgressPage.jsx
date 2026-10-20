@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     ArrowDownUp,
@@ -14,12 +14,17 @@ import {
     LayoutDashboard,
     Search,
     SlidersHorizontal,
-    Sparkles,
     Target,
     TrendingUp,
     Users,
     X,
     RotateCcw,
+    Flame,
+    GraduationCap,
+    Mail,
+    Hash,
+    Activity,
+    BarChart3,
 } from "lucide-react";
 
 const INITIAL_STUDENTS = [
@@ -36,7 +41,6 @@ const INITIAL_STUDENTS = [
         score: 92,
         attendance: 95,
         streak: 12,
-        status: "On track",
         lastActive: "Today",
         nextLesson: "Advanced React Patterns",
         skills: ["React", "JavaScript", "Node.js"],
@@ -54,7 +58,6 @@ const INITIAL_STUDENTS = [
         score: 88,
         attendance: 91,
         streak: 8,
-        status: "On track",
         lastActive: "Today",
         nextLesson: "Model Evaluation",
         skills: ["Python", "Pandas", "Machine Learning"],
@@ -72,7 +75,6 @@ const INITIAL_STUDENTS = [
         score: 64,
         attendance: 68,
         streak: 2,
-        status: "Needs attention",
         lastActive: "3 days ago",
         nextLesson: "Trees and Graphs",
         skills: ["Java", "Arrays", "Linked Lists"],
@@ -90,7 +92,6 @@ const INITIAL_STUDENTS = [
         score: 97,
         attendance: 98,
         streak: 18,
-        status: "Excellent",
         lastActive: "Today",
         nextLesson: "Performance Optimization",
         skills: ["HTML", "CSS", "React"],
@@ -108,7 +109,6 @@ const INITIAL_STUDENTS = [
         score: 76,
         attendance: 82,
         streak: 5,
-        status: "On track",
         lastActive: "Yesterday",
         nextLesson: "REST API Security",
         skills: ["Node.js", "Express", "SQL"],
@@ -126,7 +126,6 @@ const INITIAL_STUDENTS = [
         score: 52,
         attendance: 61,
         streak: 1,
-        status: "Needs attention",
         lastActive: "5 days ago",
         nextLesson: "Functions and Modules",
         skills: ["Python", "Functions", "Loops"],
@@ -144,7 +143,6 @@ const INITIAL_STUDENTS = [
         score: 85,
         attendance: 88,
         streak: 9,
-        status: "On track",
         lastActive: "Today",
         nextLesson: "Authentication and JWT",
         skills: ["React", "APIs", "Authentication"],
@@ -162,7 +160,6 @@ const INITIAL_STUDENTS = [
         score: 95,
         attendance: 96,
         streak: 15,
-        status: "Excellent",
         lastActive: "Today",
         nextLesson: "Deep Learning Basics",
         skills: ["Python", "NumPy", "Model Training"],
@@ -199,48 +196,56 @@ const ACCENTS = {
         bar: "from-emerald-500 to-green-400",
         badge: "bg-emerald-50 text-emerald-700",
         ring: "ring-emerald-100",
+        icon: "bg-emerald-50 text-emerald-700",
     },
     violet: {
         avatar: "bg-violet-100 text-violet-800",
         bar: "from-violet-600 to-purple-400",
         badge: "bg-violet-50 text-violet-700",
         ring: "ring-violet-100",
+        icon: "bg-violet-50 text-violet-700",
     },
     blue: {
         avatar: "bg-blue-100 text-blue-800",
         bar: "from-blue-600 to-sky-400",
         badge: "bg-blue-50 text-blue-700",
         ring: "ring-blue-100",
+        icon: "bg-blue-50 text-blue-700",
     },
     rose: {
         avatar: "bg-rose-100 text-rose-800",
         bar: "from-rose-600 to-pink-400",
         badge: "bg-rose-50 text-rose-700",
         ring: "ring-rose-100",
+        icon: "bg-rose-50 text-rose-700",
     },
     amber: {
         avatar: "bg-amber-100 text-amber-800",
         bar: "from-amber-500 to-yellow-400",
         badge: "bg-amber-50 text-amber-800",
         ring: "ring-amber-100",
+        icon: "bg-amber-50 text-amber-800",
     },
     cyan: {
         avatar: "bg-cyan-100 text-cyan-800",
         bar: "from-cyan-600 to-teal-400",
         badge: "bg-cyan-50 text-cyan-800",
         ring: "ring-cyan-100",
+        icon: "bg-cyan-50 text-cyan-800",
     },
     indigo: {
         avatar: "bg-indigo-100 text-indigo-800",
         bar: "from-indigo-600 to-blue-400",
         badge: "bg-indigo-50 text-indigo-800",
         ring: "ring-indigo-100",
+        icon: "bg-indigo-50 text-indigo-800",
     },
     pink: {
         avatar: "bg-pink-100 text-pink-800",
         bar: "from-pink-600 to-rose-400",
         badge: "bg-pink-50 text-pink-800",
         ring: "ring-pink-100",
+        icon: "bg-pink-50 text-pink-800",
     },
 };
 
@@ -260,14 +265,52 @@ function getStatus(student) {
     return "On track";
 }
 
+function getStatusStyle(status) {
+    if (status === "Excellent") {
+        return "bg-violet-50 text-violet-700 ring-violet-100";
+    }
+
+    if (status === "On track") {
+        return "bg-emerald-50 text-emerald-700 ring-emerald-100";
+    }
+
+    return "bg-amber-50 text-amber-800 ring-amber-100";
+}
+
 function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
     const [open, setOpen] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        function handleOutsideClick(event) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target)
+            ) {
+                setOpen(false);
+            }
+        }
+
+        function handleEscape(event) {
+            if (event.key === "Escape") setOpen(false);
+        }
+
+        document.addEventListener("mousedown", handleOutsideClick);
+        document.addEventListener("keydown", handleEscape);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+            document.removeEventListener("keydown", handleEscape);
+        };
+    }, []);
+
+    const selectedOption = options.find((option) => option.value === value);
 
     return (
-        <div className="relative min-w-0">
-            <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+        <div ref={dropdownRef} className="relative min-w-0">
+            <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">
                 {label}
-            </span>
+            </label>
 
             <button
                 type="button"
@@ -275,8 +318,8 @@ function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
                 aria-haspopup="listbox"
                 onClick={() => setOpen((current) => !current)}
                 className={`flex min-h-[50px] w-full items-center gap-3 rounded-xl border bg-white px-3 text-left transition ${open
-                        ? "border-emerald-500 ring-4 ring-emerald-500/10"
-                        : "border-slate-200 hover:border-emerald-300"
+                    ? "border-emerald-500 ring-4 ring-emerald-500/10"
+                    : "border-slate-200 hover:border-emerald-300"
                     }`}
             >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
@@ -284,7 +327,7 @@ function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
                 </span>
 
                 <span className="min-w-0 flex-1 truncate text-sm font-semibold text-slate-700">
-                    {options.find((option) => option.value === value)?.label}
+                    {selectedOption?.label || "Select option"}
                 </span>
 
                 <ChevronDown
@@ -297,38 +340,36 @@ function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
             <AnimatePresence>
                 {open && (
                     <motion.div
-                        initial={{ opacity: 0, y: 5 }}
+                        initial={{ opacity: 0, y: -5 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 5 }}
-                        className="absolute left-0 top-full z-[100] mt-2 max-h-64 w-full min-w-[220px] overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl"
+                        exit={{ opacity: 0, y: -5 }}
                         role="listbox"
                         aria-label={label}
+                        className="absolute left-0 top-full z-[100] mt-2 max-h-64 w-full min-w-[220px] overflow-y-auto rounded-xl border border-slate-200 bg-white p-1.5 shadow-2xl"
                     >
-                        {options.map((option) => (
-                            <button
-                                type="button"
-                                role="option"
-                                aria-selected={value === option.value}
-                                key={option.value}
-                                onClick={() => {
-                                    onChange(option.value);
-                                    setOpen(false);
-                                }}
-                                className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm transition ${value === option.value
+                        {options.map((option) => {
+                            const selected = value === option.value;
+
+                            return (
+                                <button
+                                    type="button"
+                                    role="option"
+                                    aria-selected={selected}
+                                    key={option.value}
+                                    onClick={() => {
+                                        onChange(option.value);
+                                        setOpen(false);
+                                    }}
+                                    className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm transition ${selected
                                         ? "bg-emerald-50 font-semibold text-emerald-800"
                                         : "text-slate-600 hover:bg-slate-50"
-                                    }`}
-                            >
-                                <span>{option.label}</span>
-
-                                {value === option.value && (
-                                    <Check
-                                        size={16}
-                                        className="shrink-0 text-emerald-600"
-                                    />
-                                )}
-                            </button>
-                        ))}
+                                        }`}
+                                >
+                                    <span>{option.label}</span>
+                                    {selected && <Check size={16} />}
+                                </button>
+                            );
+                        })}
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -336,13 +377,7 @@ function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
     );
 }
 
-function MetricCard({
-    title,
-    value,
-    detail,
-    icon: Icon,
-    tone = "emerald",
-}) {
+function MetricCard({ title, value, detail, icon: Icon, tone = "emerald" }) {
     const tones = {
         emerald: "bg-emerald-50 text-emerald-700",
         violet: "bg-violet-50 text-violet-700",
@@ -353,10 +388,11 @@ function MetricCard({
     return (
         <motion.article
             whileHover={{ y: -3 }}
+            transition={{ duration: 0.2 }}
             className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
         >
             <div className="flex items-start justify-between gap-3">
-                <div>
+                <div className="min-w-0">
                     <p className="text-sm font-medium text-slate-500">{title}</p>
                     <p className="mt-3 text-3xl font-bold tracking-tight text-slate-950">
                         {value}
@@ -364,7 +400,7 @@ function MetricCard({
                 </div>
 
                 <div
-                    className={`flex h-11 w-11 items-center justify-center rounded-xl ${tones[tone]}`}
+                    className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl ${tones[tone]}`}
                 >
                     <Icon size={21} />
                 </div>
@@ -375,27 +411,22 @@ function MetricCard({
     );
 }
 
-function StudentCard({ student, onView }) {
+function StudentCard({ student, index }) {
     const accent = ACCENTS[student.color] || ACCENTS.emerald;
     const status = getStatus(student);
-
-    const statusStyles = {
-        Excellent: "bg-violet-50 text-violet-700",
-        "On track": "bg-emerald-50 text-emerald-700",
-        "Needs attention": "bg-amber-50 text-amber-800",
-    };
+    const remaining = Math.max(student.total - student.completed, 0);
 
     return (
         <motion.article
-            layout
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"
+            transition={{ duration: 0.25, delay: Math.min(index * 0.035, 0.2) }}
+            className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-200 hover:shadow-xl"
         >
             <div className={`h-1.5 bg-gradient-to-r ${accent.bar}`} />
 
             <div className="flex flex-1 flex-col p-5">
+                {/* Student identity */}
                 <div className="flex items-start gap-3">
                     <div
                         className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-bold ring-4 ${accent.avatar} ${accent.ring}`}
@@ -407,56 +438,70 @@ function StudentCard({ student, onView }) {
                         <h3 className="truncate font-bold text-slate-900">
                             {student.name}
                         </h3>
-                        <p className="mt-1 truncate text-xs text-slate-500">
-                            {student.email}
+
+                        <p className="mt-1 flex min-w-0 items-center gap-1.5 text-xs text-slate-500">
+                            <Mail size={12} className="shrink-0" />
+                            <span className="truncate">{student.email}</span>
                         </p>
-                        <p className="mt-1 text-[11px] font-medium text-slate-400">
+
+                        <p className="mt-1 flex items-center gap-1.5 text-[11px] font-medium text-slate-400">
+                            <Hash size={11} />
                             {student.id}
                         </p>
                     </div>
                 </div>
 
-                <div className="mt-5 rounded-xl bg-slate-50 p-3">
-                    <p className="text-xs font-medium text-slate-500">
+                {/* Course */}
+                <div className="mt-5 rounded-xl bg-slate-50 p-3.5">
+                    <p className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                        <BookOpen size={13} />
                         Enrolled course
                     </p>
-                    <p className="mt-1 text-sm font-semibold leading-5 text-slate-800">
+                    <p className="mt-1.5 text-sm font-semibold leading-5 text-slate-800">
                         {student.course}
                     </p>
                 </div>
 
-                <div className="mt-5 flex items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-slate-700">
-                        Course progress
-                    </span>
-                    <span className="text-lg font-bold text-slate-900">
-                        {student.progress}%
-                    </span>
+                {/* Main progress */}
+                <div className="mt-5">
+                    <div className="flex items-end justify-between gap-3">
+                        <div>
+                            <p className="text-sm font-semibold text-slate-700">
+                                Course progress
+                            </p>
+                            <p className="mt-1 text-xs text-slate-500">
+                                {student.completed} of {student.total} lessons completed
+                            </p>
+                        </div>
+
+                        <span className="shrink-0 text-2xl font-extrabold tracking-tight text-slate-950">
+                            {student.progress}%
+                        </span>
+                    </div>
+
+                    <div
+                        className="mt-3 h-2.5 overflow-hidden rounded-full bg-slate-100"
+                        role="progressbar"
+                        aria-label={`${student.name} course progress`}
+                        aria-valuenow={student.progress}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                    >
+                        <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${student.progress}%` }}
+                            transition={{ duration: 0.6, delay: 0.1 }}
+                            className={`h-full rounded-full bg-gradient-to-r ${accent.bar}`}
+                        />
+                    </div>
+
+                    <div className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-500">
+                        <span>{student.completed} completed</span>
+                        <span>{remaining} remaining</span>
+                    </div>
                 </div>
 
-                <div
-                    className="mt-2 h-2.5 overflow-hidden rounded-full bg-slate-100"
-                    role="progressbar"
-                    aria-label={`${student.name} course progress`}
-                    aria-valuenow={student.progress}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                >
-                    <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${student.progress}%` }}
-                        transition={{ duration: 0.7 }}
-                        className={`h-full rounded-full bg-gradient-to-r ${accent.bar}`}
-                    />
-                </div>
-
-                <div className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-500">
-                    <span>
-                        {student.completed} of {student.total} lessons
-                    </span>
-                    <span>{student.total - student.completed} remaining</span>
-                </div>
-
+                {/* Performance metrics */}
                 <div className="mt-5 grid grid-cols-2 gap-3">
                     <div className="rounded-xl border border-slate-100 p-3">
                         <div className="flex items-center gap-1.5 text-slate-500">
@@ -466,6 +511,7 @@ function StudentCard({ student, onView }) {
                         <p className="mt-2 text-xl font-bold text-slate-900">
                             {student.score}%
                         </p>
+                        <p className="mt-1 text-[11px] text-slate-400">Score</p>
                     </div>
 
                     <div className="rounded-xl border border-slate-100 p-3">
@@ -476,255 +522,103 @@ function StudentCard({ student, onView }) {
                         <p className="mt-2 text-xl font-bold text-slate-900">
                             {student.attendance}%
                         </p>
+                        <p className="mt-1 text-[11px] text-slate-400">Attendance rate</p>
                     </div>
                 </div>
 
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-                    <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold ${statusStyles[status]}`}
-                    >
-                        <span className="h-1.5 w-1.5 rounded-full bg-current" />
-                        {status}
-                    </span>
-                    <span className="text-xs text-slate-400">
-                        {student.lastActive}
-                    </span>
-                </div>
-
-                <button
-                    type="button"
-                    onClick={() => onView(student)}
-                    className="mt-5 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-emerald-300 hover:bg-emerald-50 hover:text-emerald-800"
-                >
-                    View student progress
-                    <ArrowRight size={16} />
-                </button>
-            </div>
-        </motion.article>
-    );
-}
-
-function StudentDetailsModal({ student, onClose }) {
-    if (!student) return null;
-
-    const accent = ACCENTS[student.color] || ACCENTS.emerald;
-    const status = getStatus(student);
-
-    return (
-        <AnimatePresence>
-            <motion.div
-                key={student.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onMouseDown={(event) => {
-                    if (event.target === event.currentTarget) onClose();
-                }}
-                className="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto bg-slate-950/60 p-4 backdrop-blur-sm"
-            >
-                <motion.div
-                    initial={{ opacity: 0, y: 18, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    role="dialog"
-                    aria-modal="true"
-                    aria-labelledby="student-details-title"
-                    className="my-auto max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl bg-white shadow-2xl"
-                >
-                    <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-100 bg-white p-5 sm:p-6">
-                        <div className="flex min-w-0 items-center gap-3">
-                            <div
-                                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-bold ${accent.avatar}`}
-                            >
-                                {student.avatar}
-                            </div>
-
-                            <div className="min-w-0">
-                                <h2
-                                    id="student-details-title"
-                                    className="truncate text-lg font-bold text-slate-900"
-                                >
-                                    {student.name}
-                                </h2>
-                                <p className="mt-1 truncate text-sm text-slate-500">
-                                    {student.course}
-                                </p>
-                            </div>
+                {/* Activity information */}
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                    <div className="flex items-center gap-2 rounded-xl bg-amber-50/70 p-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-amber-700">
+                            <Flame size={16} />
                         </div>
-
-                        <button
-                            type="button"
-                            aria-label="Close student details"
-                            onClick={onClose}
-                            className="rounded-xl p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-800"
-                        >
-                            <X size={19} />
-                        </button>
-                    </div>
-
-                    <div className="space-y-6 p-5 sm:p-6">
-                        <div className="rounded-2xl bg-gradient-to-r from-emerald-900 to-green-700 p-5 text-white">
-                            <div className="flex items-center justify-between gap-3">
-                                <div>
-                                    <p className="text-sm text-emerald-100">
-                                        Overall course progress
-                                    </p>
-                                    <p className="mt-2 text-4xl font-bold">
-                                        {student.progress}%
-                                    </p>
-                                </div>
-
-                                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
-                                    <TrendingUp size={25} />
-                                </div>
-                            </div>
-
-                            <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-white/20">
-                                <div
-                                    className="h-full rounded-full bg-white transition-all"
-                                    style={{ width: `${student.progress}%` }}
-                                />
-                            </div>
-
-                            <p className="mt-3 text-xs text-emerald-100">
-                                {student.completed} lessons completed out of{" "}
-                                {student.total}
+                        <div className="min-w-0">
+                            <p className="text-[11px] text-slate-500">Learning streak</p>
+                            <p className="mt-0.5 truncate text-sm font-bold text-slate-800">
+                                {student.streak} days
                             </p>
                         </div>
+                    </div>
 
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                            {[
-                                {
-                                    label: "Assessment score",
-                                    value: `${student.score}%`,
-                                    icon: Award,
-                                },
-                                {
-                                    label: "Attendance",
-                                    value: `${student.attendance}%`,
-                                    icon: CalendarDays,
-                                },
-                                {
-                                    label: "Learning streak",
-                                    value: `${student.streak} days`,
-                                    icon: TrendingUp,
-                                },
-                            ].map(({ label, value, icon: Icon }) => (
-                                <div
-                                    key={label}
-                                    className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
-                                >
-                                    <Icon size={18} className="text-emerald-700" />
-                                    <p className="mt-3 text-xs leading-5 text-slate-500">
-                                        {label}
-                                    </p>
-                                    <p className="mt-1 text-xl font-bold text-slate-900">
-                                        {value}
-                                    </p>
-                                </div>
-                            ))}
+                    <div className="flex items-center gap-2 rounded-xl bg-blue-50/70 p-3">
+                        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-blue-700">
+                            <Clock3 size={16} />
                         </div>
-
-                        <div>
-                            <h3 className="font-bold text-slate-900">
-                                Learning overview
-                            </h3>
-
-                            <div className="mt-3 space-y-4 rounded-2xl border border-slate-100 p-4">
-                                <div>
-                                    <div className="flex justify-between gap-3 text-sm">
-                                        <span className="text-slate-600">
-                                            Lessons completed
-                                        </span>
-                                        <span className="font-semibold text-slate-800">
-                                            {student.completed}/{student.total}
-                                        </span>
-                                    </div>
-
-                                    <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
-                                        <div
-                                            className={`h-full rounded-full bg-gradient-to-r ${accent.bar}`}
-                                            style={{
-                                                width: `${student.progress}%`,
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
-                                        <BookOpen size={17} />
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs text-slate-500">
-                                            Next lesson
-                                        </p>
-                                        <p className="mt-1 text-sm font-semibold text-slate-800">
-                                            {student.nextLesson}
-                                        </p>
-                                    </div>
-                                </div>
-
-                                <div className="flex items-start gap-3">
-                                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
-                                        <Clock3 size={17} />
-                                    </div>
-
-                                    <div>
-                                        <p className="text-xs text-slate-500">
-                                            Last active
-                                        </p>
-                                        <p className="mt-1 text-sm font-semibold text-slate-800">
-                                            {student.lastActive}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 className="font-bold text-slate-900">
-                                Skills covered
-                            </h3>
-
-                            <div className="mt-3 flex flex-wrap gap-2">
-                                {student.skills.map((skill) => (
-                                    <span
-                                        key={skill}
-                                        className={`rounded-lg px-3 py-2 text-xs font-semibold ${accent.badge}`}
-                                    >
-                                        {skill}
-                                    </span>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                            <span
-                                className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold ${status === "Excellent"
-                                        ? "bg-violet-50 text-violet-700"
-                                        : status === "On track"
-                                            ? "bg-emerald-50 text-emerald-700"
-                                            : "bg-amber-50 text-amber-800"
-                                    }`}
-                            >
-                                <CircleCheck size={15} />
-                                {status}
-                            </span>
-
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="min-h-11 rounded-xl bg-emerald-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700"
-                            >
-                                Done
-                            </button>
+                        <div className="min-w-0">
+                            <p className="text-[11px] text-slate-500">Last active</p>
+                            <p className="mt-0.5 truncate text-sm font-bold text-slate-800">
+                                {student.lastActive}
+                            </p>
                         </div>
                     </div>
-                </motion.div>
-            </motion.div>
-        </AnimatePresence>
+                </div>
+
+                {/* Next lesson */}
+                <div className="mt-4 flex items-start gap-3 rounded-xl border border-emerald-100 bg-emerald-50/50 p-3.5">
+                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-emerald-700 shadow-sm">
+                        <GraduationCap size={18} />
+                    </div>
+
+                    <div className="min-w-0">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
+                            Next lesson
+                        </p>
+                        <p className="mt-1 break-words text-sm font-bold leading-5 text-slate-800">
+                            {student.nextLesson}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Skills */}
+                <div className="mt-5">
+                    <div className="mb-2 flex items-center gap-2">
+                        <Target size={15} className="text-slate-400" />
+                        <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+                            Skills covered
+                        </p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                        {student.skills.map((skill) => (
+                            <span
+                                key={skill}
+                                className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold ${accent.badge}`}
+                            >
+                                {skill}
+                            </span>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Status */}
+                <div className="mt-5 border-t border-slate-100 pt-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span
+                            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset ${getStatusStyle(status)}`}
+                        >
+                            <CircleCheck size={13} />
+                            {status}
+                        </span>
+
+                        <span className="text-xs text-slate-400">
+                            {status === "Excellent"
+                                ? "Great performance"
+                                : status === "On track"
+                                    ? "Progressing well"
+                                    : "Follow-up recommended"}
+                        </span>
+                    </div>
+
+                    <p className="mt-3 text-xs leading-5 text-slate-500">
+                        {status === "Excellent"
+                            ? "Excellent progress. Encourage the student to maintain this learning pace."
+                            : status === "On track"
+                                ? "The student is progressing steadily. Regular practice will help maintain momentum."
+                                : "Consider additional support and review attendance, assessment results, and incomplete lessons."}
+                    </p>
+                </div>
+            </div>
+        </motion.article>
     );
 }
 
@@ -735,74 +629,59 @@ export default function TrainerStudentProgressPage() {
     const [courseFilter, setCourseFilter] = useState("All");
     const [sortBy, setSortBy] = useState("progress");
     const [showFilters, setShowFilters] = useState(true);
-    const [selectedStudent, setSelectedStudent] = useState(null);
     const [notice, setNotice] = useState("");
 
     const stats = useMemo(() => {
-        const averageProgress = students.length
-            ? Math.round(
-                students.reduce(
-                    (sum, student) => sum + student.progress,
-                    0
-                ) / students.length
-            )
-            : 0;
+        const count = students.length || 1;
 
-        const averageScore = students.length
-            ? Math.round(
-                students.reduce((sum, student) => sum + student.score, 0) /
-                students.length
-            )
-            : 0;
+        const averageProgress = Math.round(
+            students.reduce((sum, student) => sum + student.progress, 0) / count
+        );
 
-        const needsAttention = students.filter(
-            (student) => getStatus(student) === "Needs attention"
-        ).length;
-
-        const excellent = students.filter(
-            (student) => getStatus(student) === "Excellent"
-        ).length;
+        const averageScore = Math.round(
+            students.reduce((sum, student) => sum + student.score, 0) / count
+        );
 
         return {
             averageProgress,
             averageScore,
-            needsAttention,
-            excellent,
+            needsAttention: students.filter(
+                (student) => getStatus(student) === "Needs attention"
+            ).length,
+            excellent: students.filter(
+                (student) => getStatus(student) === "Excellent"
+            ).length,
         };
     }, [students]);
 
     const filteredStudents = useMemo(() => {
-        let result = [...students];
         const query = search.trim().toLowerCase();
 
-        if (query) {
-            result = result.filter((student) =>
+        let result = students.filter((student) => {
+            const matchesSearch =
+                !query ||
                 [
                     student.name,
                     student.email,
                     student.id,
                     student.course,
                     ...student.skills,
+                    student.nextLesson,
                 ]
                     .join(" ")
                     .toLowerCase()
-                    .includes(query)
-            );
-        }
+                    .includes(query);
 
-        if (statusFilter !== "All") {
-            result = result.filter(
-                (student) => getStatus(student) === statusFilter
-            );
-        }
+            const matchesStatus =
+                statusFilter === "All" || getStatus(student) === statusFilter;
 
-        if (courseFilter !== "All") {
-            result = result.filter(
-                (student) => student.course === courseFilter
-            );
-        }
+            const matchesCourse =
+                courseFilter === "All" || student.course === courseFilter;
 
-        result.sort((a, b) => {
+            return matchesSearch && matchesStatus && matchesCourse;
+        });
+
+        result = [...result].sort((a, b) => {
             if (sortBy === "progress") return b.progress - a.progress;
             if (sortBy === "lowProgress") return a.progress - b.progress;
             if (sortBy === "score") return b.score - a.score;
@@ -830,6 +709,10 @@ export default function TrainerStudentProgressPage() {
             "Total Lessons",
             "Assessment Score",
             "Attendance",
+            "Learning Streak",
+            "Last Active",
+            "Next Lesson",
+            "Skills",
             "Status",
         ];
 
@@ -843,6 +726,10 @@ export default function TrainerStudentProgressPage() {
             student.total,
             `${student.score}%`,
             `${student.attendance}%`,
+            student.streak,
+            student.lastActive,
+            student.nextLesson,
+            student.skills.join("; "),
             getStatus(student),
         ]);
 
@@ -862,11 +749,12 @@ export default function TrainerStudentProgressPage() {
 
         link.href = url;
         link.download = "student-progress.csv";
+
         document.body.appendChild(link);
         link.click();
         link.remove();
-        URL.revokeObjectURL(url);
 
+        window.setTimeout(() => URL.revokeObjectURL(url), 1000);
         setNotice("Student progress report downloaded.");
     }
 
@@ -880,29 +768,16 @@ export default function TrainerStudentProgressPage() {
     return (
         <div className="min-h-screen bg-[#f6faf7] text-slate-900">
             <div className="mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+                {/* Page header */}
                 <motion.header
-                    initial={{ opacity: 0, y: 12 }}
+                    initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-center"
                 >
-                    <div>
-                        <h1 className="text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
-                            Student progress
-                        </h1>
-                        <p className="mt-2 text-sm text-slate-500">
-                            Track learning progress, assessment scores, and
-                            attendance.
-                        </p>
-                    </div>
+
 
                     <div className="flex flex-wrap gap-3">
-                        <a
-                            href="/trainer"
-                            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800"
-                        >
-                            <LayoutDashboard size={16} />
-                            Dashboard
-                        </a>
+
 
                         <button
                             type="button"
@@ -915,10 +790,8 @@ export default function TrainerStudentProgressPage() {
                     </div>
                 </motion.header>
 
-                <motion.section
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.05 }}
+                {/* Summary cards */}
+                <section
                     className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4"
                     aria-label="Student progress statistics"
                 >
@@ -952,17 +825,18 @@ export default function TrainerStudentProgressPage() {
                         icon={Award}
                         tone="amber"
                     />
-                </motion.section>
+                </section>
 
-                <section className="overflow-visible rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+                {/* Students section */}
+                <section className="relative z-10 overflow-visible rounded-2xl border border-slate-200/80 bg-white shadow-sm">
                     <div className="flex flex-col justify-between gap-4 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:p-6">
                         <div>
                             <h2 className="text-lg font-bold text-slate-900">
                                 Your students
                             </h2>
+
                             <p className="mt-1 text-sm text-slate-500">
-                                Find a student and review their learning
-                                progress.
+                                All student progress details are available below.
                             </p>
                         </div>
 
@@ -970,12 +844,10 @@ export default function TrainerStudentProgressPage() {
                             <button
                                 type="button"
                                 aria-expanded={showFilters}
-                                onClick={() =>
-                                    setShowFilters((current) => !current)
-                                }
+                                onClick={() => setShowFilters((current) => !current)}
                                 className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${showFilters
-                                        ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                    ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
                                     }`}
                             >
                                 <SlidersHorizontal size={16} />
@@ -998,6 +870,7 @@ export default function TrainerStudentProgressPage() {
                         </div>
                     </div>
 
+                    {/* Search */}
                     <div className="border-b border-slate-100 p-5 sm:px-6">
                         <label
                             htmlFor="student-search"
@@ -1014,13 +887,11 @@ export default function TrainerStudentProgressPage() {
 
                             <input
                                 id="student-search"
-                                type="search"
+                                type="text"
                                 value={search}
-                                onChange={(event) =>
-                                    setSearch(event.target.value)
-                                }
+                                onChange={(event) => setSearch(event.target.value)}
                                 placeholder="Search by name, email, course, skill or ID..."
-                                className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-11 pr-10 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
+                                className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-11 pr-10 text-sm font-bold text-slate-950 outline-none transition placeholder:font-medium placeholder:text-slate-500 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
                             />
 
                             {search && (
@@ -1036,36 +907,45 @@ export default function TrainerStudentProgressPage() {
                         </div>
                     </div>
 
-                    {showFilters && (
-                        <div className="relative z-30 border-b border-slate-100">
-                            <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 sm:p-6 xl:grid-cols-3">
-                                <PremiumDropdown
-                                    label="Student status"
-                                    value={statusFilter}
-                                    options={STATUS_OPTIONS}
-                                    onChange={setStatusFilter}
-                                    icon={Users}
-                                />
+                    {/* Filters */}
+                    <AnimatePresence initial={false}>
+                        {showFilters && (
+                            <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: "auto" }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="relative z-20 overflow-visible border-b border-slate-100"
+                            >
+                                <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 sm:p-6 xl:grid-cols-3">
+                                    <PremiumDropdown
+                                        label="Student status"
+                                        value={statusFilter}
+                                        options={STATUS_OPTIONS}
+                                        onChange={setStatusFilter}
+                                        icon={Users}
+                                    />
 
-                                <PremiumDropdown
-                                    label="Course"
-                                    value={courseFilter}
-                                    options={COURSE_OPTIONS}
-                                    onChange={setCourseFilter}
-                                    icon={BookOpen}
-                                />
+                                    <PremiumDropdown
+                                        label="Course"
+                                        value={courseFilter}
+                                        options={COURSE_OPTIONS}
+                                        onChange={setCourseFilter}
+                                        icon={BookOpen}
+                                    />
 
-                                <PremiumDropdown
-                                    label="Sort students"
-                                    value={sortBy}
-                                    options={SORT_OPTIONS}
-                                    onChange={setSortBy}
-                                    icon={ArrowDownUp}
-                                />
-                            </div>
-                        </div>
-                    )}
+                                    <PremiumDropdown
+                                        label="Sort students"
+                                        value={sortBy}
+                                        options={SORT_OPTIONS}
+                                        onChange={setSortBy}
+                                        icon={ArrowDownUp}
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
+                    {/* Results count */}
                     <div className="flex flex-col justify-between gap-2 px-5 py-4 sm:flex-row sm:items-center sm:px-6">
                         <p className="text-sm text-slate-500">
                             Showing{" "}
@@ -1080,30 +960,23 @@ export default function TrainerStudentProgressPage() {
                         </p>
 
                         <span className="inline-flex items-center gap-2 text-xs text-slate-400">
-                            <Check
-                                size={14}
-                                className="text-emerald-600"
-                            />
+                            <Check size={14} className="text-emerald-600" />
                             Results update automatically
                         </span>
                     </div>
 
+                    {/* Student cards: details stay on the main screen */}
                     <div className="px-5 pb-6 sm:px-6">
                         {filteredStudents.length > 0 ? (
-                            <motion.div
-                                layout
-                                className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3"
-                            >
-                                <AnimatePresence mode="popLayout">
-                                    {filteredStudents.map((student) => (
-                                        <StudentCard
-                                            key={student.id}
-                                            student={student}
-                                            onView={setSelectedStudent}
-                                        />
-                                    ))}
-                                </AnimatePresence>
-                            </motion.div>
+                            <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2 2xl:grid-cols-3">
+                                {filteredStudents.map((student, index) => (
+                                    <StudentCard
+                                        key={student.id}
+                                        student={student}
+                                        index={index}
+                                    />
+                                ))}
+                            </div>
                         ) : (
                             <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 px-5 py-12 text-center">
                                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm ring-1 ring-slate-200">
@@ -1115,8 +988,7 @@ export default function TrainerStudentProgressPage() {
                                 </h3>
 
                                 <p className="mt-2 max-w-sm text-sm leading-6 text-slate-500">
-                                    Try a different search or change your
-                                    filters.
+                                    Try a different search or change your filters.
                                 </p>
 
                                 <button
@@ -1131,42 +1003,9 @@ export default function TrainerStudentProgressPage() {
                         )}
                     </div>
                 </section>
-
-                <div className="mt-6 flex items-start gap-3 rounded-2xl border border-emerald-100 bg-white p-4 shadow-sm">
-                    <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
-                        <Sparkles size={17} />
-                    </div>
-
-                    <div>
-                        <p className="text-sm font-semibold text-slate-800">
-                            Learning insights
-                        </p>
-                        <p className="mt-1 text-xs leading-5 text-slate-500">
-                            Progress figures are demo data. Connect your
-                            backend to display real student activity,
-                            assessments, and attendance.
-                        </p>
-                    </div>
-                </div>
-
-                <footer className="mt-6 flex flex-col gap-2 border-t border-slate-200 pt-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="inline-flex items-center gap-2">
-                        <CircleCheck
-                            size={15}
-                            className="text-emerald-600"
-                        />
-                        Student progress overview
-                    </p>
-
-                    <p>Sample student records are displayed.</p>
-                </footer>
             </div>
 
-            <StudentDetailsModal
-                student={selectedStudent}
-                onClose={() => setSelectedStudent(null)}
-            />
-
+            {/* Download notification */}
             <AnimatePresence>
                 {notice && (
                     <motion.div
@@ -1181,9 +1020,7 @@ export default function TrainerStudentProgressPage() {
                             className="mt-1 shrink-0 text-emerald-600"
                         />
 
-                        <p className="flex-1 text-sm text-slate-700">
-                            {notice}
-                        </p>
+                        <p className="flex-1 text-sm text-slate-700">{notice}</p>
 
                         <button
                             type="button"
