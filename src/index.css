@@ -581,3 +581,174 @@ input:-webkit-autofill:active {
   box-shadow: 0 0 0 1000px #08070f inset !important;
   transition: background-color 9999s ease-in-out 0s;
 }
+
+
+/* ==========================================
+   TECHMENTOR TRAINER THEME
+   Navy + Ice Blue | Bold Light UI
+   Scoped to Trainer Panel only
+========================================== */
+
+.trainer-theme {
+  --trainer-navy: #172554;
+  --trainer-blue: #1d4ed8;
+  --trainer-ice: #eff6ff;
+  --trainer-page: #f3f7fc;
+  --trainer-border: #dbe5f1;
+  --trainer-text: #172033;
+  --trainer-muted: #64748b;
+
+  color-scheme: light;
+  color: var(--trainer-text);
+  background: var(--trainer-page);
+}
+
+.trainer-theme .trainer-content {
+  background: var(--trainer-page);
+}
+
+.trainer-theme main {
+  color: var(--trainer-text);
+}
+
+/* Convert old dark cards to white cards */
+.trainer-theme main [class*="bg-[#08070f]"],
+.trainer-theme main [class*="bg-[#0b0a12]"],
+.trainer-theme main [class*="bg-[#0f172a]"],
+.trainer-theme main [class*="bg-[#111827]"],
+.trainer-theme main [class*="bg-slate-950"],
+.trainer-theme main [class*="bg-slate-900"],
+.trainer-theme main [class*="bg-gray-900"],
+.trainer-theme main [class*="bg-zinc-900"] {
+  background-color: #fff !important;
+}
+
+/* Softer secondary surfaces */
+.trainer-theme main [class*="bg-white/"],
+.trainer-theme main [class*="bg-slate-800"],
+.trainer-theme main [class*="bg-slate-700"],
+.trainer-theme main [class*="bg-gray-800"],
+.trainer-theme main [class*="bg-zinc-800"] {
+  background-color: #f8fbff !important;
+}
+
+/* Dark text on light surfaces */
+.trainer-theme main [class*="text-white"],
+.trainer-theme main [class*="text-slate-100"],
+.trainer-theme main [class*="text-slate-200"],
+.trainer-theme main [class*="text-gray-100"],
+.trainer-theme main [class*="text-gray-200"] {
+  color: #172033 !important;
+}
+
+/* Muted text */
+.trainer-theme main [class*="text-slate-300"],
+.trainer-theme main [class*="text-slate-400"],
+.trainer-theme main [class*="text-gray-300"],
+.trainer-theme main [class*="text-gray-400"] {
+  color: #64748b !important;
+}
+
+/* Borders */
+.trainer-theme main [class*="border-white/"],
+.trainer-theme main [class*="border-slate-700"],
+.trainer-theme main [class*="border-slate-800"],
+.trainer-theme main [class*="border-gray-700"],
+.trainer-theme main [class*="border-gray-800"] {
+  border-color: #dbe5f1 !important;
+}
+
+/* Replace purple accents with ice blue / navy */
+.trainer-theme main [class*="bg-violet-"],
+.trainer-theme main [class*="bg-purple-"] {
+  background-color: #eff6ff !important;
+}
+
+.trainer-theme main [class*="text-violet-"],
+.trainer-theme main [class*="text-purple-"] {
+  color: #1d4ed8 !important;
+}
+
+.trainer-theme main [class*="border-violet-"],
+.trainer-theme main [class*="border-purple-"] {
+  border-color: #bfdbfe !important;
+}
+
+/* Form fields */
+.trainer-theme main input,
+.trainer-theme main select,
+.trainer-theme main textarea {
+  background-color: #fff !important;
+  color: #172033 !important;
+  border-color: #cbd5e1 !important;
+}
+
+.trainer-theme main input::placeholder,
+.trainer-theme main textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Primary buttons */
+.trainer-theme main button[class*="bg-blue-"],
+.trainer-theme main a[class*="bg-blue-"] {
+  box-shadow: 0 5px 14px rgba(29, 78, 216, 0.12);
+}
+
+/* Tables */
+.trainer-theme main table thead {
+  background: #eff6ff !important;
+  color: #172554 !important;
+}
+
+.trainer-theme main table tbody tr {
+  border-color: #e2e8f0 !important;
+}
+
+.trainer-theme main table tbody tr:hover {
+  background: #f8fbff !important;
+}
+
+/* Scrollbar */
+.trainer-theme main ::-webkit-scrollbar {
+  width: 8px;
+}
+
+.trainer-theme main ::-webkit-scrollbar-track {
+  background: #eef3f9;
+}
+
+.trainer-theme main ::-webkit-scrollbar-thumb {
+  background: #b8c9df;
+  border-radius: 20px;
+}
+
+.trainer-theme main ::-webkit-scrollbar-thumb:hover {
+  background: #6488bd;
+}
+
+/* ==========================================
+   TRAINER PROFILE — BLACK TYPING CURSOR FIX
+   Scoped fix: no global design changes
+========================================== */
+
+/* Black blinking cursor and readable text
+   only inside the Trainer Profile page */
+.trainer-theme main input,
+.trainer-theme main textarea,
+.trainer-theme main select {
+  caret-color: #000000 !important;
+}
+
+/* Show the typing cursor when editing */
+.trainer-theme main input:not(:disabled),
+.trainer-theme main textarea:not(:disabled),
+.trainer-theme main select:not(:disabled) {
+  cursor: text;
+}
+
+/* Keep placeholders visible on white form fields */
+.trainer-theme main input::placeholder,
+.trainer-theme main textarea::placeholder {
+  color: #64748b !important;
+  opacity: 1;
+}
