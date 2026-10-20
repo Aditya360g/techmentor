@@ -1,7 +1,4 @@
-
-
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
     ArrowDownUp,
@@ -24,7 +21,6 @@ import {
     X,
     RotateCcw,
 } from "lucide-react";
-
 
 const INITIAL_STUDENTS = [
     {
@@ -249,10 +245,18 @@ const ACCENTS = {
 };
 
 function getStatus(student) {
-    if (student.progress >= 90 && student.score >= 90) return "Excellent";
-    if (student.progress < 50 || student.attendance < 75 || student.score < 60) {
+    if (student.progress >= 90 && student.score >= 90) {
+        return "Excellent";
+    }
+
+    if (
+        student.progress < 50 ||
+        student.attendance < 75 ||
+        student.score < 60
+    ) {
         return "Needs attention";
     }
+
     return "On track";
 }
 
@@ -271,8 +275,8 @@ function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
                 aria-haspopup="listbox"
                 onClick={() => setOpen((current) => !current)}
                 className={`flex min-h-[50px] w-full items-center gap-3 rounded-xl border bg-white px-3 text-left transition ${open
-                    ? "border-emerald-500 ring-4 ring-emerald-500/10"
-                    : "border-slate-200 hover:border-emerald-300"
+                        ? "border-emerald-500 ring-4 ring-emerald-500/10"
+                        : "border-slate-200 hover:border-emerald-300"
                     }`}
             >
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700">
@@ -285,7 +289,8 @@ function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
 
                 <ChevronDown
                     size={16}
-                    className={`shrink-0 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`}
+                    className={`shrink-0 text-slate-400 transition-transform ${open ? "rotate-180" : ""
+                        }`}
                 />
             </button>
 
@@ -310,13 +315,17 @@ function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
                                     setOpen(false);
                                 }}
                                 className={`flex w-full items-center justify-between gap-3 rounded-lg px-3 py-3 text-left text-sm transition ${value === option.value
-                                    ? "bg-emerald-50 font-semibold text-emerald-800"
-                                    : "text-slate-600 hover:bg-slate-50"
+                                        ? "bg-emerald-50 font-semibold text-emerald-800"
+                                        : "text-slate-600 hover:bg-slate-50"
                                     }`}
                             >
                                 <span>{option.label}</span>
+
                                 {value === option.value && (
-                                    <Check size={16} className="shrink-0 text-emerald-600" />
+                                    <Check
+                                        size={16}
+                                        className="shrink-0 text-emerald-600"
+                                    />
                                 )}
                             </button>
                         ))}
@@ -327,7 +336,13 @@ function PremiumDropdown({ label, value, options, onChange, icon: Icon }) {
     );
 }
 
-function MetricCard({ title, value, detail, icon: Icon, tone = "emerald" }) {
+function MetricCard({
+    title,
+    value,
+    detail,
+    icon: Icon,
+    tone = "emerald",
+}) {
     const tones = {
         emerald: "bg-emerald-50 text-emerald-700",
         violet: "bg-violet-50 text-violet-700",
@@ -347,10 +362,14 @@ function MetricCard({ title, value, detail, icon: Icon, tone = "emerald" }) {
                         {value}
                     </p>
                 </div>
-                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${tones[tone]}`}>
+
+                <div
+                    className={`flex h-11 w-11 items-center justify-center rounded-xl ${tones[tone]}`}
+                >
                     <Icon size={21} />
                 </div>
             </div>
+
             <p className="mt-3 text-xs leading-5 text-slate-500">{detail}</p>
         </motion.article>
     );
@@ -378,27 +397,41 @@ function StudentCard({ student, onView }) {
 
             <div className="flex flex-1 flex-col p-5">
                 <div className="flex items-start gap-3">
-                    <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-bold ring-4 ${accent.avatar} ${accent.ring}`}>
+                    <div
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-bold ring-4 ${accent.avatar} ${accent.ring}`}
+                    >
                         {student.avatar}
                     </div>
 
                     <div className="min-w-0 flex-1">
-                        <h3 className="truncate font-bold text-slate-900">{student.name}</h3>
-                        <p className="mt-1 truncate text-xs text-slate-500">{student.email}</p>
-                        <p className="mt-1 text-[11px] font-medium text-slate-400">{student.id}</p>
+                        <h3 className="truncate font-bold text-slate-900">
+                            {student.name}
+                        </h3>
+                        <p className="mt-1 truncate text-xs text-slate-500">
+                            {student.email}
+                        </p>
+                        <p className="mt-1 text-[11px] font-medium text-slate-400">
+                            {student.id}
+                        </p>
                     </div>
                 </div>
 
                 <div className="mt-5 rounded-xl bg-slate-50 p-3">
-                    <p className="text-xs font-medium text-slate-500">Enrolled course</p>
+                    <p className="text-xs font-medium text-slate-500">
+                        Enrolled course
+                    </p>
                     <p className="mt-1 text-sm font-semibold leading-5 text-slate-800">
                         {student.course}
                     </p>
                 </div>
 
                 <div className="mt-5 flex items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-slate-700">Course progress</span>
-                    <span className="text-lg font-bold text-slate-900">{student.progress}%</span>
+                    <span className="text-sm font-semibold text-slate-700">
+                        Course progress
+                    </span>
+                    <span className="text-lg font-bold text-slate-900">
+                        {student.progress}%
+                    </span>
                 </div>
 
                 <div
@@ -418,7 +451,9 @@ function StudentCard({ student, onView }) {
                 </div>
 
                 <div className="mt-2 flex items-center justify-between gap-2 text-xs text-slate-500">
-                    <span>{student.completed} of {student.total} lessons</span>
+                    <span>
+                        {student.completed} of {student.total} lessons
+                    </span>
                     <span>{student.total - student.completed} remaining</span>
                 </div>
 
@@ -428,7 +463,9 @@ function StudentCard({ student, onView }) {
                             <Award size={14} />
                             <span className="text-xs">Assessment</span>
                         </div>
-                        <p className="mt-2 text-xl font-bold text-slate-900">{student.score}%</p>
+                        <p className="mt-2 text-xl font-bold text-slate-900">
+                            {student.score}%
+                        </p>
                     </div>
 
                     <div className="rounded-xl border border-slate-100 p-3">
@@ -436,16 +473,22 @@ function StudentCard({ student, onView }) {
                             <CalendarDays size={14} />
                             <span className="text-xs">Attendance</span>
                         </div>
-                        <p className="mt-2 text-xl font-bold text-slate-900">{student.attendance}%</p>
+                        <p className="mt-2 text-xl font-bold text-slate-900">
+                            {student.attendance}%
+                        </p>
                     </div>
                 </div>
 
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
-                    <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold ${statusStyles[status]}`}>
+                    <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-xs font-semibold ${statusStyles[status]}`}
+                    >
                         <span className="h-1.5 w-1.5 rounded-full bg-current" />
                         {status}
                     </span>
-                    <span className="text-xs text-slate-400">{student.lastActive}</span>
+                    <span className="text-xs text-slate-400">
+                        {student.lastActive}
+                    </span>
                 </div>
 
                 <button
@@ -490,16 +533,25 @@ function StudentDetailsModal({ student, onClose }) {
                 >
                     <div className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b border-slate-100 bg-white p-5 sm:p-6">
                         <div className="flex min-w-0 items-center gap-3">
-                            <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-bold ${accent.avatar}`}>
+                            <div
+                                className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl font-bold ${accent.avatar}`}
+                            >
                                 {student.avatar}
                             </div>
+
                             <div className="min-w-0">
-                                <h2 id="student-details-title" className="truncate text-lg font-bold text-slate-900">
+                                <h2
+                                    id="student-details-title"
+                                    className="truncate text-lg font-bold text-slate-900"
+                                >
                                     {student.name}
                                 </h2>
-                                <p className="mt-1 truncate text-sm text-slate-500">{student.course}</p>
+                                <p className="mt-1 truncate text-sm text-slate-500">
+                                    {student.course}
+                                </p>
                             </div>
                         </div>
+
                         <button
                             type="button"
                             aria-label="Close student details"
@@ -514,50 +566,87 @@ function StudentDetailsModal({ student, onClose }) {
                         <div className="rounded-2xl bg-gradient-to-r from-emerald-900 to-green-700 p-5 text-white">
                             <div className="flex items-center justify-between gap-3">
                                 <div>
-                                    <p className="text-sm text-emerald-100">Overall course progress</p>
-                                    <p className="mt-2 text-4xl font-bold">{student.progress}%</p>
+                                    <p className="text-sm text-emerald-100">
+                                        Overall course progress
+                                    </p>
+                                    <p className="mt-2 text-4xl font-bold">
+                                        {student.progress}%
+                                    </p>
                                 </div>
+
                                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10">
                                     <TrendingUp size={25} />
                                 </div>
                             </div>
+
                             <div className="mt-4 h-2.5 overflow-hidden rounded-full bg-white/20">
                                 <div
                                     className="h-full rounded-full bg-white transition-all"
                                     style={{ width: `${student.progress}%` }}
                                 />
                             </div>
+
                             <p className="mt-3 text-xs text-emerald-100">
-                                {student.completed} lessons completed out of {student.total}
+                                {student.completed} lessons completed out of{" "}
+                                {student.total}
                             </p>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                             {[
-                                { label: "Assessment score", value: `${student.score}%`, icon: Award },
-                                { label: "Attendance", value: `${student.attendance}%`, icon: CalendarDays },
-                                { label: "Learning streak", value: `${student.streak} days`, icon: TrendingUp },
+                                {
+                                    label: "Assessment score",
+                                    value: `${student.score}%`,
+                                    icon: Award,
+                                },
+                                {
+                                    label: "Attendance",
+                                    value: `${student.attendance}%`,
+                                    icon: CalendarDays,
+                                },
+                                {
+                                    label: "Learning streak",
+                                    value: `${student.streak} days`,
+                                    icon: TrendingUp,
+                                },
                             ].map(({ label, value, icon: Icon }) => (
-                                <div key={label} className="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                <div
+                                    key={label}
+                                    className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
+                                >
                                     <Icon size={18} className="text-emerald-700" />
-                                    <p className="mt-3 text-xs leading-5 text-slate-500">{label}</p>
-                                    <p className="mt-1 text-xl font-bold text-slate-900">{value}</p>
+                                    <p className="mt-3 text-xs leading-5 text-slate-500">
+                                        {label}
+                                    </p>
+                                    <p className="mt-1 text-xl font-bold text-slate-900">
+                                        {value}
+                                    </p>
                                 </div>
                             ))}
                         </div>
 
                         <div>
-                            <h3 className="font-bold text-slate-900">Learning overview</h3>
+                            <h3 className="font-bold text-slate-900">
+                                Learning overview
+                            </h3>
+
                             <div className="mt-3 space-y-4 rounded-2xl border border-slate-100 p-4">
                                 <div>
                                     <div className="flex justify-between gap-3 text-sm">
-                                        <span className="text-slate-600">Lessons completed</span>
-                                        <span className="font-semibold text-slate-800">{student.completed}/{student.total}</span>
+                                        <span className="text-slate-600">
+                                            Lessons completed
+                                        </span>
+                                        <span className="font-semibold text-slate-800">
+                                            {student.completed}/{student.total}
+                                        </span>
                                     </div>
+
                                     <div className="mt-2 h-2 overflow-hidden rounded-full bg-slate-100">
                                         <div
                                             className={`h-full rounded-full bg-gradient-to-r ${accent.bar}`}
-                                            style={{ width: `${student.progress}%` }}
+                                            style={{
+                                                width: `${student.progress}%`,
+                                            }}
                                         />
                                     </div>
                                 </div>
@@ -566,9 +655,14 @@ function StudentDetailsModal({ student, onClose }) {
                                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-700">
                                         <BookOpen size={17} />
                                     </div>
+
                                     <div>
-                                        <p className="text-xs text-slate-500">Next lesson</p>
-                                        <p className="mt-1 text-sm font-semibold text-slate-800">{student.nextLesson}</p>
+                                        <p className="text-xs text-slate-500">
+                                            Next lesson
+                                        </p>
+                                        <p className="mt-1 text-sm font-semibold text-slate-800">
+                                            {student.nextLesson}
+                                        </p>
                                     </div>
                                 </div>
 
@@ -576,19 +670,30 @@ function StudentDetailsModal({ student, onClose }) {
                                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-50 text-amber-700">
                                         <Clock3 size={17} />
                                     </div>
+
                                     <div>
-                                        <p className="text-xs text-slate-500">Last active</p>
-                                        <p className="mt-1 text-sm font-semibold text-slate-800">{student.lastActive}</p>
+                                        <p className="text-xs text-slate-500">
+                                            Last active
+                                        </p>
+                                        <p className="mt-1 text-sm font-semibold text-slate-800">
+                                            {student.lastActive}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <h3 className="font-bold text-slate-900">Skills covered</h3>
+                            <h3 className="font-bold text-slate-900">
+                                Skills covered
+                            </h3>
+
                             <div className="mt-3 flex flex-wrap gap-2">
                                 {student.skills.map((skill) => (
-                                    <span key={skill} className={`rounded-lg px-3 py-2 text-xs font-semibold ${accent.badge}`}>
+                                    <span
+                                        key={skill}
+                                        className={`rounded-lg px-3 py-2 text-xs font-semibold ${accent.badge}`}
+                                    >
                                         {skill}
                                     </span>
                                 ))}
@@ -596,15 +701,18 @@ function StudentDetailsModal({ student, onClose }) {
                         </div>
 
                         <div className="flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
-                            <span className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold ${status === "Excellent"
-                                ? "bg-violet-50 text-violet-700"
-                                : status === "On track"
-                                    ? "bg-emerald-50 text-emerald-700"
-                                    : "bg-amber-50 text-amber-800"
-                                }`}>
+                            <span
+                                className={`inline-flex w-fit items-center gap-2 rounded-full px-3 py-2 text-xs font-semibold ${status === "Excellent"
+                                        ? "bg-violet-50 text-violet-700"
+                                        : status === "On track"
+                                            ? "bg-emerald-50 text-emerald-700"
+                                            : "bg-amber-50 text-amber-800"
+                                    }`}
+                            >
                                 <CircleCheck size={15} />
                                 {status}
                             </span>
+
                             <button
                                 type="button"
                                 onClick={onClose}
@@ -632,11 +740,19 @@ export default function TrainerStudentProgressPage() {
 
     const stats = useMemo(() => {
         const averageProgress = students.length
-            ? Math.round(students.reduce((sum, student) => sum + student.progress, 0) / students.length)
+            ? Math.round(
+                students.reduce(
+                    (sum, student) => sum + student.progress,
+                    0
+                ) / students.length
+            )
             : 0;
 
         const averageScore = students.length
-            ? Math.round(students.reduce((sum, student) => sum + student.score, 0) / students.length)
+            ? Math.round(
+                students.reduce((sum, student) => sum + student.score, 0) /
+                students.length
+            )
             : 0;
 
         const needsAttention = students.filter(
@@ -647,7 +763,12 @@ export default function TrainerStudentProgressPage() {
             (student) => getStatus(student) === "Excellent"
         ).length;
 
-        return { averageProgress, averageScore, needsAttention, excellent };
+        return {
+            averageProgress,
+            averageScore,
+            needsAttention,
+            excellent,
+        };
     }, [students]);
 
     const filteredStudents = useMemo(() => {
@@ -670,11 +791,15 @@ export default function TrainerStudentProgressPage() {
         }
 
         if (statusFilter !== "All") {
-            result = result.filter((student) => getStatus(student) === statusFilter);
+            result = result.filter(
+                (student) => getStatus(student) === statusFilter
+            );
         }
 
         if (courseFilter !== "All") {
-            result = result.filter((student) => student.course === courseFilter);
+            result = result.filter(
+                (student) => student.course === courseFilter
+            );
         }
 
         result.sort((a, b) => {
@@ -765,18 +890,19 @@ export default function TrainerStudentProgressPage() {
                             Student progress
                         </h1>
                         <p className="mt-2 text-sm text-slate-500">
-                            Track learning progress, assessment scores, and attendance.
+                            Track learning progress, assessment scores, and
+                            attendance.
                         </p>
                     </div>
 
                     <div className="flex flex-wrap gap-3">
-                        <Link
-                            to="/trainer"
+                        <a
+                            href="/trainer"
                             className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:bg-emerald-50 hover:text-emerald-800"
                         >
                             <LayoutDashboard size={16} />
                             Dashboard
-                        </Link>
+                        </a>
 
                         <button
                             type="button"
@@ -802,6 +928,7 @@ export default function TrainerStudentProgressPage() {
                         detail="Students in your learning groups"
                         icon={Users}
                     />
+
                     <MetricCard
                         title="Average progress"
                         value={`${stats.averageProgress}%`}
@@ -809,6 +936,7 @@ export default function TrainerStudentProgressPage() {
                         icon={TrendingUp}
                         tone="blue"
                     />
+
                     <MetricCard
                         title="Average score"
                         value={`${stats.averageScore}%`}
@@ -816,6 +944,7 @@ export default function TrainerStudentProgressPage() {
                         icon={Target}
                         tone="violet"
                     />
+
                     <MetricCard
                         title="Need attention"
                         value={stats.needsAttention}
@@ -828,9 +957,12 @@ export default function TrainerStudentProgressPage() {
                 <section className="overflow-visible rounded-2xl border border-slate-200/80 bg-white shadow-sm">
                     <div className="flex flex-col justify-between gap-4 border-b border-slate-100 p-5 sm:flex-row sm:items-center sm:p-6">
                         <div>
-                            <h2 className="text-lg font-bold text-slate-900">Your students</h2>
+                            <h2 className="text-lg font-bold text-slate-900">
+                                Your students
+                            </h2>
                             <p className="mt-1 text-sm text-slate-500">
-                                Find a student and review their learning progress.
+                                Find a student and review their learning
+                                progress.
                             </p>
                         </div>
 
@@ -838,15 +970,21 @@ export default function TrainerStudentProgressPage() {
                             <button
                                 type="button"
                                 aria-expanded={showFilters}
-                                onClick={() => setShowFilters((current) => !current)}
+                                onClick={() =>
+                                    setShowFilters((current) => !current)
+                                }
                                 className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${showFilters
-                                    ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                                        ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                                        : "border-slate-200 text-slate-600 hover:bg-slate-50"
                                     }`}
                             >
                                 <SlidersHorizontal size={16} />
                                 Filters
-                                <ChevronDown size={15} className={`transition-transform ${showFilters ? "rotate-180" : ""}`} />
+                                <ChevronDown
+                                    size={15}
+                                    className={`transition-transform ${showFilters ? "rotate-180" : ""
+                                        }`}
+                                />
                             </button>
 
                             <button
@@ -861,19 +999,30 @@ export default function TrainerStudentProgressPage() {
                     </div>
 
                     <div className="border-b border-slate-100 p-5 sm:px-6">
-                        <label htmlFor="student-search" className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        <label
+                            htmlFor="student-search"
+                            className="mb-2 block text-xs font-semibold uppercase tracking-wider text-slate-500"
+                        >
                             Search students
                         </label>
+
                         <div className="relative">
-                            <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                            <Search
+                                size={18}
+                                className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                            />
+
                             <input
                                 id="student-search"
                                 type="search"
                                 value={search}
-                                onChange={(event) => setSearch(event.target.value)}
+                                onChange={(event) =>
+                                    setSearch(event.target.value)
+                                }
                                 placeholder="Search by name, email, course, skill or ID..."
                                 className="min-h-12 w-full rounded-xl border border-slate-200 bg-slate-50/70 pl-11 pr-10 text-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10"
                             />
+
                             {search && (
                                 <button
                                     type="button"
@@ -897,6 +1046,7 @@ export default function TrainerStudentProgressPage() {
                                     onChange={setStatusFilter}
                                     icon={Users}
                                 />
+
                                 <PremiumDropdown
                                     label="Course"
                                     value={courseFilter}
@@ -904,6 +1054,7 @@ export default function TrainerStudentProgressPage() {
                                     onChange={setCourseFilter}
                                     icon={BookOpen}
                                 />
+
                                 <PremiumDropdown
                                     label="Sort students"
                                     value={sortBy}
@@ -918,20 +1069,31 @@ export default function TrainerStudentProgressPage() {
                     <div className="flex flex-col justify-between gap-2 px-5 py-4 sm:flex-row sm:items-center sm:px-6">
                         <p className="text-sm text-slate-500">
                             Showing{" "}
-                            <span className="font-bold text-slate-900">{filteredStudents.length}</span>
-                            {" "}of{" "}
-                            <span className="font-bold text-slate-900">{students.length}</span>
-                            {" "}students
+                            <span className="font-bold text-slate-900">
+                                {filteredStudents.length}
+                            </span>{" "}
+                            of{" "}
+                            <span className="font-bold text-slate-900">
+                                {students.length}
+                            </span>{" "}
+                            students
                         </p>
+
                         <span className="inline-flex items-center gap-2 text-xs text-slate-400">
-                            <Check size={14} className="text-emerald-600" />
+                            <Check
+                                size={14}
+                                className="text-emerald-600"
+                            />
                             Results update automatically
                         </span>
                     </div>
 
                     <div className="px-5 pb-6 sm:px-6">
                         {filteredStudents.length > 0 ? (
-                            <motion.div layout className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3">
+                            <motion.div
+                                layout
+                                className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2 xl:grid-cols-3"
+                            >
                                 <AnimatePresence mode="popLayout">
                                     {filteredStudents.map((student) => (
                                         <StudentCard
@@ -947,10 +1109,16 @@ export default function TrainerStudentProgressPage() {
                                 <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-emerald-700 shadow-sm ring-1 ring-slate-200">
                                     <Search size={23} />
                                 </div>
-                                <h3 className="mt-5 font-bold text-slate-900">No students found</h3>
+
+                                <h3 className="mt-5 font-bold text-slate-900">
+                                    No students found
+                                </h3>
+
                                 <p className="mt-2 max-w-sm text-sm leading-6 text-slate-500">
-                                    Try a different search or change your filters.
+                                    Try a different search or change your
+                                    filters.
                                 </p>
+
                                 <button
                                     type="button"
                                     onClick={resetFilters}
@@ -968,19 +1136,28 @@ export default function TrainerStudentProgressPage() {
                     <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700">
                         <Sparkles size={17} />
                     </div>
+
                     <div>
-                        <p className="text-sm font-semibold text-slate-800">Learning insights</p>
+                        <p className="text-sm font-semibold text-slate-800">
+                            Learning insights
+                        </p>
                         <p className="mt-1 text-xs leading-5 text-slate-500">
-                            Progress figures are demo data. Connect your backend to display real student activity, assessments, and attendance.
+                            Progress figures are demo data. Connect your
+                            backend to display real student activity,
+                            assessments, and attendance.
                         </p>
                     </div>
                 </div>
 
                 <footer className="mt-6 flex flex-col gap-2 border-t border-slate-200 pt-5 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
                     <p className="inline-flex items-center gap-2">
-                        <CircleCheck size={15} className="text-emerald-600" />
+                        <CircleCheck
+                            size={15}
+                            className="text-emerald-600"
+                        />
                         Student progress overview
                     </p>
+
                     <p>Sample student records are displayed.</p>
                 </footer>
             </div>
@@ -999,8 +1176,15 @@ export default function TrainerStudentProgressPage() {
                         exit={{ opacity: 0, y: 10 }}
                         className="fixed bottom-5 right-4 z-[300] flex max-w-sm items-start gap-3 rounded-2xl border border-emerald-100 bg-white p-4 shadow-xl sm:right-6"
                     >
-                        <CircleCheck size={19} className="mt-1 shrink-0 text-emerald-600" />
-                        <p className="flex-1 text-sm text-slate-700">{notice}</p>
+                        <CircleCheck
+                            size={19}
+                            className="mt-1 shrink-0 text-emerald-600"
+                        />
+
+                        <p className="flex-1 text-sm text-slate-700">
+                            {notice}
+                        </p>
+
                         <button
                             type="button"
                             aria-label="Dismiss notification"
