@@ -66,6 +66,19 @@ import CollegeNotificationsPage from "../pages/college/CollegeNotificationsPage"
 import CollegePaymentsPage from "../pages/college/CollegePaymentsPage";
 import CollegeFeedbackPage from "../pages/college/CollegeFeedbackPage";
 
+import CollegeStudentsPage from "../pages/college/CollegeStudentsPage";
+import CollegeBatchesPage from "../pages/college/CollegeBatchesPage";
+import CollegeStudentProgressPage from "../pages/college/CollegeStudentProgressPage";
+import CollegeCoursesPage from "../pages/college/CollegeCoursesPage";
+import CollegeSchedulePage from "../pages/college/CollegeSchedulePage";
+import CollegeLiveClassesPage from "../pages/college/CollegeLiveClassesPage";
+import CollegeAttendancePage from "../pages/college/CollegeAttendancePage";
+import CollegePlacementsPage from "../pages/college/CollegePlacementsPage";
+import CollegeAnalyticsPage from "../pages/college/CollegeAnalyticsPage";
+import CollegeAnnouncementsPage from "../pages/college/CollegeAnnouncementsPage";
+import CollegeTeamPage from "../pages/college/CollegeTeamPage";
+import CollegeSupportPage from "../pages/college/CollegeSupportPage";
+
 /* STUDENT */
 import StudentDashboardPage from "../pages/student/StudentDashboardPage";
 import StudentProfilePage from "../pages/student/StudentProfilePage";
@@ -197,22 +210,45 @@ export default function AppRoutes() {
       </Route>
 
       {/* ================= COLLEGE ================= */}
+
+      {/* ================= COLLEGE ================= */}
       <Route path="/college" element={<CollegeLayout />}>
         <Route index element={<CollegeDashboardPage />} />
+
+        {/* College profile */}
         <Route path="profile" element={<CollegeProfilePage />} />
+
+        {/* Student management */}
+        <Route path="students" element={<CollegeStudentsPage />} />
+        <Route path="batches" element={<CollegeBatchesPage />} />
+        <Route path="student-progress" element={<CollegeStudentProgressPage />} />
+
+        {/* Trainer management - existing routes preserved */}
         <Route path="trainers" element={<FindTrainersPage />} />
         <Route path="requests" element={<CollegeRequestsPage />} />
         <Route path="assignments" element={<CollegeAssignmentsPage />} />
+
+        {/* Courses and learning */}
+        <Route path="courses" element={<CollegeCoursesPage />} />
+        <Route path="class-schedule" element={<CollegeSchedulePage />} />
+        <Route path="live-classes" element={<CollegeLiveClassesPage />} />
+        <Route path="assignments-tests" element={<CollegeAssignmentsPage />} />
+        <Route path="attendance" element={<CollegeAttendancePage />} />
+
+        {/* Demos and operations */}
         <Route path="demo-schedule" element={<DemoSchedulePage />} />
-
-        <Route
-          path="notifications"
-          element={<CollegeNotificationsPage />}
-        />
-
         <Route path="payments" element={<CollegePaymentsPage />} />
+        <Route path="placements" element={<CollegePlacementsPage />} />
+
+        {/* Reports and communication */}
+        <Route path="analytics" element={<CollegeAnalyticsPage />} />
+        <Route path="notifications" element={<CollegeNotificationsPage />} />
+        <Route path="announcements" element={<CollegeAnnouncementsPage />} />
+        <Route path="team" element={<CollegeTeamPage />} />
+        <Route path="support" element={<CollegeSupportPage />} />
         <Route path="feedback" element={<CollegeFeedbackPage />} />
       </Route>
+
 
       {/* ================= STUDENT ================= */}
       <Route path="/student" element={<StudentLayout />}>

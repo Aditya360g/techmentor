@@ -1,176 +1,131 @@
-﻿import { useState } from "react";
-import { NavLink, Outlet } from "react-router";
-import {
-  Bell,
-  Building2,
-  CalendarDays,
-  ClipboardList,
-  CreditCard,
-  LayoutDashboard,
-  Menu,
-  MessageSquareText,
-  Search,
-  X,
-} from "lucide-react";
+﻿
+import { useCallback, useEffect, useState } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router";
 
-const links = [
-  {
-    name: "Dashboard",
-    path: "/college",
-    icon: LayoutDashboard,
-    end: true,
-  },
-  {
-    name: "Profile",
-    path: "/college/profile",
-    icon: Building2,
-  },
-  {
-    name: "Find Trainers",
-    path: "/college/trainers",
-    icon: Search,
-  },
-  {
-    name: "Requests",
-    path: "/college/requests",
-    icon: ClipboardList,
-  },
-  {
-    name: "Assignments",
-    path: "/college/assignments",
-    icon: ClipboardList,
-  },
-  {
-    name: "Demo Schedule",
-    path: "/college/demo-schedule",
-    icon: CalendarDays,
-  },
-  {
-    name: "Notifications",
-    path: "/college/notifications",
-    icon: Bell,
-  },
-  {
-    name: "Payments",
-    path: "/college/payments",
-    icon: CreditCard,
-  },
-  {
-    name: "Feedback",
-    path: "/college/feedback",
-    icon: MessageSquareText,
-  },
-];
+import CollegeSidebar from "../college/layout/CollegeSidebar";
+import CollegeTopbar from "../college/layout/CollegeTopbar";
 
 export default function CollegeLayout() {
-  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const Sidebar = () => (
-    <>
-      <div className="flex h-20 items-center border-b border-white/[0.07] px-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 font-bold text-white">
-            CF
-          </div>
-
-          <div>
-            <p className="font-bold text-white">
-              CodeFaculty
-            </p>
-
-            <p className="text-[11px] text-violet-400">
-              College Panel
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-        {links.map((item) => {
-          const Icon = item.icon;
-
-          return (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              end={item.end}
-              onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
-                  isActive
-                    ? "bg-violet-500/10 text-violet-300"
-                    : "text-slate-500 hover:bg-white/[0.04] hover:text-white"
-                }`
-              }
-            >
-              <Icon size={18} />
-              {item.name}
-            </NavLink>
-          );
-        })}
-      </nav>
-    </>
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [desktopView, setDesktopView] = useState(
+    () => typeof window !== "undefined" && window.innerWidth >= 768
   );
 
+  const sidebarWidth = 272;
+
+  const handleLogout = useCallback(() => {
+    setMobileOpen(false);
+    navigate("/login", { replace: true });
+  }, [navigate]);
+
+  // Keep the sidebar layout responsive.
+  useEffect(() => {
+    const handleResize = () => {
+      const isDesktop = window.innerWidth >= 768;
+
+      setDesktopView(isDesktop);
+
+      if (isDesktop) {
+        setMobileOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Close mobile navigation after changing pages.
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
+  // Prevent background scrolling while mobile navigation is open.
+  useEffect(() => {
+    if (!mobileOpen || desktopView) return undefined;
+
+    const previousOverflow = document.body.style.overflow;
+
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setMobileOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileOpen, desktopView]);
+
   return (
-    <div className="min-h-screen bg-[#08070f] text-white">
-
-      <aside className="fixed inset-y-0 left-0 hidden w-[260px] flex-col border-r border-white/[0.07] bg-[#0b0a12] lg:flex">
-        <Sidebar />
-      </aside>
-
-      {open && (
+    <div className="h-dvh overflow-hidden bg-[#f7f8fc] text-slate-900">
+      {/* Mobile sidebar backdrop */}
+      {mobileOpen && !desktopView && (
         <button
           type="button"
-          onClick={() => setOpen(false)}
-          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+          aria-label="Close navigation backdrop"
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-40 bg-slate-950/50 md:hidden"
         />
       )}
 
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-[280px] flex-col border-r border-white/[0.07] bg-[#0b0a12] transition-transform duration-300 lg:hidden ${
-          open ? "translate-x-0" : "-translate-x-full"
-        }`}
+      {/* College sidebar */}
+      <CollegeSidebar
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
+        collapsed={false}
+        onCollapsedChange={() => { }}
+        onLogout={handleLogout}
+      />
+
+      {/* Main workspace */}
+      <div
+        className="flex h-dvh min-w-0 flex-col"
+        style={{
+          marginLeft: desktopView ? `${sidebarWidth}px` : "0px",
+        }}
       >
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="absolute right-4 top-5 text-slate-400"
+        {/* Fixed-height topbar */}
+        <CollegeTopbar
+          mobileOpen={mobileOpen}
+          onMenuClick={() => setMobileOpen((open) => !open)}
+          onLogout={handleLogout}
+        />
+
+        {/* Scrollable content */}
+        <main
+          id="college-main-content"
+          className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8"
         >
-          <X size={22} />
-        </button>
-
-        <Sidebar />
-      </aside>
-
-      <div className="lg:pl-[260px]">
-
-        <header className="sticky top-0 z-30 flex h-20 items-center border-b border-white/[0.07] bg-[#08070f]/90 px-5 backdrop-blur-xl lg:px-8">
-
-          <button
-            type="button"
-            onClick={() => setOpen(true)}
-            className="mr-4 text-white lg:hidden"
-          >
-            <Menu size={22} />
-          </button>
-
-          <div>
-            <p className="font-semibold">
-              College Dashboard
-            </p>
-
-            <p className="text-xs text-slate-600">
-              Manage trainers and requirements
-            </p>
+          <div className="mx-auto w-full max-w-[1600px]">
+            <Outlet />
           </div>
 
-        </header>
+          {/* Footer */}
+          <footer className="mx-auto mt-8 flex w-full max-w-[1600px] flex-col gap-2 border-t border-slate-200 py-5 text-[11px] text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+            <p>
+              © {new Date().getFullYear()} CodeFaculty. College Workspace.
+            </p>
 
-        <main className="p-5 md:p-8">
-          <Outlet />
+            <button
+              type="button"
+              onClick={() => navigate("/college/settings")}
+              className="inline-flex w-fit items-center gap-1 font-semibold text-slate-500 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
+            >
+              Workspace settings
+            </button>
+          </footer>
         </main>
-
       </div>
     </div>
   );
