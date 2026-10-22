@@ -1,122 +1,88 @@
-﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router";
+﻿
+import { useEffect, useRef, useState } from "react";
+
 import {
-  Search,
   Bell,
-  ChevronDown,
-  ChevronRight,
+  Menu,
+  Search,
+  X,
   UserRound,
   Settings,
+  Trophy,
+  Video,
+  Headphones,
   LogOut,
-  Menu,
-  X,
-  CheckCheck,
+  ChevronDown,
+  ChevronRight,
+  LayoutDashboard,
+  BookOpen,
   CalendarDays,
-  Users,
-  GraduationCap,
-  CreditCard,
-  FileText,
-  Building2,
-  Command,
-  ArrowUpRight,
-  CircleHelp,
+  ClipboardCheck,
+  FileCheck2,
+  ChartNoAxesCombined,
+  Award,
+  Library,
+  CheckCircle2,
+  Sparkles,
 } from "lucide-react";
 
-const collegePages = [
-  { label: "Dashboard", path: "/college", keywords: "home overview", icon: Building2 },
-  { label: "Analytics", path: "/college/analytics", keywords: "statistics performance", icon: Search },
-  { label: "Students", path: "/college/students", keywords: "learners student management", icon: Users },
-  { label: "Trainers", path: "/college/trainers", keywords: "teachers faculty", icon: GraduationCap },
-  { label: "Programs & Courses", path: "/college/programs", keywords: "subjects curriculum", icon: FileText },
-  { label: "Assignments", path: "/college/assignments", keywords: "tasks submissions", icon: FileText },
-  { label: "Class Schedule", path: "/college/schedule", keywords: "calendar timetable classes", icon: CalendarDays },
-  { label: "Trainer Requests", path: "/college/requests", keywords: "faculty applications", icon: Users },
-  { label: "Demo Sessions", path: "/college/demo-schedule", keywords: "trial class meeting", icon: CalendarDays },
-  { label: "Placements", path: "/college/placements", keywords: "jobs careers hiring", icon: GraduationCap },
-  { label: "Payments", path: "/college/payments", keywords: "fees billing transactions", icon: CreditCard },
-  { label: "Reports", path: "/college/reports", keywords: "documents export", icon: FileText },
-  { label: "Notifications", path: "/college/notifications", keywords: "alerts messages updates", icon: Bell },
-  { label: "Settings", path: "/college/settings", keywords: "preferences account", icon: Settings },
-];
+import { Link, useLocation, useNavigate } from "react-router";
 
-const initialNotifications = [
-  {
-    id: "trainer-request",
-    title: "Trainer request received",
-    message: "A new trainer request needs your attention.",
-    time: "Recently",
-    icon: GraduationCap,
-    unread: true,
-    path: "/college/requests",
-  },
-  {
-    id: "student-activity",
-    title: "Student activity",
-    message: "Review your latest student updates.",
-    time: "Today",
-    icon: Users,
-    unread: true,
-    path: "/college/students",
-  },
-  {
-    id: "payment-overview",
-    title: "Payment overview",
-    message: "Check the latest payment records.",
-    time: "Today",
-    icon: CreditCard,
-    unread: false,
-    path: "/college/payments",
-  },
+const pages = [
+  { title: "Student Dashboard", path: "/student", keywords: "home overview dashboard", icon: LayoutDashboard },
+  { title: "My Profile", path: "/student/profile", keywords: "account personal details profile", icon: UserRound },
+  { title: "My Courses", path: "/student/courses", keywords: "learning enrolled courses course", icon: BookOpen },
+  { title: "Live Classes", path: "/student/live-classes", keywords: "online lecture video class", icon: Video },
+  { title: "Schedule", path: "/student/schedule", keywords: "calendar timetable upcoming", icon: CalendarDays },
+  { title: "Assignments", path: "/student/assignments", keywords: "homework tasks submissions", icon: ClipboardCheck },
+  { title: "Coding Tests", path: "/student/tests", keywords: "exam quiz coding assessment test", icon: FileCheck2 },
+  { title: "My Progress", path: "/student/progress", keywords: "performance learning progress", icon: ChartNoAxesCombined },
+  { title: "Results", path: "/student/results", keywords: "marks grades scores test results", icon: Trophy },
+  { title: "Certificates", path: "/student/certificates", keywords: "achievements completion certificate", icon: Award },
+  { title: "Notifications", path: "/student/notifications", keywords: "alerts messages updates", icon: Bell },
+  { title: "Resources", path: "/student/resources", keywords: "notes study material library", icon: Library },
+  { title: "Support", path: "/student/support", keywords: "help contact assistance ticket", icon: Headphones },
+  { title: "Settings", path: "/student/settings", keywords: "preferences configuration account", icon: Settings },
 ];
 
 const profileLinks = [
   {
-    label: "Account Settings",
-    description: "Manage your college account",
-    path: "/college/settings",
-    icon: UserRound,
-  },
-  {
-    label: "Notifications",
-    description: "Review important updates",
-    path: "/college/notifications",
-    icon: Bell,
-  },
-  {
-    label: "Payments",
-    description: "View payment activity",
-    path: "/college/payments",
-    icon: CreditCard,
-  },
-  {
-    label: "Support & Settings",
-    description: "Manage workspace preferences",
-    path: "/college/settings",
+    label: "Settings",
+    description: "Manage your preferences",
+    path: "/student/settings",
     icon: Settings,
+  },
+  {
+    label: "Results",
+    description: "View your test scores",
+    path: "/student/results",
+    icon: Trophy,
+  },
+  {
+    label: "Live Classes",
+    description: "Join your learning sessions",
+    path: "/student/live-classes",
+    icon: Video,
+  },
+  {
+    label: "Support",
+    description: "Get help when you need it",
+    path: "/student/support",
+    icon: Headphones,
   },
 ];
 
-function getInitials(name = "") {
-  const words = String(name).trim().split(/\s+/).filter(Boolean);
+const titles = Object.fromEntries(
+  pages.map((page) => [page.path, page.title])
+);
 
-  if (!words.length) return "CF";
-
-  return words
-    .slice(0, 2)
-    .map((word) => word.charAt(0).toUpperCase())
-    .join("");
-}
-
-function normalizeNotification(item, index) {
-  return {
-    ...item,
-    id: item.id ?? `notification-${index}`,
-    title: item.title ?? "Notification",
-    message: item.message ?? "",
-    time: item.time ?? "",
-    unread: Boolean(item.unread),
-    icon: typeof item.icon === "function" ? item.icon : Bell,
-  };
+function getPageTitle(pathname) {
+  if (titles[pathname]) return titles[pathname];
+  if (pathname.startsWith("/student/courses/")) return "Course Details";
+  if (pathname.startsWith("/student/assignments/")) return "Assignment Details";
+  if (pathname.includes("/result")) return "Test Result";
+  if (pathname.startsWith("/student/tests/")) return "Coding Test";
+  return "Student Portal";
 }
 
 function SearchResults({
@@ -124,26 +90,26 @@ function SearchResults({
   query,
   filteredPages,
   pathname,
-  activeResult,
-  setActiveResult,
   openPage,
 }) {
   if (!searchOpen || !query) return null;
 
   return (
-    <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-[100] min-w-[280px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_50px_rgba(15,23,42,0.16)]">
-      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
-        <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-slate-500">
+    <div className="absolute right-0 top-[calc(100%+10px)] z-[100] w-full min-w-[280px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_50px_rgba(15,23,42,0.18)] sm:w-[350px]">
+      <div className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
+        <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-700">
           Search Results
         </p>
-        <span className="text-[11px] font-semibold text-slate-500">
-          {filteredPages.length} {filteredPages.length === 1 ? "result" : "results"}
+
+        <span className="text-[11px] font-bold text-slate-600">
+          {filteredPages.length}{" "}
+          {filteredPages.length === 1 ? "result" : "results"}
         </span>
       </div>
 
       {filteredPages.length > 0 ? (
         <div className="max-h-[320px] overflow-y-auto p-2">
-          {filteredPages.map((page, index) => {
+          {filteredPages.map((page) => {
             const Icon = page.icon;
             const isCurrentPage = pathname === page.path;
 
@@ -151,54 +117,50 @@ function SearchResults({
               <button
                 key={page.path}
                 type="button"
-                onMouseEnter={() => setActiveResult(index)}
-                onClick={() => openPage(page.path)}
-                className={[
-                  "flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left",
-                  activeResult === index
-                    ? "bg-sky-50 text-sky-800"
-                    : "text-slate-700 hover:bg-slate-50",
-                ].join(" ")}
+                onClick={() => openPage(page)}
+                className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors hover:bg-violet-50 focus-visible:bg-violet-50 focus-visible:outline-none"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-slate-100 bg-slate-50 text-sky-700">
-                  <Icon size={17} />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-800">
+                  <Icon size={18} />
                 </span>
 
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] font-bold text-slate-900">
-                    {page.label}
-                  </span>
-                  <span className="mt-0.5 block truncate text-[10px] text-slate-400">
-                    {page.path}
+                  <span className="block truncate text-[13px] font-bold text-slate-950">
+                    {page.title}
                   </span>
                 </span>
 
                 {isCurrentPage ? (
-                  <span className="text-[10px] font-bold text-sky-700">
+                  <span className="text-[10px] font-extrabold text-violet-800">
                     Current
                   </span>
                 ) : (
-                  <ChevronRight size={15} className="shrink-0 text-slate-400" />
+                  <ChevronRight
+                    size={16}
+                    className="shrink-0 text-slate-500"
+                  />
                 )}
               </button>
             );
           })}
         </div>
       ) : (
-        <div className="px-5 py-8 text-center">
-          <Search size={23} className="mx-auto text-slate-300" />
-          <p className="mt-3 text-sm font-bold text-slate-800">
+        <div className="px-5 py-7 text-center">
+          <Search size={24} className="mx-auto text-slate-500" />
+
+          <p className="mt-3 text-sm font-bold text-slate-950">
             No pages found
           </p>
-          <p className="mt-1 text-xs text-slate-500">
-            Try students, trainers, courses or payments.
+
+          <p className="mt-1 text-xs font-medium text-slate-600">
+            Try courses, results, tests, schedule or settings.
           </p>
         </div>
       )}
 
-      <div className="border-t border-slate-100 bg-slate-50 px-4 py-2">
-        <p className="text-[10px] font-medium text-slate-500">
-          Press Enter to open the selected result. Press Esc to close.
+      <div className="border-t border-slate-200 bg-slate-50 px-4 py-2">
+        <p className="text-[10px] font-semibold text-slate-600">
+          Press Enter to open the first result. Press Esc to close.
         </p>
       </div>
     </div>
@@ -216,15 +178,13 @@ function SearchBox({
   filteredPages,
   query,
   pathname,
-  activeResult,
-  setActiveResult,
   openPage,
 }) {
-  const clearSearch = () => {
+  function clearSearch() {
     setSearch("");
     setSearchOpen(true);
     containerRef.current?.querySelector("input")?.focus();
-  };
+  }
 
   return (
     <div
@@ -238,48 +198,51 @@ function SearchBox({
       <div
         className={[
           "flex h-11 items-center gap-2.5 rounded-xl border px-3.5",
+          "transition-colors duration-150",
           searchOpen
-            ? "border-sky-400 bg-white ring-2 ring-sky-100"
-            : "border-slate-200 bg-slate-50 hover:border-slate-300",
+            ? "border-violet-500 bg-white shadow-[0_0_0_3px_rgba(139,92,246,0.12)]"
+            : "border-slate-300 bg-white hover:border-slate-400",
         ].join(" ")}
       >
-        <Search
-          size={17}
-          className={searchOpen ? "shrink-0 text-sky-700" : "shrink-0 text-slate-400"}
-        />
+        <Search size={18} className="shrink-0 text-slate-700" />
 
         <input
-          type="search"
+          type="text"
+          name={mobile ? "student-mobile-search" : "student-desktop-search"}
           value={search}
           onChange={(event) => {
             setSearch(event.target.value);
-            setActiveResult(0);
             setSearchOpen(true);
           }}
           onFocus={() => setSearchOpen(true)}
           onKeyDown={handleSearchKeyDown}
-          placeholder={mobile ? "Search college pages..." : "Search pages..."}
-          aria-label="Search college pages"
+          placeholder={
+            mobile ? "Search student pages..." : "Search courses, pages..."
+          }
+          aria-label="Search student pages"
           aria-expanded={searchOpen && query.length > 0}
           autoComplete="off"
           spellCheck={false}
-          className="min-w-0 flex-1 border-0 bg-transparent text-[13px] font-semibold text-slate-900 outline-none placeholder:font-medium placeholder:text-slate-400"
+          className="student-search-input min-w-0 flex-1 border-0 bg-transparent text-[13px] font-bold outline-none"
+          style={{
+            color: "#000",
+            WebkitTextFillColor: "#000",
+            caretColor: "#6d28d9",
+            opacity: 1,
+          }}
         />
 
-        {search.length > 0 ? (
+        {search.length > 0 && (
           <button
             type="button"
             onMouseDown={(event) => event.preventDefault()}
             onClick={clearSearch}
             aria-label="Clear search"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+            title="Clear search"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-slate-700 hover:bg-slate-100 hover:text-black"
           >
-            <X size={15} />
+            <X size={16} strokeWidth={2.5} />
           </button>
-        ) : (
-          <kbd className="hidden shrink-0 items-center gap-1 rounded-md border border-slate-200 bg-white px-1.5 py-1 text-[10px] text-slate-400 lg:flex">
-            <Command size={10} /> K
-          </kbd>
         )}
       </div>
 
@@ -288,226 +251,107 @@ function SearchBox({
         query={query}
         filteredPages={filteredPages}
         pathname={pathname}
-        activeResult={activeResult}
-        setActiveResult={setActiveResult}
         openPage={openPage}
       />
     </div>
   );
 }
 
-export default function CollegeTopbar({
-  onMenuClick,
-  mobileOpen = false,
-  onLogout,
-  user,
-  collegeName,
-  notificationItems,
-}) {
-  const navigate = useNavigate();
+export default function StudentTopbar({ onMenuClick }) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
-  const [activeResult, setActiveResult] = useState(0);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const [readNotificationIds, setReadNotificationIds] = useState(() => new Set());
-  const [logoutError, setLogoutError] = useState("");
+  const [bellShake, setBellShake] = useState(false);
 
   const desktopSearchRef = useRef(null);
   const mobileSearchRef = useRef(null);
-  const notificationRef = useRef(null);
   const profileRef = useRef(null);
-  const searchInputRef = useRef(null);
+  const shakeTimeoutRef = useRef(null);
 
-  const displayName =
-    user?.collegeName ||
-    user?.name ||
-    collegeName ||
-    "College Admin";
-
-  const displayEmail = user?.email || "College Administrator";
-  const initials = getInitials(displayName);
+  const title = getPageTitle(location.pathname);
   const query = search.trim().toLowerCase();
 
-  const notifications = useMemo(() => {
-    const source = Array.isArray(notificationItems)
-      ? notificationItems
-      : initialNotifications;
-
-    return source.map(normalizeNotification);
-  }, [notificationItems]);
-
-  const unreadCount = notifications.filter(
-    (item) => item.unread && !readNotificationIds.has(item.id)
-  ).length;
-
-  const filteredPages = useMemo(() => {
-    if (!query) return [];
-
-    return collegePages.filter((page) =>
-      `${page.label} ${page.path} ${page.keywords}`
+  const filteredPages = query
+    ? pages.filter((page) =>
+      `${page.title} ${page.path} ${page.keywords} `
         .toLowerCase()
         .includes(query)
-    );
-  }, [query]);
+    )
+    : [];
 
-  const currentPage = useMemo(() => {
-    const pathname = location.pathname.replace(/\/+$/, "") || "/";
-
-    return [...collegePages]
-      .sort((a, b) => b.path.length - a.path.length)
-      .find((page) => {
-        if (page.path === "/college") return pathname === "/college";
-
-        return (
-          pathname === page.path ||
-          pathname.startsWith(`${page.path}/`)
-        );
-      });
-  }, [location.pathname]);
-
-  const closeMenus = useCallback(() => {
+  function openPage(page) {
+    navigate(page.path);
+    setSearch("");
     setSearchOpen(false);
     setProfileOpen(false);
-    setNotificationsOpen(false);
-  }, []);
+  }
 
-  const openPage = useCallback(
-    (path) => {
-      closeMenus();
-      setSearch("");
-      setActiveResult(0);
-      setLogoutError("");
-      navigate(path);
-    },
-    [closeMenus, navigate]
-  );
-
-  const handleSearchKeyDown = (event) => {
-    if (event.key === "ArrowDown" && filteredPages.length > 0) {
-      event.preventDefault();
-      setActiveResult((current) =>
-        current >= filteredPages.length - 1 ? 0 : current + 1
-      );
-    }
-
-    if (event.key === "ArrowUp" && filteredPages.length > 0) {
-      event.preventDefault();
-      setActiveResult((current) =>
-        current <= 0 ? filteredPages.length - 1 : current - 1
-      );
-    }
-
+  function handleSearchKeyDown(event) {
     if (event.key === "Enter" && filteredPages.length > 0) {
       event.preventDefault();
-      const index = Math.min(activeResult, filteredPages.length - 1);
-      openPage(filteredPages[index].path);
+      openPage(filteredPages[0]);
     }
 
     if (event.key === "Escape") {
       setSearchOpen(false);
     }
-  };
-
-  const markAllNotificationsRead = () => {
-    setReadNotificationIds((previous) => {
-      const next = new Set(previous);
-      notifications.forEach((item) => {
-        if (item.unread) next.add(item.id);
-      });
-      return next;
-    });
-  };
-
-  const handleNotificationClick = (notification) => {
-    if (notification.unread) {
-      setReadNotificationIds((previous) => {
-        const next = new Set(previous);
-        next.add(notification.id);
-        return next;
-      });
-    }
-
-    if (notification.path) {
-      openPage(notification.path);
-    } else {
-      setNotificationsOpen(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    setLogoutError("");
-    closeMenus();
-
-    try {
-      if (onLogout) {
-        await onLogout();
-      } else {
-        navigate("/login", { replace: true });
-      }
-    } catch (error) {
-      console.error("College logout failed:", error);
-      setLogoutError("Logout failed. Please try again.");
-      setProfileOpen(true);
-    }
-  };
+  }
 
   useEffect(() => {
-    closeMenus();
-    setSearch("");
-    setActiveResult(0);
-    setLogoutError("");
-  }, [location.pathname, closeMenus]);
+    const interval = window.setInterval(() => {
+      setBellShake(true);
+
+      window.clearTimeout(shakeTimeoutRef.current);
+
+      shakeTimeoutRef.current = window.setTimeout(() => {
+        setBellShake(false);
+      }, 750);
+    }, 10000);
+
+    return () => {
+      window.clearInterval(interval);
+      window.clearTimeout(shakeTimeoutRef.current);
+    };
+  }, []);
 
   useEffect(() => {
-    const handleOutsideClick = (event) => {
-      if (
-        !desktopSearchRef.current?.contains(event.target) &&
-        !mobileSearchRef.current?.contains(event.target)
-      ) {
+    function handleOutsideClick(event) {
+      const insideDesktop =
+        desktopSearchRef.current?.contains(event.target) ?? false;
+
+      const insideMobile =
+        mobileSearchRef.current?.contains(event.target) ?? false;
+
+      const insideProfile =
+        profileRef.current?.contains(event.target) ?? false;
+
+      if (!insideDesktop && !insideMobile) {
         setSearchOpen(false);
       }
 
-      if (!notificationRef.current?.contains(event.target)) {
-        setNotificationsOpen(false);
-      }
-
-      if (!profileRef.current?.contains(event.target)) {
+      if (!insideProfile) {
         setProfileOpen(false);
       }
-    };
+    }
 
-    const handleKeyboard = (event) => {
+    function handleEscape(event) {
       if (event.key === "Escape") {
-        closeMenus();
-        return;
-      }
-
-      if (
-        (event.ctrlKey || event.metaKey) &&
-        event.key.toLowerCase() === "k"
-      ) {
-        event.preventDefault();
+        setSearchOpen(false);
         setProfileOpen(false);
-        setNotificationsOpen(false);
-        setSearchOpen(true);
-
-        requestAnimationFrame(() => {
-          searchInputRef.current?.focus();
-        });
       }
-    };
+    }
 
     document.addEventListener("mousedown", handleOutsideClick);
-    document.addEventListener("keydown", handleKeyboard);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
       document.removeEventListener("mousedown", handleOutsideClick);
-      document.removeEventListener("keydown", handleKeyboard);
+      document.removeEventListener("keydown", handleEscape);
     };
-  }, [closeMenus]);
+  }, []);
 
   const searchProps = {
     search,
@@ -518,233 +362,126 @@ export default function CollegeTopbar({
     filteredPages,
     query,
     pathname: location.pathname,
-    activeResult,
-    setActiveResult,
     openPage,
   };
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex h-[67px] w-full items-center justify-between gap-3 border-b border-slate-200 bg-white px-3 text-slate-900 shadow-sm sm:px-5 lg:px-8">
+      <header className="sticky top-0 z-40 flex h-[67px] w-full items-center justify-between gap-3 border-b border-slate-200 bg-white px-3 shadow-sm sm:px-5 lg:px-8">
         <div className="flex min-w-0 items-center gap-3 sm:gap-4">
           <button
             type="button"
             onClick={onMenuClick}
-            aria-label={mobileOpen ? "Close college navigation" : "Open college navigation"}
-            aria-expanded={mobileOpen}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700 md:hidden"
+            aria-label="Open student navigation"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition-colors hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-violet-100 lg:hidden"
           >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+            <Menu size={20} />
           </button>
 
-          <div className="hidden min-w-0 sm:block">
-            <p className="text-[10px] font-extrabold uppercase tracking-[0.16em] text-sky-700">
-              College Workspace
-            </p>
-            <h1 className="mt-1 max-w-[220px] truncate text-sm font-extrabold tracking-tight text-slate-950">
-              {currentPage?.label || "College Portal"}
-            </h1>
-          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <h1 className="truncate text-base font-extrabold tracking-tight text-slate-950 sm:text-xl">
+                {title}
+              </h1>
 
-          <div className="min-w-0 flex-1 md:hidden">
-            <h1 className="truncate text-sm font-extrabold text-slate-950">
-              {currentPage?.label || "College Portal"}
-            </h1>
-            <p className="mt-0.5 truncate text-[10px] font-medium text-slate-500">
-              Manage your college workspace
+              <span className="hidden items-center gap-1 rounded-full border border-emerald-200 bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-800 md:inline-flex">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                Active
+              </span>
+            </div>
+
+            <p className="mt-1 hidden text-xs font-medium text-slate-600 sm:block sm:text-[13px]">
+              Learn, grow, and track your progress.
             </p>
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <SearchBox
             {...searchProps}
             containerRef={desktopSearchRef}
           />
 
-          <button
-            type="button"
-            onClick={() => openPage("/college/settings")}
-            aria-label="Help and settings"
-            title="Help and settings"
-            className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl text-slate-500 hover:bg-slate-100 hover:text-sky-700 sm:flex"
+          <Link
+            to="/student/notifications"
+            aria-label="Open notifications"
+            title="Notifications"
+            className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition-colors hover:border-violet-200 hover:bg-violet-50 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-violet-100 sm:h-11 sm:w-11"
           >
-            <CircleHelp size={19} />
-          </button>
+            <Bell
+              size={19}
+              className={bellShake ? "topbar-bell-shake" : ""}
+            />
 
-          <div ref={notificationRef} className="relative">
-            <button
-              type="button"
-              onClick={() => {
-                setNotificationsOpen((open) => !open);
-                setProfileOpen(false);
-                setSearchOpen(false);
-              }}
-              aria-label={`Notifications, ${unreadCount} unread`}
-              aria-expanded={notificationsOpen}
-              className={[
-                "relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border",
-                notificationsOpen
-                  ? "border-sky-200 bg-sky-50 text-sky-700"
-                  : "border-slate-200 bg-white text-slate-600 hover:border-sky-200 hover:bg-sky-50 hover:text-sky-700",
-              ].join(" ")}
-            >
-              <Bell size={19} />
-
-              {unreadCount > 0 && (
-                <span className="absolute right-1 top-1 flex h-[17px] min-w-[17px] items-center justify-center rounded-full border-2 border-white bg-sky-600 px-1 text-[9px] font-extrabold text-white">
-                  {unreadCount > 9 ? "9+" : unreadCount}
-                </span>
-              )}
-            </button>
-
-            {notificationsOpen && (
-              <div className="absolute right-[-44px] top-[calc(100%+10px)] z-50 w-[min(360px,calc(100vw-16px))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_50px_rgba(15,23,42,0.16)] sm:right-0">
-                <div className="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-4">
-                  <div>
-                    <h2 className="text-sm font-extrabold text-slate-900">
-                      Notifications
-                    </h2>
-                    <p className="mt-1 text-[11px] text-slate-500">
-                      {unreadCount} unread updates
-                    </p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={markAllNotificationsRead}
-                    disabled={unreadCount === 0}
-                    className="flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1.5 text-[10px] font-bold text-sky-700 hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    <CheckCheck size={14} />
-                    Mark all read
-                  </button>
-                </div>
-
-                <div className="max-h-[340px] overflow-y-auto p-2">
-                  {notifications.length > 0 ? (
-                    notifications.map((notification) => {
-                      const Icon = notification.icon;
-                      const isUnread =
-                        notification.unread &&
-                        !readNotificationIds.has(notification.id);
-
-                      return (
-                        <button
-                          type="button"
-                          key={notification.id}
-                          onClick={() => handleNotificationClick(notification)}
-                          className="flex w-full gap-3 rounded-xl p-3 text-left hover:bg-slate-50"
-                        >
-                          <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sky-100 bg-sky-50 text-sky-700">
-                            <Icon size={18} />
-                            {isUnread && (
-                              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-white bg-sky-600" />
-                            )}
-                          </span>
-
-                          <span className="min-w-0 flex-1">
-                            <span className="flex items-start justify-between gap-2">
-                              <span className="text-[12px] font-bold text-slate-800">
-                                {notification.title}
-                              </span>
-                              <span className="shrink-0 text-[9px] text-slate-400">
-                                {notification.time}
-                              </span>
-                            </span>
-                            <span className="mt-1 block text-[11px] leading-5 text-slate-500">
-                              {notification.message}
-                            </span>
-                          </span>
-                        </button>
-                      );
-                    })
-                  ) : (
-                    <div className="py-10 text-center">
-                      <Bell size={24} className="mx-auto mb-2 text-slate-300" />
-                      <p className="text-sm font-semibold text-slate-600">
-                        You’re all caught up
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => openPage("/college/notifications")}
-                  className="flex w-full items-center justify-center gap-2 border-t border-slate-100 px-4 py-3 text-xs font-bold text-sky-700 hover:bg-sky-50"
-                >
-                  View all notifications
-                  <ChevronRight size={14} />
-                </button>
-              </div>
-            )}
-          </div>
+            <span className="absolute right-[8px] top-[7px] h-2 w-2 rounded-full border-2 border-white bg-violet-600" />
+          </Link>
 
           <div ref={profileRef} className="relative">
             <button
               type="button"
               onClick={() => {
                 setProfileOpen((open) => !open);
-                setNotificationsOpen(false);
                 setSearchOpen(false);
-                setLogoutError("");
               }}
-              aria-label="Open college profile menu"
+              aria-label="Open profile menu"
               aria-expanded={profileOpen}
               className={[
-                "flex h-10 items-center gap-2 rounded-xl border bg-white px-1.5 sm:gap-2.5 sm:px-2",
+                "flex h-10 items-center gap-2 rounded-xl border bg-white px-1.5 transition-all sm:h-11 sm:gap-2.5 sm:px-2",
                 profileOpen
-                  ? "border-sky-200 bg-sky-50"
-                  : "border-slate-200 hover:border-sky-200 hover:bg-sky-50/50",
+                  ? "border-violet-300 shadow-[0_0_0_3px_rgba(139,92,246,0.08)]"
+                  : "border-slate-200 hover:border-violet-200 hover:bg-violet-50/40",
               ].join(" ")}
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#dbeafe] to-[#bae6fd] text-[11px] font-extrabold text-[#12345a] ring-1 ring-sky-200 sm:h-9 sm:w-9">
-                {initials}
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-violet-100 to-indigo-100 text-xs font-extrabold text-violet-800 ring-1 ring-violet-200 sm:h-9 sm:w-9">
+                AS
               </span>
 
               <span className="hidden min-w-0 text-left sm:block">
-                <span className="block max-w-[125px] truncate text-xs font-extrabold text-slate-900">
-                  {displayName}
+                <span className="block max-w-[125px] truncate text-xs font-bold text-slate-900">
+                  Aditya Sharma
                 </span>
-                <span className="mt-0.5 block text-[10px] font-medium text-slate-500">
-                  College Admin
-                </span>
+
+
               </span>
 
               <ChevronDown
                 size={15}
-                className="hidden text-slate-500 sm:block"
+                className={[
+                  "hidden text-slate-500 transition-transform duration-200 sm:block",
+                  profileOpen ? "rotate-180 text-violet-700" : "",
+                ].join(" ")}
               />
             </button>
 
             {profileOpen && (
-              <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-[min(290px,calc(100vw-16px))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_50px_rgba(15,23,42,0.16)]">
+              <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-[270px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_16px_50px_rgba(15,23,42,0.15)] sm:w-[290px]">
                 <Link
-                  to="/college/settings"
-                  onClick={() => closeMenus()}
-                  className="flex items-center gap-3 border-b border-slate-100 bg-gradient-to-br from-sky-50 via-white to-blue-50 p-4 hover:from-sky-100"
+                  to="/student/profile"
+                  onClick={() => setProfileOpen(false)}
+                  className="flex items-center gap-3 border-b border-slate-100 bg-gradient-to-br from-violet-50 via-white to-indigo-50 p-4 hover:from-violet-100"
                 >
-                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#12345a] to-[#1976b9] text-sm font-extrabold text-white">
-                    {initials}
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-600 to-indigo-600 text-sm font-extrabold text-white shadow-md">
+                    AS
                   </span>
 
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-extrabold text-slate-950">
-                      {displayName}
+                      Aditya Sharma
                     </span>
-                    <span className="mt-1 block truncate text-[11px] text-slate-500">
-                      {displayEmail}
-                    </span>
-                    <span className="mt-2 inline-flex rounded-full border border-sky-100 bg-sky-50 px-2 py-1 text-[10px] font-bold text-sky-800">
-                      College Account
+
+
+
+                    <span className="mt-2 inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-bold text-emerald-800">
+                      <CheckCircle2 size={11} />
+                      Learning actively
                     </span>
                   </span>
-                  <ChevronRight size={16} className="text-slate-400" />
+
+                  <ChevronRight size={16} className="text-slate-500" />
                 </Link>
 
                 <div className="p-2">
-                  <p className="px-3 pb-2 pt-1 text-[10px] font-extrabold uppercase tracking-[0.15em] text-slate-400">
+                  <p className="px-3 pb-2 pt-1 text-[10px] font-extrabold uppercase tracking-[0.15em] text-slate-500">
                     Quick Access
                   </p>
 
@@ -754,60 +491,58 @@ export default function CollegeTopbar({
 
                     return (
                       <Link
-                        key={item.label}
+                        key={item.path}
                         to={item.path}
-                        onClick={closeMenus}
+                        onClick={() => setProfileOpen(false)}
                         className={[
-                          "group flex items-center gap-3 rounded-xl px-3 py-2.5",
+                          "group flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors",
                           isActive
-                            ? "bg-sky-50 text-sky-800"
-                            : "text-slate-700 hover:bg-slate-50 hover:text-sky-800",
+                            ? "bg-violet-50 text-violet-800"
+                            : "text-slate-800 hover:bg-violet-50 hover:text-violet-800",
                         ].join(" ")}
                       >
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-500 group-hover:bg-sky-50 group-hover:text-sky-700">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-50 text-slate-600 group-hover:bg-white group-hover:text-violet-700">
                           <Icon size={17} />
                         </span>
 
                         <span className="min-w-0 flex-1">
-                          <span className="block text-[12px] font-bold">
+                          <span className="block text-[13px] font-bold">
                             {item.label}
                           </span>
-                          <span className="mt-0.5 block text-[10px] text-slate-500">
+
+                          <span className="mt-0.5 block text-[10px] font-medium text-slate-500">
                             {item.description}
                           </span>
                         </span>
 
-                        <ChevronRight size={14} className="text-slate-300" />
+                        <ChevronRight size={14} className="text-slate-400" />
                       </Link>
                     );
                   })}
                 </div>
 
-                {logoutError && (
-                  <p role="alert" className="px-4 py-2 text-[11px] font-medium text-rose-600">
-                    {logoutError}
-                  </p>
-                )}
-
                 <div className="border-t border-slate-100 p-2">
-                  <button
-                    type="button"
-                    onClick={handleLogout}
-                    className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-rose-700 hover:bg-rose-50"
+                  <Link
+                    to="/login"
+                    onClick={() => setProfileOpen(false)}
+                    className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-red-700 transition-colors hover:bg-red-50"
                   >
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-rose-50 text-rose-600 group-hover:bg-white">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-50 text-red-600 group-hover:bg-white">
                       <LogOut size={17} />
                     </span>
+
                     <span className="flex-1">
-                      <span className="block text-[12px] font-bold">
+                      <span className="block text-[13px] font-bold">
                         Logout
                       </span>
-                      <span className="mt-0.5 block text-[10px] text-rose-500">
+
+                      <span className="mt-0.5 block text-[10px] font-medium text-red-500">
                         Sign out of your account
                       </span>
                     </span>
-                    <ChevronRight size={14} className="text-rose-300" />
-                  </button>
+
+                    <ChevronRight size={14} className="text-red-400" />
+                  </Link>
                 </div>
               </div>
             )}
@@ -822,6 +557,47 @@ export default function CollegeTopbar({
           containerRef={mobileSearchRef}
         />
       </div>
+
+      <style>{`
+  .student - search - input,
+        .student - search - input: focus,
+        .student - search - input:active {
+  color: #000!important;
+  -webkit - text - fill - color: #000!important;
+  opacity: 1!important;
+  outline: none!important;
+  box - shadow: none!important;
+}
+
+        .student - search - input::placeholder {
+  color: #64748b!important;
+  -webkit - text - fill - color: #64748b!important;
+  opacity: 1!important;
+  font - weight: 500;
+}
+
+@keyframes topbar - bell - shake {
+  0 %, 100 % { transform: rotate(0deg); }
+  12 % { transform: rotate(14deg); }
+  24 % { transform: rotate(-14deg); }
+  36 % { transform: rotate(11deg); }
+  48 % { transform: rotate(-11deg); }
+  60 % { transform: rotate(6deg); }
+  72 % { transform: rotate(-6deg); }
+  84 % { transform: rotate(2deg); }
+}
+
+        .topbar - bell - shake {
+  transform - origin: top center;
+  animation: topbar - bell - shake 0.7s ease -in -out;
+}
+
+@media(prefers - reduced - motion: reduce) {
+          .topbar - bell - shake {
+    animation: none;
+  }
+}
+`}</style>
     </>
   );
 }

@@ -26,11 +26,10 @@ export default function StudentLayout() {
 
 
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-[280px] border-r border-slate-200 bg-white transition-transform duration-300 lg:hidden ${
-          open
+        className={`fixed inset-y-0 left-0 z-50 w-[280px] border-r border-slate-200 bg-white transition-transform duration-300 lg:hidden ${open
             ? "translate-x-0"
             : "-translate-x-full"
-        }`}
+          }`}
       >
         <StudentSidebar
           onNavigate={() => setOpen(false)}
