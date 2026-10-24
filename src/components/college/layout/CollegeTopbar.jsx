@@ -70,14 +70,19 @@ const DEFAULT_NOTIFICATIONS = [
 
 function getInitials(name = "") {
     const words = String(name).trim().split(/\s+/).filter(Boolean);
+
     if (!words.length) return "CF";
-    return words.slice(0, 2).map((word) => word.charAt(0).toUpperCase()).join("");
+
+    return words
+        .slice(0, 2)
+        .map((word) => word.charAt(0).toUpperCase())
+        .join("");
 }
 
 function normalizeNotification(item, index) {
     return {
         ...item,
-        id: item.id ?? `college - notification - ${index} `,
+        id: item.id ?? `college-notification-${index}`,
         title: item.title ?? "Notification",
         message: item.message ?? "",
         time: item.time ?? "",
@@ -87,10 +92,10 @@ function normalizeNotification(item, index) {
 }
 
 const iconButton =
-    "relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-700 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-violet-400 hover:bg-violet-50 hover:text-violet-700 hover:shadow-[0_5px_18px_rgba(109,40,217,0.13)] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400";
+    "relative flex h-10 w-10 items-center justify-center rounded-xl border border-slate-300 bg-white text-slate-800 transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-violet-400 hover:bg-violet-50 hover:text-violet-800 hover:shadow-[0_5px_18px_rgba(109,40,217,0.13)] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400";
 
 const menuButton =
-    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[12px] font-semibold text-slate-700 transition-all duration-200 hover:translate-x-0.5 hover:bg-violet-50 hover:text-violet-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300";
+    "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[12px] font-semibold text-slate-800 transition-all duration-200 hover:translate-x-0.5 hover:bg-violet-50 hover:text-violet-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-300";
 
 export default function CollegeTopbar({
     onMenuClick,
@@ -118,6 +123,7 @@ export default function CollegeTopbar({
 
     const displayName =
         user?.collegeName || user?.name || collegeName || "College Admin";
+
     const displayEmail = user?.email || "College Administrator";
     const initials = getInitials(displayName);
 
@@ -125,6 +131,7 @@ export default function CollegeTopbar({
         const source = Array.isArray(notificationItems)
             ? notificationItems
             : DEFAULT_NOTIFICATIONS;
+
         return source.map(normalizeNotification);
     }, [notificationItems]);
 
@@ -134,10 +141,11 @@ export default function CollegeTopbar({
 
     const filteredPages = useMemo(() => {
         const query = search.trim().toLowerCase();
+
         if (!query) return [];
 
         return COLLEGE_PAGES.filter((page) =>
-            `${page.label} ${page.keywords} ${page.path} `.toLowerCase().includes(query)
+            `${page.label} ${page.keywords} ${page.path}`.toLowerCase().includes(query)
         );
     }, [search]);
 
@@ -147,8 +155,14 @@ export default function CollegeTopbar({
         return [...COLLEGE_PAGES]
             .sort((a, b) => b.path.length - a.path.length)
             .find((page) => {
-                if (page.path === "/college") return pathname === "/college";
-                return pathname === page.path || pathname.startsWith(`${page.path}/`);
+                if (page.path === "/college") {
+                    return pathname === "/college";
+                }
+
+                return (
+                    pathname === page.path ||
+                    pathname.startsWith(`${page.path}/`)
+                );
             });
     }, [location.pathname]);
 
@@ -178,9 +192,17 @@ export default function CollegeTopbar({
 
     useEffect(() => {
         const handleOutsideClick = (event) => {
-            if (!searchRef.current?.contains(event.target)) setSearchOpen(false);
-            if (!notificationRef.current?.contains(event.target)) setNotificationsOpen(false);
-            if (!profileRef.current?.contains(event.target)) setProfileOpen(false);
+            if (!searchRef.current?.contains(event.target)) {
+                setSearchOpen(false);
+            }
+
+            if (!notificationRef.current?.contains(event.target)) {
+                setNotificationsOpen(false);
+            }
+
+            if (!profileRef.current?.contains(event.target)) {
+                setProfileOpen(false);
+            }
         };
 
         const handleKeyboard = (event) => {
@@ -189,7 +211,10 @@ export default function CollegeTopbar({
                 return;
             }
 
-            if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+            if (
+                (event.ctrlKey || event.metaKey) &&
+                event.key.toLowerCase() === "k"
+            ) {
                 event.preventDefault();
                 setNotificationsOpen(false);
                 setProfileOpen(false);
@@ -210,6 +235,7 @@ export default function CollegeTopbar({
     const handleSearchKeyDown = (event) => {
         if (event.key === "ArrowDown" && filteredPages.length) {
             event.preventDefault();
+
             setActiveResult((current) =>
                 current >= filteredPages.length - 1 ? 0 : current + 1
             );
@@ -217,6 +243,7 @@ export default function CollegeTopbar({
 
         if (event.key === "ArrowUp" && filteredPages.length) {
             event.preventDefault();
+
             setActiveResult((current) =>
                 current <= 0 ? filteredPages.length - 1 : current - 1
             );
@@ -224,16 +251,23 @@ export default function CollegeTopbar({
 
         if (event.key === "Enter" && filteredPages.length) {
             event.preventDefault();
-            openPage(filteredPages[Math.min(activeResult, filteredPages.length - 1)].path);
+
+            openPage(
+                filteredPages[
+                    Math.min(activeResult, filteredPages.length - 1)
+                ].path
+            );
         }
     };
 
     const markAllNotificationsRead = () => {
         setReadNotificationIds((previous) => {
             const next = new Set(previous);
+
             notifications.forEach((item) => {
                 if (item.unread) next.add(item.id);
             });
+
             return next;
         });
     };
@@ -247,8 +281,11 @@ export default function CollegeTopbar({
             });
         }
 
-        if (notification.path) openPage(notification.path);
-        else setNotificationsOpen(false);
+        if (notification.path) {
+            openPage(notification.path);
+        } else {
+            setNotificationsOpen(false);
+        }
     };
 
     const handleLogout = async () => {
@@ -256,8 +293,11 @@ export default function CollegeTopbar({
         closeMenus();
 
         try {
-            if (onLogout) await onLogout();
-            else navigate("/login", { replace: true });
+            if (onLogout) {
+                await onLogout();
+            } else {
+                navigate("/login", { replace: true });
+            }
         } catch (error) {
             console.error("College logout failed:", error);
             setLogoutError("Logout failed. Please try again.");
@@ -266,8 +306,9 @@ export default function CollegeTopbar({
     };
 
     return (
-        <header className="college-topbar relative z-30 h-[68px] w-full shrink-0 border-b border-slate-300/80 bg-white text-slate-900 shadow-[0_3px_16px_rgba(15,23,42,0.035)]">
+        <header className="college-topbar relative z-30 h-[68px] w-full shrink-0 border-b border-slate-300/80 bg-white text-slate-950 shadow-[0_3px_16px_rgba(15,23,42,0.035)]">
             <div className="flex h-[68px] w-full items-center gap-3 px-3 sm:px-5 lg:px-6">
+
                 {/* Mobile navigation */}
                 <button
                     type="button"
@@ -279,17 +320,18 @@ export default function CollegeTopbar({
                     {mobileOpen ? <X size={19} /> : <Menu size={19} />}
                 </button>
 
-                {/* Desktop: only the current page title */}
+                {/* Desktop page title */}
                 <div className="hidden min-w-0 flex-1 sm:block">
-                    <h1 className="college-title truncate text-base font-extrabold tracking-tight text-slate-950 lg:text-lg">
+                    <h1 className="college-title truncate text-base font-extrabold tracking-tight text-black lg:text-lg">
                         {currentPage?.label || "Dashboard"}
                     </h1>
+
                     <span className="mt-1 block h-[3px] w-9 rounded-full bg-gradient-to-r from-violet-600 to-indigo-500" />
                 </div>
 
                 {/* Mobile page title */}
                 <div className="min-w-0 flex-1 sm:hidden">
-                    <h1 className="truncate text-sm font-extrabold text-slate-950">
+                    <h1 className="truncate text-sm font-extrabold text-black">
                         {currentPage?.label || "Dashboard"}
                     </h1>
                 </div>
@@ -307,8 +349,8 @@ export default function CollegeTopbar({
                     >
                         <Search
                             size={17}
-                            className={`shrink-0 transition-colors ${searchOpen ? "text-violet-700" : "text-slate-800"
-                                }`}
+                            strokeWidth={2.8}
+                            className="shrink-0 text-black"
                         />
 
                         <input
@@ -326,11 +368,15 @@ export default function CollegeTopbar({
                             aria-label="Search College pages"
                             aria-autocomplete="list"
                             aria-expanded={searchOpen}
-                            className="min-w-0 w-full bg-transparent text-[12px] font-bold text-black outline-none placeholder:font-semibold placeholder:text-slate-600"
+                            className="college-search-input min-w-0 w-full bg-transparent text-[12px] font-extrabold text-black caret-black outline-none placeholder:font-bold placeholder:text-black"
                         />
 
-                        <kbd className="hidden shrink-0 items-center rounded-md border border-slate-300 bg-white px-1.5 py-0.5 text-[10px] font-bold text-black xl:flex">
-                            <Command size={10} className="mr-1" />
+                        <kbd className="hidden shrink-0 items-center rounded-md border border-black bg-white px-1.5 py-0.5 text-[10px] font-extrabold text-black xl:flex">
+                            <Command
+                                size={10}
+                                strokeWidth={2.8}
+                                className="mr-1"
+                            />
                             K
                         </kbd>
                     </div>
@@ -338,10 +384,11 @@ export default function CollegeTopbar({
                     {searchOpen && search.trim() && (
                         <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_18px_50px_rgba(15,23,42,0.16)] animate-in fade-in slide-in-from-top-2 duration-200">
                             <div className="flex items-center justify-between px-2 py-2">
-                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                                <p className="text-[10px] font-extrabold uppercase tracking-wider text-slate-600">
                                     Search results
                                 </p>
-                                <span className="text-[10px] font-bold text-slate-600">
+
+                                <span className="text-[10px] font-bold text-black">
                                     {filteredPages.length} found
                                 </span>
                             </div>
@@ -358,31 +405,38 @@ export default function CollegeTopbar({
                                                 onMouseEnter={() => setActiveResult(index)}
                                                 onClick={() => openPage(page.path)}
                                                 className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition-all duration-200 ${activeResult === index
-                                                    ? "translate-x-0.5 bg-violet-50 text-violet-900 shadow-sm"
-                                                    : "text-slate-800 hover:translate-x-0.5 hover:bg-slate-50"
+                                                    ? "translate-x-0.5 bg-violet-50 text-violet-950 shadow-sm"
+                                                    : "text-black hover:translate-x-0.5 hover:bg-slate-50"
                                                     }`}
                                             >
-                                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-violet-100 bg-violet-50 text-violet-700 transition-transform duration-200 group-hover:scale-105">
-                                                    <Icon size={16} />
+                                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-violet-100 bg-violet-50 text-violet-800">
+                                                    <Icon size={16} strokeWidth={2.5} />
                                                 </span>
+
                                                 <span className="min-w-0 flex-1">
-                                                    <span className="block truncate text-[12px] font-bold">
+                                                    <span className="block truncate text-[12px] font-extrabold text-black">
                                                         {page.label}
                                                     </span>
-                                                    <span className="mt-0.5 block truncate text-[10px] text-slate-500">
+
+                                                    <span className="mt-0.5 block truncate text-[10px] font-semibold text-slate-700">
                                                         {page.path}
                                                     </span>
                                                 </span>
-                                                <ChevronRight size={14} className="text-slate-400" />
+
+                                                <ChevronRight size={14} className="text-slate-600" />
                                             </button>
                                         );
                                     })}
                                 </div>
                             ) : (
                                 <div className="px-3 py-7 text-center">
-                                    <Search size={21} className="mx-auto mb-2 text-slate-400" />
-                                    <p className="text-sm font-bold text-slate-800">No pages found</p>
-                                    <p className="mt-1 text-xs text-slate-500">
+                                    <Search size={21} className="mx-auto mb-2 text-slate-500" />
+
+                                    <p className="text-sm font-bold text-black">
+                                        No pages found
+                                    </p>
+
+                                    <p className="mt-1 text-xs font-medium text-slate-700">
                                         Try students, trainers or payments.
                                     </p>
                                 </div>
@@ -393,6 +447,7 @@ export default function CollegeTopbar({
 
                 {/* Right-side actions */}
                 <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+
                     {/* Notifications */}
                     <div ref={notificationRef} className="relative">
                         <button
@@ -405,10 +460,13 @@ export default function CollegeTopbar({
                             aria-label={`Notifications, ${unreadCount} unread`}
                             aria-expanded={notificationsOpen}
                             title="Notifications"
-                            className={`${iconButton} ${notificationsOpen ? "border-violet-400 bg-violet-50 text-violet-800" : ""
+                            className={`${iconButton} ${notificationsOpen
+                                ? "border-violet-400 bg-violet-50 text-violet-900"
+                                : ""
                                 }`}
                         >
-                            <Bell size={17} />
+                            <Bell size={17} strokeWidth={2.4} />
+
                             {unreadCount > 0 && (
                                 <span className="absolute right-[6px] top-[5px] h-2.5 w-2.5 animate-pulse rounded-full border-2 border-white bg-violet-600" />
                             )}
@@ -418,16 +476,20 @@ export default function CollegeTopbar({
                             <div className="absolute right-[-45px] top-[calc(100%+10px)] z-50 w-[min(350px,calc(100vw-16px))] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_18px_50px_rgba(15,23,42,0.16)] sm:right-0">
                                 <div className="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3.5">
                                     <div>
-                                        <h2 className="text-sm font-extrabold text-slate-950">Notifications</h2>
-                                        <p className="mt-1 text-[11px] font-medium text-slate-600">
+                                        <h2 className="text-sm font-extrabold text-black">
+                                            Notifications
+                                        </h2>
+
+                                        <p className="mt-1 text-[11px] font-medium text-slate-700">
                                             {unreadCount} unread updates
                                         </p>
                                     </div>
+
                                     <button
                                         type="button"
                                         onClick={markAllNotificationsRead}
                                         disabled={unreadCount === 0}
-                                        className="flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1.5 text-[10px] font-bold text-violet-800 transition-all hover:bg-violet-50 disabled:opacity-40"
+                                        className="flex shrink-0 items-center gap-1.5 rounded-lg px-2 py-1.5 text-[10px] font-bold text-violet-900 transition-all hover:bg-violet-50 disabled:opacity-40"
                                     >
                                         <CheckCheck size={14} />
                                         Mark all read
@@ -438,8 +500,10 @@ export default function CollegeTopbar({
                                     {notifications.length > 0 ? (
                                         notifications.map((notification) => {
                                             const Icon = notification.icon;
+
                                             const isUnread =
-                                                notification.unread && !readNotificationIds.has(notification.id);
+                                                notification.unread &&
+                                                !readNotificationIds.has(notification.id);
 
                                             return (
                                                 <button
@@ -448,22 +512,26 @@ export default function CollegeTopbar({
                                                     onClick={() => handleNotificationClick(notification)}
                                                     className="flex w-full gap-3 rounded-xl p-3 text-left transition-all duration-200 hover:translate-x-0.5 hover:bg-violet-50/70"
                                                 >
-                                                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-violet-100 bg-violet-50 text-violet-800">
-                                                        <Icon size={17} />
+                                                    <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-violet-100 bg-violet-50 text-violet-900">
+                                                        <Icon size={17} strokeWidth={2.4} />
+
                                                         {isUnread && (
                                                             <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-violet-600" />
                                                         )}
                                                     </span>
+
                                                     <span className="min-w-0 flex-1">
                                                         <span className="flex items-start justify-between gap-2">
-                                                            <span className="text-[12px] font-bold text-slate-900">
+                                                            <span className="text-[12px] font-bold text-black">
                                                                 {notification.title}
                                                             </span>
-                                                            <span className="shrink-0 text-[9px] font-medium text-slate-500">
+
+                                                            <span className="shrink-0 text-[9px] font-medium text-slate-600">
                                                                 {notification.time}
                                                             </span>
                                                         </span>
-                                                        <span className="mt-1 block text-[11px] leading-5 text-slate-600">
+
+                                                        <span className="mt-1 block text-[11px] leading-5 text-slate-700">
                                                             {notification.message}
                                                         </span>
                                                     </span>
@@ -472,8 +540,9 @@ export default function CollegeTopbar({
                                         })
                                     ) : (
                                         <div className="py-9 text-center">
-                                            <Bell size={23} className="mx-auto mb-2 text-slate-400" />
-                                            <p className="text-sm font-semibold text-slate-700">
+                                            <Bell size={23} className="mx-auto mb-2 text-slate-500" />
+
+                                            <p className="text-sm font-semibold text-slate-800">
                                                 You’re all caught up
                                             </p>
                                         </div>
@@ -483,7 +552,7 @@ export default function CollegeTopbar({
                                 <button
                                     type="button"
                                     onClick={() => openPage("/college/notifications")}
-                                    className="flex w-full items-center justify-center gap-2 border-t border-slate-200 px-4 py-3 text-xs font-bold text-violet-800 transition-colors hover:bg-violet-50"
+                                    className="flex w-full items-center justify-center gap-2 border-t border-slate-200 px-4 py-3 text-xs font-bold text-violet-900 transition-colors hover:bg-violet-50"
                                 >
                                     View all notifications
                                     <ChevronRight size={14} />
@@ -513,17 +582,20 @@ export default function CollegeTopbar({
                             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-violet-700 to-indigo-600 text-[10px] font-extrabold text-white shadow-sm">
                                 {initials}
                             </span>
+
                             <span className="hidden min-w-0 text-left sm:block">
                                 <span className="block max-w-[110px] truncate text-[11px] font-extrabold text-black">
                                     {displayName}
                                 </span>
-                                <span className="mt-0.5 block text-[9px] font-semibold text-slate-600">
+
+                                <span className="mt-0.5 block text-[9px] font-semibold text-slate-700">
                                     College Admin
                                 </span>
                             </span>
+
                             <ChevronDown
                                 size={13}
-                                className={`hidden text-slate-600 transition-transform duration-200 sm:block ${profileOpen ? "rotate-180" : ""
+                                className={`hidden text-slate-700 transition-transform duration-200 sm:block ${profileOpen ? "rotate-180" : ""
                                     }`}
                             />
                         </button>
@@ -531,13 +603,15 @@ export default function CollegeTopbar({
                         {profileOpen && (
                             <div className="absolute right-0 top-[calc(100%+10px)] z-50 w-[min(270px,calc(100vw-16px))] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-[0_18px_50px_rgba(15,23,42,0.16)]">
                                 <div className="border-b border-slate-100 px-3 py-3">
-                                    <p className="truncate text-[13px] font-extrabold text-slate-950">
+                                    <p className="truncate text-[13px] font-extrabold text-black">
                                         {displayName}
                                     </p>
-                                    <p className="mt-1 truncate text-[11px] font-medium text-slate-600">
+
+                                    <p className="mt-1 truncate text-[11px] font-medium text-slate-700">
                                         {displayEmail}
                                     </p>
-                                    <span className="mt-2 inline-flex rounded-lg border border-violet-100 bg-violet-50 px-2 py-1 text-[9px] font-extrabold uppercase tracking-wider text-violet-800">
+
+                                    <span className="mt-2 inline-flex rounded-lg border border-violet-100 bg-violet-50 px-2 py-1 text-[9px] font-extrabold uppercase tracking-wider text-violet-900">
                                         College Account
                                     </span>
                                 </div>
@@ -548,34 +622,40 @@ export default function CollegeTopbar({
                                         onClick={() => openPage("/college/settings")}
                                         className={menuButton}
                                     >
-                                        <UserRound size={16} className="text-violet-700" />
+                                        <UserRound size={16} className="text-violet-800" />
                                         Account settings
                                     </button>
+
                                     <button
                                         type="button"
                                         onClick={() => openPage("/college/notifications")}
                                         className={menuButton}
                                     >
-                                        <Bell size={16} className="text-violet-700" />
+                                        <Bell size={16} className="text-violet-800" />
                                         Notifications
+
                                         {unreadCount > 0 && (
-                                            <span className="ml-auto rounded-md bg-violet-100 px-1.5 py-0.5 text-[10px] font-extrabold text-violet-800">
+                                            <span className="ml-auto rounded-md bg-violet-100 px-1.5 py-0.5 text-[10px] font-extrabold text-violet-900">
                                                 {unreadCount}
                                             </span>
                                         )}
                                     </button>
+
                                     <button
                                         type="button"
                                         onClick={() => openPage("/college/settings")}
                                         className={menuButton}
                                     >
-                                        <Settings size={16} className="text-violet-700" />
+                                        <Settings size={16} className="text-violet-800" />
                                         Preferences
                                     </button>
                                 </div>
 
                                 {logoutError && (
-                                    <p role="alert" className="px-3 py-2 text-[11px] font-semibold text-rose-600">
+                                    <p
+                                        role="alert"
+                                        className="px-3 py-2 text-[11px] font-semibold text-rose-700"
+                                    >
                                         {logoutError}
                                     </p>
                                 )}
@@ -584,7 +664,7 @@ export default function CollegeTopbar({
                                     <button
                                         type="button"
                                         onClick={handleLogout}
-                                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[12px] font-bold text-rose-600 transition-all duration-200 hover:translate-x-0.5 hover:bg-rose-50"
+                                        className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[12px] font-bold text-rose-700 transition-all duration-200 hover:translate-x-0.5 hover:bg-rose-50"
                                     >
                                         <LogOut size={16} />
                                         Logout
@@ -597,46 +677,76 @@ export default function CollegeTopbar({
             </div>
 
             <style>{`
-        .college-topbar button {
-          -webkit-tap-highlight-color: transparent;
-        }
+                .college-topbar button {
+                    -webkit-tap-highlight-color: transparent;
+                }
 
-        .college-topbar button:focus-visible {
-          outline: 2px solid rgba(124, 58, 237, 0.6);
-          outline-offset: 2px;
-        }
+                .college-topbar button:focus-visible {
+                    outline: 2px solid rgba(124, 58, 237, 0.6);
+                    outline-offset: 2px;
+                }
 
-        .college-title {
-          animation: collegeTitleIn 280ms ease-out both;
-        }
+                .college-title {
+                    animation: collegeTitleIn 280ms ease-out both;
+                }
 
-        .college-search:focus-within {
-          border-color: rgb(124 58 237);
-          box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
-        }
+                .college-search:focus-within {
+                    border-color: #000000;
+                    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.12);
+                }
 
-        @keyframes collegeTitleIn {
-          from {
-            opacity: 0;
-            transform: translateY(4px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
+                /* Search text: pure black and bold */
+                .college-topbar .college-search-input {
+                    color: #000000 !important;
+                    font-weight: 800 !important;
+                    caret-color: #000000 !important;
+                    -webkit-text-fill-color: #000000;
+                    opacity: 1;
+                }
 
-        @media (prefers-reduced-motion: reduce) {
-          .college-topbar *,
-          .college-topbar *::before,
-          .college-topbar *::after {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-            scroll-behavior: auto !important;
-          }
-        }
-      `}</style>
+                /* Blinking text cursor: black */
+                .college-topbar .college-search-input:focus {
+                    color: #000000 !important;
+                    caret-color: #000000 !important;
+                    outline: none;
+                }
+
+                /* Placeholder: black and bold */
+                .college-topbar .college-search-input::placeholder {
+                    color: #000000 !important;
+                    font-weight: 700 !important;
+                    -webkit-text-fill-color: #000000;
+                    opacity: 1;
+                }
+
+                /* Browser search decorations */
+                .college-topbar .college-search-input::-webkit-search-cancel-button {
+                    cursor: pointer;
+                }
+
+                @keyframes collegeTitleIn {
+                    from {
+                        opacity: 0;
+                        transform: translateY(4px);
+                    }
+
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    .college-topbar *,
+                    .college-topbar *::before,
+                    .college-topbar *::after {
+                        animation-duration: 0.01ms !important;
+                        animation-iteration-count: 1 !important;
+                        transition-duration: 0.01ms !important;
+                        scroll-behavior: auto !important;
+                    }
+                }
+            `}</style>
         </header>
     );
 }

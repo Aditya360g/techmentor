@@ -1,11 +1,16 @@
 ﻿
 import { useMemo, useState } from "react";
 import { Link } from "react-router";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import {
   Area,
   AreaChart,
+  Bar,
+  BarChart,
   CartesianGrid,
+  Cell,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -13,11 +18,11 @@ import {
 } from "recharts";
 import {
   Activity,
-  ArrowDownRight,
   ArrowRight,
   ArrowUpRight,
   Bell,
   BookOpen,
+  BriefcaseBusiness,
   CalendarDays,
   CheckCircle2,
   ChevronDown,
@@ -33,63 +38,102 @@ import {
   Users,
   Video,
   Wallet,
-  Zap,
 } from "lucide-react";
 
-/* ----------------------------------
-   DEMO DATA
----------------------------------- */
+/* =========================
+   THEME
+========================= */
+
+const C = {
+  bg: "#0b1421",
+  panel: "#101d2e",
+  panel2: "#12263b",
+  border: "rgba(148,163,184,.17)",
+  text: "#f8fafc",
+  muted: "#a8b8cc",
+  subtle: "#7f91a8",
+  blue: "#38bdf8",
+  cyan: "#22d3ee",
+  violet: "#818cf8",
+  green: "#34d399",
+};
+
+const axisStyle = {
+  fill: "#b4c2d4",
+  fontSize: 11,
+};
+
+const gridStyle = {
+  stroke: "#94a3b8",
+  strokeOpacity: 0.16,
+  vertical: false,
+};
+
+/* =========================
+   SAMPLE DATA
+========================= */
 
 const stats = [
   {
     title: "Total Students",
     value: "1,284",
     change: "+12.8%",
-    trend: "up",
-    caption: "compared to last month",
+    note: "compared to last month",
     icon: GraduationCap,
-    color: "sky",
+    color: C.blue,
     progress: 78,
   },
   {
     title: "Active Trainers",
     value: "48",
     change: "+8.2%",
-    trend: "up",
-    caption: "across all programs",
+    note: "across all programs",
     icon: UserRoundCheck,
-    color: "indigo",
+    color: C.violet,
     progress: 68,
   },
   {
     title: "Active Programs",
     value: "16",
-    change: "+3 this month",
-    trend: "up",
-    caption: "learning programs",
+    change: "+3",
+    note: "this month",
     icon: BookOpen,
-    color: "cyan",
+    color: C.cyan,
     progress: 84,
   },
   {
     title: "Placement Rate",
     value: "86.4%",
     change: "+4.6%",
-    trend: "up",
-    caption: "placement performance",
+    note: "placement performance",
     icon: Target,
-    color: "emerald",
+    color: C.green,
     progress: 86,
   },
 ];
 
-const enrollmentData = [
+const growthData = [
   { month: "May", students: 740, placements: 410 },
   { month: "Jun", students: 820, placements: 465 },
   { month: "Jul", students: 790, placements: 490 },
   { month: "Aug", students: 960, placements: 560 },
   { month: "Sep", students: 1080, placements: 640 },
   { month: "Oct", students: 1284, placements: 720 },
+];
+
+const courseData = [
+  { name: "React", students: 320 },
+  { name: "Python", students: 280 },
+  { name: "Java", students: 210 },
+  { name: "Data Science", students: 190 },
+  { name: "UI/UX", students: 145 },
+];
+
+const distribution = [
+  { name: "Development", value: 38, color: C.blue },
+  { name: "Data Science", value: 27, color: C.violet },
+  { name: "Programming", value: 21, color: C.cyan },
+  { name: "Other", value: 14, color: C.green },
 ];
 
 const requests = [
@@ -101,7 +145,7 @@ const requests = [
     date: "22 Oct 2026",
     status: "Shortlisting",
     initials: "FS",
-    color: "sky",
+    color: C.blue,
   },
   {
     id: "REQ-1023",
@@ -111,7 +155,7 @@ const requests = [
     date: "23 Oct 2026",
     status: "Demo Scheduled",
     initials: "PY",
-    color: "indigo",
+    color: C.violet,
   },
   {
     id: "REQ-1022",
@@ -121,19 +165,18 @@ const requests = [
     date: "25 Oct 2026",
     status: "New Request",
     initials: "JV",
-    color: "cyan",
+    color: C.cyan,
   },
 ];
 
-const upcomingClasses = [
+const classes = [
   {
     title: "Full Stack Development",
     trainer: "Aman Sharma",
     time: "10:30 AM",
     date: "Today",
     duration: "90 min",
-    type: "Live Class",
-    color: "sky",
+    color: C.blue,
   },
   {
     title: "Python for Beginners",
@@ -141,8 +184,7 @@ const upcomingClasses = [
     time: "12:00 PM",
     date: "Today",
     duration: "60 min",
-    type: "Demo Session",
-    color: "indigo",
+    color: C.violet,
   },
   {
     title: "DSA Problem Solving",
@@ -150,8 +192,7 @@ const upcomingClasses = [
     time: "02:30 PM",
     date: "Tomorrow",
     duration: "90 min",
-    type: "Live Class",
-    color: "cyan",
+    color: C.cyan,
   },
 ];
 
@@ -161,84 +202,93 @@ const activities = [
     detail: "Full Stack Development · 120 students",
     time: "12 minutes ago",
     icon: UserRoundCheck,
-    color: "sky",
+    color: C.blue,
   },
   {
     title: "Python demo scheduled",
     detail: "Priya Verma · Tomorrow at 12:00 PM",
     time: "45 minutes ago",
     icon: CalendarDays,
-    color: "indigo",
+    color: C.violet,
   },
   {
     title: "Payment successfully processed",
     detail: "Invoice #INV-2084 · ₹24,500",
     time: "2 hours ago",
     icon: Wallet,
-    color: "emerald",
+    color: C.green,
   },
   {
     title: "New students enrolled",
     detail: "Java + DSA · 28 new enrollments",
     time: "4 hours ago",
     icon: Users,
-    color: "cyan",
+    color: C.cyan,
   },
 ];
 
-const statusClasses = {
-  Shortlisting:
-    "border-amber-400/15 bg-amber-400/[0.08] text-amber-300",
-  "Demo Scheduled":
-    "border-indigo-400/15 bg-indigo-400/[0.08] text-indigo-300",
-  "New Request":
-    "border-sky-400/15 bg-sky-400/[0.08] text-sky-300",
-};
+const quickActions = [
+  {
+    title: "Manage Students",
+    description: "Review student records.",
+    to: "/college/students",
+    icon: Users,
+    color: C.blue,
+  },
+  {
+    title: "Trainer Requests",
+    description: "Review incoming requests.",
+    to: "/college/requests",
+    icon: UserRoundCheck,
+    color: C.violet,
+  },
+  {
+    title: "Manage Programs",
+    description: "Explore learning programs.",
+    to: "/college/programs",
+    icon: BookOpen,
+    color: C.cyan,
+  },
+  {
+    title: "Payments",
+    description: "Check invoices and payments.",
+    to: "/college/payments",
+    icon: Wallet,
+    color: C.green,
+  },
+  {
+    title: "Placements",
+    description: "Review placement activity.",
+    to: "/college/placements",
+    icon: BriefcaseBusiness,
+    color: "#c4b5fd",
+  },
+  {
+    title: "Analytics",
+    description: "Review campus performance.",
+    to: "/college/analytics",
+    icon: TrendingUp,
+    color: "#60a5fa",
+  },
+];
 
-const colorClasses = {
-  sky: {
-    icon: "bg-sky-400/10 text-sky-300",
-    bar: "bg-sky-400",
-    border: "hover:border-sky-400/25",
-    avatar: "bg-sky-400/10 text-sky-300",
-  },
-  indigo: {
-    icon: "bg-indigo-400/10 text-indigo-300",
-    bar: "bg-indigo-400",
-    border: "hover:border-indigo-400/25",
-    avatar: "bg-indigo-400/10 text-indigo-300",
-  },
-  cyan: {
-    icon: "bg-cyan-400/10 text-cyan-300",
-    bar: "bg-cyan-400",
-    border: "hover:border-cyan-400/25",
-    avatar: "bg-cyan-400/10 text-cyan-300",
-  },
-  emerald: {
-    icon: "bg-emerald-400/10 text-emerald-300",
-    bar: "bg-emerald-400",
-    border: "hover:border-emerald-400/25",
-    avatar: "bg-emerald-400/10 text-emerald-300",
-  },
-};
-
-/* ----------------------------------
-   ANIMATION SETTINGS
----------------------------------- */
+/* =========================
+   ANIMATION VARIANTS
+========================= */
 
 const pageVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.075,
+      staggerChildren: 0.065,
       delayChildren: 0.04,
     },
   },
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 18 },
+  hidden: { opacity: 0, y: 16 },
   visible: {
     opacity: 1,
     y: 0,
@@ -249,9 +299,44 @@ const itemVariants = {
   },
 };
 
-/* ----------------------------------
+/* =========================
    REUSABLE COMPONENTS
----------------------------------- */
+========================= */
+
+function Panel({ children, className = "" }) {
+  return (
+    <section
+      className={`min - w - 0 rounded - 2xl border bg - [#101d2e] shadow - [0_14px_40px_rgba(0, 0, 0, .16)] ${className} `}
+      style={{ borderColor: C.border }}
+    >
+      {children}
+    </section>
+  );
+}
+
+function ChartFrame({ children, height = 280 }) {
+  return (
+    <div
+      className="w-full min-w-0"
+      style={{ height }}
+    >
+      <ResponsiveContainer width="100%" height="100%">
+        {children}
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+function Eyebrow({ children, color = C.blue }) {
+  return (
+    <p
+      className="mb-1.5 text-[10px] font-bold uppercase tracking-[.17em]"
+      style={{ color }}
+    >
+      {children}
+    </p>
+  );
+}
 
 function SectionHeading({
   eyebrow,
@@ -261,19 +346,15 @@ function SectionHeading({
 }) {
   return (
     <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-      <div>
-        {eyebrow && (
-          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.18em] text-sky-300/75">
-            {eyebrow}
-          </p>
-        )}
+      <div className="min-w-0">
+        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
 
-        <h2 className="text-base font-semibold tracking-tight text-slate-100 sm:text-lg">
+        <h2 className="text-base font-bold tracking-tight text-white sm:text-lg">
           {title}
         </h2>
 
         {description && (
-          <p className="mt-1 text-xs leading-5 text-slate-500 sm:text-sm">
+          <p className="mt-1 text-xs leading-5 text-slate-300 sm:text-sm">
             {description}
           </p>
         )}
@@ -284,25 +365,11 @@ function SectionHeading({
   );
 }
 
-function Panel({ children, className = "" }) {
-  return (
-    <section
-      className={[
-        "rounded-2xl border border-white/[0.075]",
-        "bg-[#101B2B]/85 shadow-[0_12px_35px_rgba(0,0,0,0.12)]",
-        className,
-      ].join(" ")}
-    >
-      {children}
-    </section>
-  );
-}
-
-function SmallLink({ to, children }) {
+function SectionLink({ to, children }) {
   return (
     <Link
       to={to}
-      className="inline-flex items-center gap-1.5 text-xs font-semibold text-sky-300 transition-colors hover:text-sky-200"
+      className="inline-flex shrink-0 items-center gap-1.5 text-xs font-bold text-sky-300 transition hover:text-white"
     >
       {children}
       <ArrowRight size={14} />
@@ -311,94 +378,183 @@ function SmallLink({ to, children }) {
 }
 
 function StatusBadge({ status }) {
+  const color =
+    status === "Shortlisting"
+      ? "#fbbf24"
+      : status === "Demo Scheduled"
+        ? C.violet
+        : C.blue;
+
   return (
     <span
-      className={[
-        "inline-flex items-center whitespace-nowrap rounded-full border px-2.5 py-1",
-        "text-[10px] font-semibold sm:text-[11px]",
-        statusClasses[status] ||
-        "border-white/10 bg-white/[0.04] text-slate-300",
-      ].join(" ")}
+      className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-[10px] font-bold"
+      style={{
+        color,
+        borderColor: `${color} 35`,
+        background: `${color} 12`,
+      }}
     >
-      <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-current" />
+      <span
+        className="h-1.5 w-1.5 rounded-full"
+        style={{ background: color }}
+      />
       {status}
     </span>
   );
 }
 
-/* ----------------------------------
+function ChartTooltip({ active, payload, label }) {
+  if (!active || !payload?.length) return null;
+
+  return (
+    <div
+      className="min-w-[180px] rounded-xl border p-3 shadow-2xl"
+      style={{
+        background: "#0b1421",
+        borderColor: "rgba(148,163,184,.3)",
+      }}
+    >
+      <p className="mb-2 text-xs font-extrabold text-white">
+        {label || "Overview"}
+      </p>
+
+      {payload.map((item) => (
+        <div
+          key={`${item.dataKey} -${item.name} `}
+          className="flex items-center justify-between gap-4 py-1.5"
+        >
+          <span className="flex items-center gap-2 text-[11px] text-slate-300">
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ background: item.color || item.payload?.color || C.blue }}
+            />
+            {item.name}
+          </span>
+
+          <span
+            className="text-sm font-extrabold tabular-nums"
+            style={{ color: item.color || item.payload?.color || C.blue }}
+          >
+            {Number(item.value).toLocaleString("en-IN")}
+            {item.unit || ""}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* =========================
    MAIN DASHBOARD
----------------------------------- */
+========================= */
 
 export default function CollegeDashboardPage() {
   const [period, setPeriod] = useState("6 months");
-  const [activityExpanded, setActivityExpanded] = useState(false);
+  const [showAllActivities, setShowAllActivities] = useState(false);
 
-  const visibleActivities = useMemo(
+  const chartData = useMemo(
     () =>
-      activityExpanded
-        ? activities
-        : activities.slice(0, 3),
-    [activityExpanded]
+      period === "3 months"
+        ? growthData.slice(-3)
+        : growthData,
+    [period]
   );
 
-  const chartData = useMemo(() => {
-    if (period === "3 months") {
-      return enrollmentData.slice(-3);
-    }
+  const visibleActivities = showAllActivities
+    ? activities
+    : activities.slice(0, 3);
 
-    return enrollmentData;
-  }, [period]);
+  const latestGrowth = chartData[chartData.length - 1];
 
   return (
-    <motion.div
+    <motion.main
       variants={pageVariants}
       initial="hidden"
       animate="visible"
-      className="mx-auto w-full max-w-[1600px] space-y-7 pb-8 text-slate-100 sm:space-y-8"
+      className="college-dashboard min-h-full w-full min-w-0 overflow-x-hidden px-4 py-5 text-slate-100 sm:px-6 sm:py-7 xl:px-8"
+      style={{ background: C.bg, color: C.text }}
     >
+      <style>{`
+  .college-dashboard,
+  .college-dashboard * {
+    box-sizing: border-box;
+  }
+
+  .college-dashboard {
+    color-scheme: dark;
+  }
+
+  .college-dashboard .recharts-wrapper,
+  .college-dashboard .recharts-surface,
+  .college-dashboard .recharts-layer,
+  .college-dashboard .recharts-cartesian-grid,
+  .college-dashboard .recharts-cartesian-axis,
+  .college-dashboard .recharts-cartesian-axis-tick {
+    background: transparent !important;
+  }
+
+  .college-dashboard .recharts-cartesian-axis-tick-value {
+    fill: #b4c2d4 !important;
+  }
+
+  .college-dashboard .recharts-text,
+  .college-dashboard .recharts-cartesian-axis-tick text {
+    fill: #b4c2d4 !important;
+  }
+
+  .college-dashboard .recharts-tooltip-wrapper {
+    outline: none !important;
+  }
+
+  .college-dashboard select {
+    color: #f8fafc;
+    background-color: #0b1421;
+  }
+
+  .college-dashboard option {
+    color: #f8fafc;
+    background-color: #0b1421;
+  }
+
+  .college-dashboard a:focus-visible,
+  .college-dashboard button:focus-visible,
+  .college-dashboard select:focus-visible {
+    outline: 2px solid #38bdf8;
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .college-dashboard *,
+    .college-dashboard *::before,
+    .college-dashboard *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+`}</style>
+
       {/* PAGE HEADER */}
 
       <motion.header
         variants={itemVariants}
-        className="flex flex-col justify-between gap-5 xl:flex-row xl:items-center"
+        className="mb-7 flex flex-col justify-between gap-5 xl:flex-row xl:items-center"
       >
-        <div>
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-300/15 bg-sky-300/[0.06] px-3 py-1.5">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
 
-            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-sky-200">
-              Institution workspace
-            </span>
-          </div>
-
-          <h1 className="text-2xl font-bold tracking-tight text-white sm:text-3xl xl:text-[34px]">
-            College Dashboard
-            <span className="ml-2 inline-block">👋</span>
-          </h1>
-
-          <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-            Your campus at a glance. Track student growth, manage
-            trainers, and keep every learning program on track.
-          </p>
-        </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
             to="/college/notifications"
             aria-label="View notifications"
-            className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.035] text-slate-300 transition-all hover:border-sky-300/25 hover:bg-sky-300/[0.06] hover:text-sky-200"
+            className="relative flex h-11 w-11 items-center justify-center rounded-xl border bg-white/[0.04] text-slate-200 transition hover:border-sky-300/50 hover:bg-sky-300/10"
+            style={{ borderColor: C.border }}
           >
             <Bell size={18} />
-            <span className="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-[#101B2B] bg-sky-400" />
+            <span className="absolute right-2 top-2 h-2 w-2 rounded-full border-2 border-[#101d2e] bg-sky-400" />
           </Link>
 
           <Link
             to="/college/requests"
-            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl border border-sky-300/20 bg-sky-400 px-4 text-xs font-bold text-[#071322] shadow-lg shadow-sky-500/10 transition-all hover:-translate-y-0.5 hover:bg-sky-300 sm:px-5 sm:text-sm"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-sky-400 px-4 text-xs font-extrabold text-[#071322] shadow-lg shadow-sky-500/10 transition hover:-translate-y-0.5 hover:bg-sky-300 sm:px-5 sm:text-sm"
           >
             <Plus size={17} />
             New Requirement
@@ -406,40 +562,44 @@ export default function CollegeDashboardPage() {
         </div>
       </motion.header>
 
-      {/* WELCOME BANNER */}
+      {/* HERO BANNER */}
 
       <motion.section
         variants={itemVariants}
-        className="relative isolate overflow-hidden rounded-[24px] border border-sky-300/15 bg-gradient-to-br from-[#122B43] via-[#102237] to-[#111B30] p-5 sm:p-7 lg:p-8"
+        className="relative isolate mb-8 overflow-hidden rounded-3xl border p-5 sm:p-7 lg:p-8"
+        style={{
+          borderColor: "#38bdf830",
+          background:
+            "linear-gradient(125deg,#15334d 0%,#102237 55%,#111b30 100%)",
+        }}
       >
-        <div className="pointer-events-none absolute -right-16 -top-28 -z-10 h-72 w-72 rounded-full bg-sky-400/[0.09] blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-28 right-1/4 -z-10 h-56 w-56 rounded-full bg-indigo-400/[0.08] blur-3xl" />
+        <div className="pointer-events-none absolute -right-16 -top-24 -z-10 h-72 w-72 rounded-full bg-sky-400/10 blur-3xl" />
 
-        <div className="grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center">
+        <div className="grid gap-7 lg:grid-cols-[1fr_260px] lg:items-center">
           <div className="max-w-2xl">
             <div className="mb-4 flex items-center gap-2 text-sky-200">
               <Sparkles size={17} />
-              <span className="text-[10px] font-bold uppercase tracking-[0.17em]">
+              <span className="text-[10px] font-extrabold uppercase tracking-[.17em]">
                 Your campus command center
               </span>
             </div>
 
-            <h2 className="max-w-xl text-xl font-bold leading-tight tracking-tight text-white sm:text-2xl lg:text-[30px]">
+            <h2 className="text-2xl font-extrabold leading-tight tracking-tight text-white sm:text-3xl">
               Better learning outcomes
               <span className="block text-sky-300">
                 start with better visibility.
               </span>
             </h2>
 
-            <p className="mt-3 max-w-lg text-xs leading-6 text-slate-300/80 sm:text-sm">
-              Monitor academic performance, coordinate your trainers,
-              and discover what needs attention today — all in one place.
+            <p className="mt-3 max-w-lg text-sm leading-6 text-slate-300">
+              Monitor academic performance, coordinate trainers, and discover
+              what needs attention today.
             </p>
 
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 to="/college/analytics"
-                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-bold text-slate-900 transition-all hover:-translate-y-0.5 hover:bg-sky-100"
+                className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-xs font-extrabold text-slate-900 transition hover:-translate-y-0.5 hover:bg-sky-100"
               >
                 Explore Analytics
                 <ArrowUpRight size={15} />
@@ -447,7 +607,7 @@ export default function CollegeDashboardPage() {
 
               <Link
                 to="/college/trainers"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/[0.045] px-4 py-2.5 text-xs font-semibold text-white transition-colors hover:bg-white/10"
+                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/[0.06] px-4 py-2.5 text-xs font-bold text-white transition hover:bg-white/10"
               >
                 <Search size={15} />
                 Find Trainers
@@ -455,22 +615,19 @@ export default function CollegeDashboardPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 lg:w-[260px] lg:grid-cols-1">
-            <div className="rounded-2xl border border-white/10 bg-black/[0.13] p-4 backdrop-blur-sm">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-slate-300">
-                  Student engagement
-                </span>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <div className="flex items-center justify-between text-xs text-slate-300">
+                <span>Student engagement</span>
                 <Activity size={15} className="text-sky-300" />
               </div>
 
-              <div className="mt-3 flex items-end justify-between gap-3">
-                <span className="text-2xl font-bold text-white">
+              <div className="mt-3 flex items-end justify-between">
+                <span className="text-3xl font-extrabold text-white">
                   92.8%
                 </span>
-                <span className="mb-1 inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-300">
-                  <ArrowUpRight size={12} />
-                  6.4%
+                <span className="mb-1 text-[10px] font-bold text-emerald-300">
+                  ↗ 6.4%
                 </span>
               </div>
 
@@ -478,39 +635,37 @@ export default function CollegeDashboardPage() {
                 <motion.div
                   initial={{ width: 0 }}
                   animate={{ width: "92.8%" }}
-                  transition={{ duration: 1, delay: 0.3 }}
+                  transition={{ duration: 1.1 }}
                   className="h-full rounded-full bg-gradient-to-r from-sky-400 to-cyan-300"
                 />
               </div>
             </div>
 
-            <div className="rounded-2xl border border-white/10 bg-black/[0.13] p-4 backdrop-blur-sm">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-slate-300">
-                  Programs running
-                </span>
+            <div className="rounded-2xl border border-white/10 bg-black/20 p-4">
+              <div className="flex items-center justify-between text-xs text-slate-300">
+                <span>Programs running</span>
                 <Layers3 size={15} className="text-indigo-300" />
               </div>
 
-              <div className="mt-3 flex items-end justify-between gap-3">
-                <span className="text-2xl font-bold text-white">16</span>
-                <span className="mb-1 text-[10px] text-slate-400">
+              <div className="mt-3 flex items-end justify-between">
+                <span className="text-3xl font-extrabold text-white">16</span>
+                <span className="text-[10px] text-slate-300">
                   Across campus
                 </span>
               </div>
 
-              <div className="mt-3 flex gap-1">
+              <div className="mt-3 flex h-8 items-end gap-1">
                 {[40, 65, 50, 85, 60, 100, 72, 90, 60, 100, 78, 94].map(
                   (height, index) => (
                     <motion.span
                       key={index}
                       initial={{ height: 0 }}
-                      animate={{ height: `${height * 0.24} px` }}
+                      animate={{ height: `${height}% ` }}
                       transition={{
-                        delay: 0.25 + index * 0.035,
-                        duration: 0.35,
+                        delay: index * 0.035,
+                        duration: 0.45,
                       }}
-                      className="flex-1 self-end rounded-sm bg-gradient-to-t from-sky-500/40 to-sky-300"
+                      className="flex-1 rounded-t-sm bg-gradient-to-t from-sky-500/50 to-sky-300"
                     />
                   )
                 )}
@@ -520,9 +675,9 @@ export default function CollegeDashboardPage() {
         </div>
       </motion.section>
 
-      {/* KPI CARDS */}
+      {/* METRICS */}
 
-      <motion.section variants={itemVariants}>
+      <motion.section variants={itemVariants} className="mb-8">
         <SectionHeading
           eyebrow="Campus overview"
           title="Performance snapshot"
@@ -532,82 +687,69 @@ export default function CollegeDashboardPage() {
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
           {stats.map((item, index) => {
             const Icon = item.icon;
-            const palette = colorClasses[item.color];
 
             return (
               <motion.article
                 key={item.title}
                 variants={itemVariants}
-                whileHover={{
-                  y: -5,
-                  transition: { duration: 0.2 },
-                }}
-                className={[
-                  "group relative overflow-hidden rounded-2xl border",
-                  "border-white/[0.075] bg-[#101B2B] p-5",
-                  "transition-colors duration-300",
-                  palette.border,
-                ].join(" ")}
+                whileHover={{ y: -5 }}
+                transition={{ duration: 0.2 }}
+                className="group relative min-w-0 overflow-hidden rounded-2xl border bg-[#101d2e] p-5 transition-colors hover:border-sky-300/40"
+                style={{ borderColor: C.border }}
               >
-                <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-white/[0.015] transition-transform duration-500 group-hover:scale-150" />
+                <div
+                  className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-[.09] blur-2xl transition-transform duration-500 group-hover:scale-150"
+                  style={{ background: item.color }}
+                />
 
                 <div className="relative flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-xs font-medium text-slate-400">
+                    <p className="text-xs font-semibold text-slate-300">
                       {item.title}
                     </p>
 
                     <motion.p
-                      initial={{ opacity: 0, y: 7 }}
+                      initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{
-                        delay: 0.18 + index * 0.08,
-                        duration: 0.35,
-                      }}
-                      className="mt-3 text-[29px] font-bold tracking-tight text-white sm:text-[32px]"
+                      transition={{ delay: 0.15 + index * 0.08 }}
+                      className="mt-3 text-3xl font-extrabold tracking-tight text-white"
                     >
                       {item.value}
                     </motion.p>
                   </div>
 
                   <div
-                    className={[
-                      "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl",
-                      palette.icon,
-                    ].join(" ")}
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                    style={{
+                      color: item.color,
+                      background: `${item.color} 20`,
+                    }}
                   >
-                    <Icon size={21} strokeWidth={1.8} />
+                    <Icon size={22} />
                   </div>
                 </div>
 
-                <div className="relative mt-4 flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-300">
-                    {item.trend === "up" ? (
-                      <ArrowUpRight size={13} />
-                    ) : (
-                      <ArrowDownRight size={13} />
-                    )}
+                <div className="relative mt-4 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-[10px] font-extrabold text-emerald-300">
+                    <ArrowUpRight size={13} />
                     {item.change}
                   </span>
 
-                  <span className="text-[10px] text-slate-500">
-                    {item.caption}
+                  <span className="text-[10px] text-slate-400">
+                    {item.note}
                   </span>
                 </div>
 
-                <div className="mt-4 h-1 overflow-hidden rounded-full bg-white/[0.06]">
+                <div className="mt-4 h-1.5 overflow-hidden rounded-full bg-white/10">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${item.progress}% ` }}
                     transition={{
-                      duration: 0.85,
-                      delay: 0.25 + index * 0.1,
-                      ease: "easeOut",
+                      duration: 0.9,
+                      delay: 0.2 + index * 0.1,
                     }}
-                    className={[
-                      "h-full rounded-full",
-                      palette.bar,
-                    ].join(" ")}
+                    className="h-full rounded-full"
+                    style={{ background: item.color }}
                   />
                 </div>
               </motion.article>
@@ -616,71 +758,72 @@ export default function CollegeDashboardPage() {
         </div>
       </motion.section>
 
-      {/* CHART + QUICK SUMMARY */}
+      {/* GROWTH CHART */}
 
       <motion.section
         variants={itemVariants}
-        className="grid min-w-0 gap-5 2xl:grid-cols-[1.65fr_1fr]"
+        className="mb-8 grid min-w-0 gap-5 2xl:grid-cols-[1.65fr_1fr]"
       >
-        <Panel className="min-w-0 p-4 sm:p-6">
-          <div className="mb-5 flex flex-wrap items-start justify-between gap-4">
+        <Panel className="p-4 sm:p-6 lg:p-7">
+          <div className="mb-6 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
             <div>
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-sky-300/75">
-                Growth intelligence
-              </p>
+              <Eyebrow>Growth intelligence</Eyebrow>
 
-              <h2 className="text-base font-semibold text-white sm:text-lg">
+              <h2 className="text-lg font-extrabold tracking-tight text-white sm:text-xl">
                 Student growth & placements
               </h2>
 
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-2 max-w-lg text-xs leading-5 text-slate-300 sm:text-sm">
                 Track enrollment and placement trends over time.
               </p>
             </div>
 
-            <label className="relative">
+            <label className="relative inline-flex w-fit shrink-0 items-center">
               <span className="sr-only">Chart period</span>
+
               <select
                 value={period}
                 onChange={(event) => setPeriod(event.target.value)}
-                className="h-9 appearance-none rounded-lg border border-white/10 bg-[#0B1421] py-2 pl-3 pr-8 text-xs font-medium text-slate-300 outline-none transition-colors focus:border-sky-300/40"
+                className="h-10 appearance-none rounded-xl border py-2 pl-3 pr-9 text-xs font-bold outline-none transition focus:ring-4 focus:ring-sky-400/10"
+                style={{
+                  color: C.text,
+                  background: C.bg,
+                  borderColor: C.border,
+                }}
               >
-                <option>6 months</option>
-                <option>3 months</option>
+                <option value="6 months">Last 6 months</option>
+                <option value="3 months">Last 3 months</option>
               </select>
+
               <ChevronDown
-                size={13}
-                className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500"
+                size={14}
+                className="pointer-events-none absolute right-3 text-slate-300"
               />
             </label>
           </div>
 
-          <div className="mb-4 flex flex-wrap gap-x-5 gap-y-2">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-sky-400" />
-              <span className="text-[11px] text-slate-400">
-                Enrolled students
-              </span>
-            </div>
+          {/* CHART LEGEND */}
 
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-indigo-400" />
-              <span className="text-[11px] text-slate-400">
-                Placement milestones
-              </span>
-            </div>
+          <div className="mb-5 flex flex-wrap gap-x-6 gap-y-3">
+            <span className="flex items-center gap-2 text-xs font-medium text-slate-200">
+              <span className="h-2.5 w-2.5 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,.6)]" />
+              Enrolled students
+            </span>
+
+            <span className="flex items-center gap-2 text-xs font-medium text-slate-200">
+              <span className="h-2.5 w-2.5 rounded-full bg-violet-400 shadow-[0_0_10px_rgba(129,140,248,.5)]" />
+              Placement milestones
+            </span>
           </div>
 
-          <div className="h-[250px] w-full sm:h-[290px]">
+          {/* ANIMATED GROWTH CHART */}
+
+          <div className="h-[280px] w-full min-w-0 sm:h-[330px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart
+                key={period}
                 data={chartData}
-                margin={{
-                  top: 10,
-                  right: 6,
-                  left: -18,
-                  bottom: 0,
-                }}
+                margin={{ top: 12, right: 14, left: 0, bottom: 4 }}
               >
                 <defs>
                   <linearGradient
@@ -692,13 +835,18 @@ export default function CollegeDashboardPage() {
                   >
                     <stop
                       offset="0%"
-                      stopColor="#38BDF8"
-                      stopOpacity={0.28}
+                      stopColor="#38bdf8"
+                      stopOpacity={0.36}
                     />
                     <stop
-                      offset="95%"
-                      stopColor="#38BDF8"
-                      stopOpacity={0}
+                      offset="65%"
+                      stopColor="#38bdf8"
+                      stopOpacity={0.12}
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor="#38bdf8"
+                      stopOpacity={0.01}
                     />
                   </linearGradient>
 
@@ -711,20 +859,25 @@ export default function CollegeDashboardPage() {
                   >
                     <stop
                       offset="0%"
-                      stopColor="#818CF8"
-                      stopOpacity={0.18}
+                      stopColor="#a78bfa"
+                      stopOpacity={0.28}
                     />
                     <stop
-                      offset="95%"
-                      stopColor="#818CF8"
-                      stopOpacity={0}
+                      offset="65%"
+                      stopColor="#a78bfa"
+                      stopOpacity={0.1}
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor="#a78bfa"
+                      stopOpacity={0.01}
                     />
                   </linearGradient>
                 </defs>
 
                 <CartesianGrid
-                  stroke="#FFFFFF"
-                  strokeOpacity={0.055}
+                  stroke="rgba(148,163,184,.15)"
+                  strokeDasharray="4 6"
                   vertical={false}
                 />
 
@@ -732,230 +885,523 @@ export default function CollegeDashboardPage() {
                   dataKey="month"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#8493A7", fontSize: 11 }}
-                  dy={10}
+                  tick={axisStyle}
+                  tickMargin={12}
+                  padding={{ left: 8, right: 8 }}
                 />
 
                 <YAxis
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: "#8493A7", fontSize: 10 }}
+                  tick={axisStyle}
+                  tickMargin={10}
+                  width={48}
+                  domain={[0, "auto"]}
+                  allowDecimals={false}
                   tickFormatter={(value) =>
                     value >= 1000
-                      ? `${(value / 1000).toFixed(1)} k`
+                      ? `${(value / 1000).toFixed(1).replace(".0", "")} k`
                       : value
                   }
                 />
 
                 <Tooltip
-                  contentStyle={{
-                    background: "#101B2B",
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    borderRadius: "12px",
-                    color: "#F8FAFC",
-                    fontSize: "12px",
-                    boxShadow: "0 12px 35px rgba(0,0,0,0.25)",
+                  content={<ChartTooltip />}
+                  cursor={{
+                    stroke: "rgba(148,163,184,.5)",
+                    strokeDasharray: "4 4",
                   }}
-                  labelStyle={{
-                    color: "#94A3B8",
-                    marginBottom: 6,
-                  }}
+                  isAnimationActive
+                  animationDuration={180}
                 />
 
                 <Area
                   type="monotone"
                   dataKey="students"
                   name="Enrolled students"
-                  stroke="#38BDF8"
-                  strokeWidth={2.5}
+                  stroke="#38bdf8"
+                  strokeWidth={3}
                   fill="url(#collegeStudentGradient)"
                   activeDot={{
-                    r: 5,
-                    stroke: "#101B2B",
+                    r: 6,
+                    fill: "#38bdf8",
+                    stroke: "#e0f2fe",
                     strokeWidth: 2,
                   }}
-                  animationDuration={1000}
+                  dot={{
+                    r: 3,
+                    fill: "#38bdf8",
+                    stroke: "#101d2e",
+                    strokeWidth: 2,
+                  }}
+                  isAnimationActive
+                  animationBegin={100}
+                  animationDuration={1400}
+                  animationEasing="ease-out"
                 />
 
                 <Area
                   type="monotone"
                   dataKey="placements"
                   name="Placement milestones"
-                  stroke="#818CF8"
-                  strokeWidth={2}
+                  stroke="#a78bfa"
+                  strokeWidth={2.5}
                   fill="url(#collegePlacementGradient)"
                   activeDot={{
-                    r: 4,
-                    stroke: "#101B2B",
+                    r: 5,
+                    fill: "#a78bfa",
+                    stroke: "#ede9fe",
                     strokeWidth: 2,
                   }}
-                  animationDuration={1200}
+                  dot={{
+                    r: 2.5,
+                    fill: "#a78bfa",
+                    stroke: "#101d2e",
+                    strokeWidth: 2,
+                  }}
+                  isAnimationActive
+                  animationBegin={250}
+                  animationDuration={1600}
+                  animationEasing="ease-out"
                 />
               </AreaChart>
             </ResponsiveContainer>
           </div>
 
-          <div className="mt-4 flex items-center gap-2 border-t border-white/[0.06] pt-4">
-            <TrendingUp size={16} className="text-emerald-300" />
+          {/* GROWTH SUMMARY */}
+
+          <div className="mt-5 grid grid-cols-1 gap-3 border-t border-white/10 pt-5 sm:grid-cols-2">
+            <div className="rounded-xl border border-sky-300/15 bg-sky-300/[.05] p-3.5">
+              <div className="flex items-center gap-2 text-sky-300">
+                <GraduationCap size={17} />
+                <span className="text-xs font-semibold">
+                  Enrolled students
+                </span>
+              </div>
+
+              <p className="mt-2 text-xl font-extrabold text-white">
+                {latestGrowth?.students.toLocaleString("en-IN")}
+              </p>
+
+              <p className="mt-1 text-[10px] text-slate-400">
+                Latest displayed period
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-violet-300/15 bg-violet-300/[.05] p-3.5">
+              <div className="flex items-center gap-2 text-violet-300">
+                <Target size={16} />
+                <span className="text-xs font-semibold">
+                  Placement milestones
+                </span>
+              </div>
+
+              <p className="mt-2 text-xl font-extrabold text-white">
+                {latestGrowth?.placements.toLocaleString("en-IN")}
+              </p>
+
+              <p className="mt-1 text-[10px] text-slate-400">
+                Latest displayed period
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-4 flex items-start gap-2">
+            <Activity size={15} className="mt-0.5 shrink-0 text-sky-300" />
+
             <p className="text-[11px] leading-5 text-slate-400">
-              Student enrollment is trending upward in this sample dataset.
+              Illustrative sample data. Connect your API to display live
+              institutional metrics.
             </p>
           </div>
         </Panel>
 
-        {/* ATTENTION SUMMARY */}
+        {/* GROWTH PRIORITIES */}
+
+
 
         <Panel className="p-5 sm:p-6">
-          <SectionHeading
-            eyebrow="Stay on track"
-            title="Today's priorities"
-            description="Items to review in your workspace."
-          />
+          <Eyebrow color={C.violet}>Growth priorities</Eyebrow>
 
-          <div className="space-y-3">
-            <Link
-              to="/college/requests"
-              className="group flex items-center gap-3 rounded-xl border border-amber-300/10 bg-amber-300/[0.035] p-3.5 transition-all hover:border-amber-300/25 hover:bg-amber-300/[0.06]"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-300/10 text-amber-300">
-                <Clock3 size={19} />
-              </div>
+          <motion.h2
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.45 }}
+            className="text-lg font-extrabold tracking-tight text-white"
+          >
+            Campus performance
+          </motion.h2>
 
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-slate-200">
-                  Pending trainer requests
-                </p>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Review and shortlist trainers
-                </p>
-              </div>
+          <p className="mt-2 text-xs leading-5 text-slate-300">
+            Keep an eye on your key academic indicators.
+          </p>
 
-              <span className="flex h-7 min-w-7 items-center justify-center rounded-lg bg-amber-300/10 px-2 text-xs font-bold text-amber-300">
-                4
-              </span>
-            </Link>
+          <div className="mt-6 space-y-5">
+            {[
+              {
+                title: "Student engagement",
+                value: 92.8,
+                label: "Excellent",
+                color: C.blue,
+              },
+              {
+                title: "Placement performance",
+                value: 86.4,
+                label: "On track",
+                color: C.green,
+              },
+              {
+                title: "Trainer utilization",
+                value: 78,
+                label: "Good",
+                color: C.violet,
+              },
+              {
+                title: "Program completion",
+                value: 74,
+                label: "Improving",
+                color: C.cyan,
+              },
+            ].map((item, index) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{
+                  duration: 0.45,
+                  delay: 0.12 + index * 0.14,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-semibold text-slate-200">
+                    {item.title}
+                  </span>
 
-            <Link
-              to="/college/demo-schedule"
-              className="group flex items-center gap-3 rounded-xl border border-sky-300/10 bg-sky-300/[0.035] p-3.5 transition-all hover:border-sky-300/25 hover:bg-sky-300/[0.06]"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-300/10 text-sky-300">
-                <CalendarDays size={19} />
-              </div>
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{
+                      duration: 0.35,
+                      delay: 0.35 + index * 0.14,
+                    }}
+                    className="text-xs font-extrabold tabular-nums"
+                    style={{ color: item.color }}
+                  >
+                    {item.value}%
+                  </motion.span>
+                </div>
 
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-slate-200">
-                  Upcoming demo sessions
-                </p>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Confirm trainer availability
-                </p>
-              </div>
+                {/* Progress track */}
+                <div className="relative h-2 overflow-hidden rounded-full bg-white/10">
+                  {/* Animated gradient bar */}
+                  <motion.div
+                    initial={{ width: "0%" }}
+                    animate={{ width: `${item.value}%` }}
+                    transition={{
+                      duration: 1.25,
+                      delay: 0.2 + index * 0.14,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="relative h-full overflow-hidden rounded-full"
+                    style={{
+                      background: `linear-gradient(90deg, ${item.color}99 0%, ${item.color} 100%)`,
+                      boxShadow: `0 0 12px ${item.color}40`,
+                    }}
+                  >
+                    {/* Moving shine animation */}
+                    <motion.span
+                      className="absolute inset-y-0 w-10"
+                      style={{
+                        background:
+                          "linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)",
+                      }}
+                      initial={{ x: "-160%", opacity: 0 }}
+                      animate={{
+                        x: ["-160%", "500%"],
+                        opacity: [0, 1, 0],
+                      }}
+                      transition={{
+                        duration: 0.9,
+                        delay: 0.65 + index * 0.14,
+                        ease: "easeInOut",
+                      }}
+                    />
+                  </motion.div>
+                </div>
 
-              <span className="flex h-7 min-w-7 items-center justify-center rounded-lg bg-sky-300/10 px-2 text-xs font-bold text-sky-300">
-                2
-              </span>
-            </Link>
-
-            <Link
-              to="/college/payments"
-              className="group flex items-center gap-3 rounded-xl border border-emerald-300/10 bg-emerald-300/[0.035] p-3.5 transition-all hover:border-emerald-300/25 hover:bg-emerald-300/[0.06]"
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-300/10 text-emerald-300">
-                <Wallet size={19} />
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-slate-200">
-                  Payment overview
-                </p>
-                <p className="mt-1 text-[11px] text-slate-500">
-                  Review invoices and transactions
-                </p>
-              </div>
-
-              <ArrowRight
-                size={16}
-                className="shrink-0 text-slate-500 transition-transform group-hover:translate-x-1 group-hover:text-emerald-300"
-              />
-            </Link>
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{
+                    duration: 0.35,
+                    delay: 0.55 + index * 0.14,
+                  }}
+                  className="mt-1.5 text-[10px] text-slate-400"
+                >
+                  {item.label}
+                </motion.p>
+              </motion.div>
+            ))}
           </div>
 
-          <div className="mt-5 rounded-xl border border-white/[0.07] bg-[#0B1421] p-4">
-            <div className="flex items-center gap-2">
-              <Zap size={15} className="text-sky-300" />
-              <p className="text-xs font-semibold text-slate-200">
-                Quick insight
-              </p>
+          {/* Recommended next step */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              duration: 0.5,
+              delay: 0.85,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="mt-6 rounded-xl border border-sky-300/15 bg-sky-300/[.05] p-4"
+          >
+            <div className="flex items-start gap-3">
+              <motion.div
+                animate={{ y: [0, -3, 0] }}
+                transition={{
+                  duration: 2.2,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-300/10 text-sky-300"
+              >
+                <Sparkles size={18} />
+              </motion.div>
+
+              <div className="min-w-0">
+                <h3 className="text-xs font-bold text-white">
+                  Recommended next step
+                </h3>
+
+                <p className="mt-1.5 text-[11px] leading-5 text-slate-300">
+                  Review placement progress and identify programs that need
+                  additional trainer support.
+                </p>
+
+                <Link
+                  to="/college/analytics"
+                  className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-sky-300 transition-all duration-200 hover:translate-x-1 hover:text-white"
+                >
+                  Open analytics
+                  <ArrowRight size={13} />
+                </Link>
+              </div>
             </div>
-            <p className="mt-2 text-xs leading-5 text-slate-400">
-              Keep trainer requests and demo schedules updated to help your
-              academic programs stay organized.
-            </p>
+          </motion.div>
+        </Panel>
+
+
+      </motion.section>
+
+      {/* COURSE CHARTS */}
+
+      <motion.section
+        variants={itemVariants}
+        className="mb-8 grid min-w-0 gap-5 xl:grid-cols-2"
+      >
+        <Panel className="p-4 sm:p-6">
+          <SectionHeading
+            eyebrow="Academic analytics"
+            title="Popular learning programs"
+            description="Student enrollment across key courses."
+          />
+
+          <ChartFrame height={280}>
+            <BarChart
+              data={courseData}
+              margin={{ top: 10, right: 5, left: 0, bottom: 8 }}
+              style={{ background: "transparent" }}
+            >
+              <CartesianGrid
+                stroke="#94a3b8"
+                strokeOpacity={0.16}
+                vertical={false}
+                fill="transparent"
+              />
+
+              <XAxis
+                dataKey="name"
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#b4c2d4", fontSize: 11 }}
+                interval={0}
+                angle={-12}
+                textAnchor="end"
+                height={55}
+              />
+
+              <YAxis
+                axisLine={false}
+                tickLine={false}
+                tick={{ fill: "#b4c2d4", fontSize: 11 }}
+                allowDecimals={false}
+              />
+
+              <Tooltip
+                content={<ChartTooltip />}
+                cursor={{ fill: "transparent" }}
+              />
+
+              <Bar
+                dataKey="students"
+                name="Students"
+                radius={[6, 6, 0, 0]}
+                maxBarSize={40}
+                animationDuration={1100}
+                background={false}
+              >
+                {courseData.map((entry, index) => (
+                  <Cell
+                    key={entry.name}
+                    fill={[
+                      C.blue,
+                      C.violet,
+                      C.cyan,
+                      C.green,
+                      "#60a5fa",
+                    ][index]}
+                  />
+                ))}
+              </Bar>
+            </BarChart>
+          </ChartFrame>
+        </Panel>
+
+
+        <Panel className="p-4 sm:p-6">
+          <SectionHeading
+            eyebrow="Program breakdown"
+            title="Course distribution"
+            description="Sample view of your academic portfolio."
+          />
+
+          <div className="grid items-center gap-3 sm:grid-cols-2">
+            <div className="relative h-[250px] min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={distribution}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={62}
+                    outerRadius={94}
+                    paddingAngle={4}
+                    stroke="none"
+                    animationDuration={1100}
+                  >
+                    {distribution.map((item) => (
+                      <Cell key={item.name} fill={item.color} />
+                    ))}
+                  </Pie>
+
+                  <Tooltip
+                    content={<ChartTooltip />}
+                    wrapperStyle={{ zIndex: 20, pointerEvents: "none" }}
+                    position={{ x: 10, y: 10 }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-3xl font-extrabold text-white">16</span>
+                <span className="mt-1 text-[10px] text-slate-300">
+                  Programs
+                </span>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              {distribution.map((item) => (
+                <div key={item.name}>
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <span className="flex min-w-0 items-center gap-2 text-xs text-slate-200">
+                      <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ background: item.color }}
+                      />
+                      <span className="truncate">{item.name}</span>
+                    </span>
+
+                    <span className="text-xs font-extrabold text-white">
+                      {item.value}%
+                    </span>
+                  </div>
+
+                  <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${item.value}% ` }}
+                      transition={{ duration: 0.8, delay: 0.2 }}
+                      className="h-full rounded-full"
+                      style={{ background: item.color }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </Panel>
       </motion.section>
 
-      {/* REQUESTS + UPCOMING CLASSES */}
+      {/* REQUESTS AND SCHEDULE */}
 
       <motion.section
         variants={itemVariants}
-        className="grid min-w-0 gap-5 2xl:grid-cols-[1.2fr_0.8fr]"
+        className="mb-8 grid min-w-0 gap-5 2xl:grid-cols-[1.2fr_.8fr]"
       >
-        {/* RECENT REQUESTS */}
-
         <Panel className="min-w-0 overflow-hidden">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] p-5 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 p-5 sm:px-6">
             <div>
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-sky-300/75">
-                Trainer marketplace
-              </p>
-              <h2 className="text-base font-semibold text-white sm:text-lg">
+              <Eyebrow>Trainer marketplace</Eyebrow>
+              <h2 className="text-lg font-bold text-white">
                 Recent requirements
               </h2>
-              <p className="mt-1 text-xs text-slate-500">
+              <p className="mt-1 text-xs text-slate-300">
                 Monitor your latest trainer requests.
               </p>
             </div>
 
-            <SmallLink to="/college/requests">
-              View all
-            </SmallLink>
+            <SectionLink to="/college/requests">View all</SectionLink>
           </div>
 
-          <div className="divide-y divide-white/[0.055]">
-            {requests.map((request, index) => (
+          <div className="divide-y divide-white/[.07]">
+            {requests.map((request) => (
               <motion.div
                 key={request.id}
-                variants={itemVariants}
-                className="group flex flex-col gap-3 px-5 py-4 transition-colors hover:bg-white/[0.02] sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                whileHover={{
+                  backgroundColor: "rgba(255,255,255,.035)",
+                }}
+                className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   <div
-                    className={[
-                      "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl",
-                      "text-xs font-bold",
-                      colorClasses[request.color].avatar,
-                    ].join(" ")}
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-xs font-extrabold"
+                    style={{
+                      color: request.color,
+                      background: `${request.color} 20`,
+                    }}
                   >
                     {request.initials}
                   </div>
 
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-slate-200 transition-colors group-hover:text-sky-200">
+                    <p className="truncate text-sm font-bold text-white">
                       {request.title}
                     </p>
 
-                    <p className="mt-1 text-[11px] text-slate-500">
-                      {request.id} <span className="mx-1.5">·</span>
-                      {request.category}
+                    <p className="mt-1 text-[11px] text-slate-300">
+                      {request.id} · {request.category}
                     </p>
 
-                    <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-slate-400">
+                    <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-300">
                       <span className="inline-flex items-center gap-1">
                         <Users size={12} />
                         {request.students} students
                       </span>
+
                       <span className="inline-flex items-center gap-1">
                         <CalendarDays size={12} />
                         {request.date}
@@ -966,10 +1412,11 @@ export default function CollegeDashboardPage() {
 
                 <div className="flex items-center justify-between gap-3 pl-14 sm:flex-col sm:items-end sm:pl-0">
                   <StatusBadge status={request.status} />
+
                   <Link
                     to="/college/requests"
                     aria-label={`View ${request.id} `}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-sky-300/10 hover:text-sky-200"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-300 transition hover:bg-sky-300/10 hover:text-sky-200"
                   >
                     <ArrowUpRight size={16} />
                   </Link>
@@ -978,10 +1425,10 @@ export default function CollegeDashboardPage() {
             ))}
           </div>
 
-          <div className="border-t border-white/[0.06] p-4 sm:px-6">
+          <div className="border-t border-white/10 p-4 sm:px-6">
             <Link
               to="/college/requests"
-              className="flex items-center justify-center gap-2 rounded-xl border border-white/[0.08] bg-white/[0.02] py-3 text-xs font-semibold text-slate-300 transition-all hover:border-sky-300/20 hover:bg-sky-300/[0.04] hover:text-sky-200"
+              className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[.03] py-3 text-xs font-bold text-slate-200 transition hover:border-sky-300/30 hover:text-sky-200"
             >
               Manage all requirements
               <ArrowRight size={14} />
@@ -989,328 +1436,204 @@ export default function CollegeDashboardPage() {
           </div>
         </Panel>
 
-        {/* UPCOMING CLASSES */}
-
         <Panel className="min-w-0 overflow-hidden">
-          <div className="flex items-center justify-between gap-3 border-b border-white/[0.06] p-5 sm:px-6">
+          <div className="flex items-center justify-between gap-3 border-b border-white/10 p-5 sm:px-6">
             <div>
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-indigo-300/75">
-                Learning calendar
-              </p>
-              <h2 className="text-base font-semibold text-white sm:text-lg">
-                Upcoming sessions
+              <Eyebrow color={C.violet}>Learning calendar</Eyebrow>
+              <h2 className="text-lg font-bold text-white">
+                Upcoming classes
               </h2>
-              <p className="mt-1 text-xs text-slate-500">
-                What's coming up next.
+              <p className="mt-1 text-xs text-slate-300">
+                Your upcoming learning sessions.
               </p>
             </div>
 
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-400/10 text-indigo-300">
-              <CalendarDays size={19} />
-            </div>
+            <CalendarDays size={20} className="text-sky-300" />
           </div>
 
-          <div className="space-y-3 p-4 sm:p-5">
-            {upcomingClasses.map((session, index) => (
+          <div className="space-y-1 p-4 sm:p-5">
+            {classes.map((item) => (
               <motion.div
-                key={session.title}
+                key={item.title}
                 variants={itemVariants}
-                className={[
-                  "group rounded-xl border border-white/[0.06]",
-                  "bg-white/[0.018] p-4 transition-all duration-200",
-                  "hover:border-sky-300/15 hover:bg-white/[0.035]",
-                ].join(" ")}
+                className="flex gap-3 rounded-xl p-3 transition hover:bg-white/[.035]"
               >
-                <div className="flex gap-3">
-                  <div
-                    className={[
-                      "flex w-[54px] shrink-0 flex-col items-center justify-center rounded-xl",
-                      colorClasses[session.color].icon,
-                    ].join(" ")}
-                  >
-                    <span className="text-[10px] font-semibold">
-                      {session.date}
+                <div
+                  className="w-1 shrink-0 rounded-full"
+                  style={{ background: item.color }}
+                />
+
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-[10px] font-extrabold text-sky-300">
+                      {item.date}
                     </span>
-                    <span className="mt-1 text-[9px] opacity-75">
-                      {index + 1}
+
+                    <span className="inline-flex items-center gap-1 text-[10px] text-slate-300">
+                      <Clock3 size={11} />
+                      {item.duration}
                     </span>
                   </div>
 
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-slate-200 transition-colors group-hover:text-sky-200">
-                      {session.title}
-                    </p>
+                  <h3 className="mt-2 text-sm font-bold text-white">
+                    {item.title}
+                  </h3>
 
-                    <p className="mt-1 text-[11px] text-slate-500">
-                      Trainer: {session.trainer}
-                    </p>
+                  <p className="mt-1 text-[11px] text-slate-300">
+                    Trainer: {item.trainer}
+                  </p>
 
-                    <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
-                      <span className="inline-flex items-center gap-1 text-[10px] text-slate-400">
-                        <Clock3 size={12} />
-                        {session.time}
-                      </span>
-                      <span className="text-[10px] text-slate-600">·</span>
-                      <span className="text-[10px] text-slate-400">
-                        {session.duration}
-                      </span>
-                    </div>
+                  <div className="mt-3 flex items-center justify-between gap-2">
+                    <span className="text-xs font-extrabold text-white">
+                      {item.time}
+                    </span>
+
+                    <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[.04] px-2.5 py-1.5 text-[10px] text-slate-200">
+                      <Video size={12} />
+                      Live session
+                    </span>
                   </div>
-                </div>
-
-                <div className="mt-3 flex items-center justify-between border-t border-white/[0.05] pt-3">
-                  <span className="text-[10px] font-medium text-slate-500">
-                    {session.type}
-                  </span>
-
-                  <Link
-                    to="/college/demo-schedule"
-                    className="inline-flex items-center gap-1 text-[10px] font-semibold text-sky-300 transition-colors hover:text-sky-200"
-                  >
-                    View schedule
-                    <ArrowRight size={12} />
-                  </Link>
                 </div>
               </motion.div>
             ))}
           </div>
 
-          <div className="px-4 pb-4 sm:px-5 sm:pb-5">
+          <div className="border-t border-white/10 p-4 sm:px-5">
             <Link
-              to="/college/demo-schedule"
-              className="flex items-center justify-center gap-2 rounded-xl bg-indigo-400/[0.08] py-3 text-xs font-semibold text-indigo-200 transition-colors hover:bg-indigo-400/[0.13]"
+              to="/college/schedule"
+              className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[.03] py-3 text-xs font-bold text-slate-200 transition hover:border-sky-300/30 hover:text-sky-200"
             >
-              Open class schedule
-              <CalendarDays size={14} />
+              View full schedule
+              <ArrowRight size={14} />
             </Link>
           </div>
         </Panel>
       </motion.section>
 
-      {/* ACTIVITY + QUICK ACTIONS */}
+      {/* ACTIVITY AND QUICK ACTIONS */}
 
       <motion.section
         variants={itemVariants}
-        className="grid min-w-0 gap-5 xl:grid-cols-[1fr_0.8fr]"
+        className="mb-8 grid min-w-0 gap-5 xl:grid-cols-2"
       >
-        {/* RECENT ACTIVITY */}
+        <Panel className="p-5 sm:p-6">
+          <SectionHeading
+            eyebrow="Workspace updates"
+            title="Recent activity"
+            description="A quick overview of recent events."
+            action={
+              <button
+                type="button"
+                onClick={() => setShowAllActivities((value) => !value)}
+                className="text-xs font-extrabold text-sky-300 transition hover:text-white"
+              >
+                {showAllActivities ? "Show less" : "View all"}
+              </button>
+            }
+          />
 
-        <Panel className="min-w-0 p-5 sm:p-6">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-sky-300/75">
-                Workspace timeline
-              </p>
-              <h2 className="text-base font-semibold text-white sm:text-lg">
-                Recent activity
-              </h2>
-              <p className="mt-1 text-xs text-slate-500">
-                Latest updates across your college workspace.
-              </p>
-            </div>
-
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sky-400/10 text-sky-300">
-              <Activity size={19} />
-            </div>
-          </div>
-
-          <div className="mt-6">
+          <div className="space-y-1">
             {visibleActivities.map((activity, index) => {
               const Icon = activity.icon;
 
               return (
                 <motion.div
                   key={activity.title}
-                  initial={{ opacity: 0, x: -8 }}
+                  initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.25, delay: index * 0.05 }}
-                  className="relative flex gap-3 pb-5 last:pb-0"
+                  transition={{ delay: index * 0.07 }}
+                  className="flex items-start gap-3 rounded-xl p-3 transition hover:bg-white/[.035]"
                 >
-                  {index !== visibleActivities.length - 1 && (
-                    <span className="absolute bottom-0 left-[17px] top-9 w-px bg-white/[0.07]" />
-                  )}
-
                   <div
-                    className={[
-                      "relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
-                      colorClasses[activity.color].icon,
-                    ].join(" ")}
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                    style={{
+                      color: activity.color,
+                      background: `${activity.color} 20`,
+                    }}
                   >
-                    <Icon size={16} />
+                    <Icon size={18} />
                   </div>
 
-                  <div className="min-w-0 flex-1 pt-0.5">
-                    <p className="text-xs font-semibold text-slate-200">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-white">
                       {activity.title}
                     </p>
-                    <p className="mt-1 text-[11px] leading-5 text-slate-500">
+
+                    <p className="mt-1 text-[11px] leading-5 text-slate-300">
                       {activity.detail}
+                    </p>
+
+                    <p className="mt-1.5 text-[10px] text-slate-400">
+                      {activity.time}
                     </p>
                   </div>
 
-                  <span className="shrink-0 pt-1 text-right text-[9px] leading-4 text-slate-500 sm:text-[10px]">
-                    {activity.time}
-                  </span>
+                  <CheckCircle2
+                    size={15}
+                    className="mt-1 shrink-0 text-emerald-300"
+                  />
+                </motion.div>
+              );
+            })}
+          </div>
+        </Panel>
+
+        <Panel className="p-5 sm:p-6">
+          <SectionHeading
+            eyebrow="Work faster"
+            title="Quick actions"
+            description="Jump directly to important workspace sections."
+          />
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {quickActions.map((action) => {
+              const Icon = action.icon;
+
+              return (
+                <motion.div
+                  key={action.title}
+                  whileHover={{ y: -3 }}
+                  className="min-w-0"
+                >
+                  <Link
+                    to={action.to}
+                    className="group block h-full rounded-xl border bg-white/[.025] p-4 transition hover:border-sky-300/30 hover:bg-white/[.05]"
+                    style={{ borderColor: C.border }}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className="flex h-10 w-10 items-center justify-center rounded-xl"
+                        style={{
+                          color: action.color,
+                          background: `${action.color} 20`,
+                        }}
+                      >
+                        <Icon size={19} />
+                      </span>
+
+                      <ArrowUpRight
+                        size={15}
+                        className="text-slate-400 transition group-hover:text-sky-300"
+                      />
+                    </div>
+
+                    <p className="mt-4 text-xs font-extrabold text-white">
+                      {action.title}
+                    </p>
+
+                    <p className="mt-1 text-[10px] leading-4 text-slate-300">
+                      {action.description}
+                    </p>
+                  </Link>
                 </motion.div>
               );
             })}
           </div>
 
-          <button
-            type="button"
-            onClick={() => setActivityExpanded((value) => !value)}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl border border-white/[0.07] py-3 text-xs font-semibold text-slate-400 transition-colors hover:border-sky-300/20 hover:text-sky-200"
-          >
-            {activityExpanded ? "Show less" : "Show all activity"}
-            <motion.span
-              animate={{ rotate: activityExpanded ? -90 : 90 }}
-              transition={{ duration: 0.2 }}
-            >
-              <ArrowRight size={14} />
-            </motion.span>
-          </button>
-        </Panel>
-
-        {/* QUICK ACTIONS */}
-
-        <Panel className="p-5 sm:p-6">
-          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.16em] text-sky-300/75">
-            Work smarter
-          </p>
-
-          <h2 className="text-base font-semibold text-white sm:text-lg">
-            Quick actions
-          </h2>
-
-          <p className="mt-1 text-xs text-slate-500">
-            Jump straight into your daily tasks.
-          </p>
-
-          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <Link
-              to="/college/trainers"
-              className="group rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 transition-all hover:-translate-y-0.5 hover:border-sky-300/20 hover:bg-sky-300/[0.035]"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-400/10 text-sky-300">
-                  <Search size={19} />
-                </span>
-                <ArrowUpRight
-                  size={15}
-                  className="text-slate-600 transition-colors group-hover:text-sky-300"
-                />
-              </div>
-
-              <p className="mt-4 text-xs font-semibold text-slate-200">
-                Find Trainers
-              </p>
-              <p className="mt-1 text-[10px] leading-4 text-slate-500">
-                Discover trainers for your programs.
-              </p>
-            </Link>
-
-            <Link
-              to="/college/assignments"
-              className="group rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 transition-all hover:-translate-y-0.5 hover:border-indigo-300/20 hover:bg-indigo-300/[0.035]"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-400/10 text-indigo-300">
-                  <Layers3 size={19} />
-                </span>
-                <ArrowUpRight
-                  size={15}
-                  className="text-slate-600 transition-colors group-hover:text-indigo-300"
-                />
-              </div>
-
-              <p className="mt-4 text-xs font-semibold text-slate-200">
-                Assignments
-              </p>
-              <p className="mt-1 text-[10px] leading-4 text-slate-500">
-                Coordinate ongoing training work.
-              </p>
-            </Link>
-
-            <Link
-              to="/college/students"
-              className="group rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 transition-all hover:-translate-y-0.5 hover:border-cyan-300/20 hover:bg-cyan-300/[0.035]"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-300">
-                  <Users size={19} />
-                </span>
-                <ArrowUpRight
-                  size={15}
-                  className="text-slate-600 transition-colors group-hover:text-cyan-300"
-                />
-              </div>
-
-              <p className="mt-4 text-xs font-semibold text-slate-200">
-                Manage Students
-              </p>
-              <p className="mt-1 text-[10px] leading-4 text-slate-500">
-                Review your student records.
-              </p>
-            </Link>
-
-            <Link
-              to="/college/payments"
-              className="group rounded-xl border border-white/[0.07] bg-white/[0.02] p-4 transition-all hover:-translate-y-0.5 hover:border-emerald-300/20 hover:bg-emerald-300/[0.035]"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-300">
-                  <Wallet size={19} />
-                </span>
-                <ArrowUpRight
-                  size={15}
-                  className="text-slate-600 transition-colors group-hover:text-emerald-300"
-                />
-              </div>
-
-              <p className="mt-4 text-xs font-semibold text-slate-200">
-                Payments
-              </p>
-              <p className="mt-1 text-[10px] leading-4 text-slate-500">
-                Check invoices and payments.
-              </p>
-            </Link>
-          </div>
-
-          <div className="mt-4 flex items-start gap-3 rounded-xl border border-sky-300/10 bg-sky-300/[0.035] p-3.5">
-            <CheckCircle2
-              size={17}
-              className="mt-0.5 shrink-0 text-sky-300"
-            />
-            <div>
-              <p className="text-xs font-semibold text-slate-200">
-                Keep your workspace organized
-              </p>
-              <p className="mt-1 text-[10px] leading-5 text-slate-500">
-                Update trainer requests, schedules and student records
-                regularly for a clearer overview.
-              </p>
-            </div>
-          </div>
         </Panel>
       </motion.section>
 
-      {/* FOOTER */}
 
-      <motion.footer
-        variants={itemVariants}
-        className="flex flex-col justify-between gap-2 border-t border-white/[0.06] pt-5 text-[10px] text-slate-600 sm:flex-row sm:items-center"
-      >
-        <p>
-          TechMentor College Workspace
-          <span className="mx-2 text-slate-700">·</span>
-          Academic overview
-        </p>
-
-        <div className="flex items-center gap-2">
-          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-          <span>Dashboard interface loaded</span>
-        </div>
-      </motion.footer>
-    </motion.div>
+    </motion.main >
   );
 }

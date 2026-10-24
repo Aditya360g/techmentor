@@ -1,9 +1,10 @@
-﻿
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
 import CollegeSidebar from "../college/layout/CollegeSidebar";
 import CollegeTopbar from "../college/layout/CollegeTopbar";
+
+const SIDEBAR_WIDTH = 272;
 
 export default function CollegeLayout() {
   const location = useLocation();
@@ -14,72 +15,61 @@ export default function CollegeLayout() {
     () => typeof window !== "undefined" && window.innerWidth >= 768
   );
 
-  const sidebarWidth = 272;
-
   const handleLogout = useCallback(() => {
     setMobileOpen(false);
     navigate("/login", { replace: true });
   }, [navigate]);
 
-  // Keep the sidebar layout responsive.
   useEffect(() => {
-    const handleResize = () => {
-      const isDesktop = window.innerWidth >= 768;
+    const media = window.matchMedia("(min-width: 768px)");
 
-      setDesktopView(isDesktop);
-
-      if (isDesktop) {
-        setMobileOpen(false);
-      }
+    const updateViewport = (event) => {
+      setDesktopView(event.matches);
+      if (event.matches) setMobileOpen(false);
     };
 
-    window.addEventListener("resize", handleResize);
+    setDesktopView(media.matches);
+    media.addEventListener("change", updateViewport);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
+    return () => media.removeEventListener("change", updateViewport);
   }, []);
 
-  // Close mobile navigation after changing pages.
   useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
-  // Prevent background scrolling while mobile navigation is open.
   useEffect(() => {
-    if (!mobileOpen || desktopView) return undefined;
+    if (!mobileOpen || desktopView) return;
 
     const previousOverflow = document.body.style.overflow;
-
     document.body.style.overflow = "hidden";
 
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setMobileOpen(false);
-      }
+    const handleEscape = (event) => {
+      if (event.key === "Escape") setMobileOpen(false);
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleEscape);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [mobileOpen, desktopView]);
 
   return (
-    <div className="h-dvh overflow-hidden bg-[#f7f8fc] text-slate-900">
-      {/* Mobile sidebar backdrop */}
+    <div
+      className="college-workspace min-h-screen w-full bg-[#0b1421] text-slate-100"
+      style={{ "--college-sidebar-width": `${SIDEBAR_WIDTH}px` }}
+    >
       {mobileOpen && !desktopView && (
         <button
           type="button"
-          aria-label="Close navigation backdrop"
+          aria-label="Close navigation"
           onClick={() => setMobileOpen(false)}
-          className="fixed inset-0 z-40 bg-slate-950/50 md:hidden"
+          className="fixed inset-0 z-[60] bg-slate-950/60 md:hidden"
         />
       )}
 
-      {/* College sidebar */}
       <CollegeSidebar
         mobileOpen={mobileOpen}
         setMobileOpen={setMobileOpen}
@@ -88,43 +78,32 @@ export default function CollegeLayout() {
         onLogout={handleLogout}
       />
 
-      {/* Main workspace */}
       <div
-        className="flex h-dvh min-w-0 flex-col"
+        className="college-main-workspace flex min-h-screen min-w-0 flex-col"
         style={{
-          marginLeft: desktopView ? `${sidebarWidth}px` : "0px",
+          marginLeft: desktopView ? SIDEBAR_WIDTH : 0,
+          width: desktopView
+            ? `calc(100% - ${SIDEBAR_WIDTH}px)`
+            : "100%",
         }}
       >
-        {/* Fixed-height topbar */}
-        <CollegeTopbar
-          mobileOpen={mobileOpen}
-          onMenuClick={() => setMobileOpen((open) => !open)}
-          onLogout={handleLogout}
-        />
+        <div className="sticky top-0 z-50 w-full shrink-0">
+          <CollegeTopbar
+            mobileOpen={mobileOpen}
+            onMenuClick={() => setMobileOpen((open) => !open)}
+            onLogout={handleLogout}
+          />
+        </div>
 
-        {/* Scrollable content */}
         <main
           id="college-main-content"
-          className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain p-4 sm:p-6 lg:p-8"
+          className="college-main-content min-w-0 w-full flex-1"
         >
-          <div className="mx-auto w-full max-w-[1600px]">
+          <div className="mx-auto min-w-0 w-full max-w-[1800px]">
             <Outlet />
           </div>
 
-          {/* Footer */}
-          <footer className="mx-auto mt-8 flex w-full max-w-[1600px] flex-col gap-2 border-t border-slate-200 py-5 text-[11px] text-slate-400 sm:flex-row sm:items-center sm:justify-between">
-            <p>
-              © {new Date().getFullYear()} CodeFaculty. College Workspace.
-            </p>
 
-            <button
-              type="button"
-              onClick={() => navigate("/college/settings")}
-              className="inline-flex w-fit items-center gap-1 font-semibold text-slate-500 hover:text-violet-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-500"
-            >
-              Workspace settings
-            </button>
-          </footer>
         </main>
       </div>
     </div>

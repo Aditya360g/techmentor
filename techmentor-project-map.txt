@@ -1,0 +1,700 @@
+﻿TECHMENTOR PROJECT MAP
+PROJECT ROOT: C:\Users\Aditya\Desktop\New folder (3)\techmentor
+
+========== ALL SOURCE FILES ==========
+src\components\auth\AuthHeader.jsx
+src\components\auth\AuthLayout.jsx
+src\components\auth\OtpInput.jsx
+src\components\auth\PasswordInput.jsx
+src\components\auth\RoleSelector.jsx
+src\components\college\analytics\CollegeEnrollmentChart.jsx
+src\components\college\analytics\CollegePerformanceChart.jsx
+src\components\college\analytics\CollegeReportFilters.jsx
+src\components\college\announcements\CollegeAnnouncementForm.jsx
+src\components\college\announcements\CollegeAnnouncementList.jsx
+src\components\college\assignments\CollegeAssignmentList.jsx
+src\components\college\assignments\CollegeTestResults.jsx
+src\components\college\attendance\CollegeAttendanceOverview.jsx
+src\components\college\attendance\CollegeAttendanceTable.jsx
+src\components\college\batches\CollegeBatchForm.jsx
+src\components\college\batches\CollegeBatchList.jsx
+src\components\college\batches\CollegeDepartmentList.jsx
+src\components\college\common\CollegeConfirmDialog.jsx
+src\components\college\common\CollegeDataTable.jsx
+src\components\college\common\CollegeDetailDrawer.jsx
+src\components\college\common\CollegeEmptyState.jsx
+src\components\college\common\CollegeErrorState.jsx
+src\components\college\common\CollegeFilterBar.jsx
+src\components\college\common\CollegeLoadingState.jsx
+src\components\college\common\CollegeModal.jsx
+src\components\college\common\CollegePageHeader.jsx
+src\components\college\common\CollegePagination.jsx
+src\components\college\common\CollegeSearch.jsx
+src\components\college\common\CollegeStatCard.jsx
+src\components\college\common\CollegeStatusBadge.jsx
+src\components\college\courses\CollegeCourseDetails.jsx
+src\components\college\courses\CollegeCourseForm.jsx
+src\components\college\courses\CollegeCourseGrid.jsx
+src\components\college\dashboard\CollegeActivityFeed.jsx
+src\components\college\dashboard\CollegeAnalyticsCharts.jsx
+src\components\college\dashboard\CollegeOverviewStats.jsx
+src\components\college\dashboard\CollegeQuickActions.jsx
+src\components\college\dashboard\CollegeUpcomingSchedule.jsx
+src\components\college\layout\CollegeLayout.jsx
+src\components\college\layout\CollegeSidebar.jsx
+src\components\college\layout\CollegeTopbar.jsx
+src\components\college\live-classes\CollegeDemoSchedule.jsx
+src\components\college\live-classes\CollegeLiveClassList.jsx
+src\components\college\notifications\CollegeNotificationList.jsx
+src\components\college\payments\CollegeInvoiceTable.jsx
+src\components\college\payments\CollegePaymentSummary.jsx
+src\components\college\placements\CollegeOpportunityList.jsx
+src\components\college\placements\CollegePlacementOverview.jsx
+src\components\college\profile\CollegeProfileForm.jsx
+src\components\college\progress\CollegeAtRiskStudents.jsx
+src\components\college\progress\CollegeProgressOverview.jsx
+src\components\college\progress\CollegeProgressReport.jsx
+src\components\college\requests\CollegeDemoEvaluation.jsx
+src\components\college\requests\CollegeRequestForm.jsx
+src\components\college\requests\CollegeRequestTable.jsx
+src\components\college\requests\CollegeTrainerAssignment.jsx
+src\components\college\schedule\CollegeCalendar.jsx
+src\components\college\schedule\CollegeScheduleForm.jsx
+src\components\college\schedule\CollegeScheduleList.jsx
+src\components\college\students\CollegeStudentFilters.jsx
+src\components\college\students\CollegeStudentProfile.jsx
+src\components\college\students\CollegeStudentProgress.jsx
+src\components\college\students\CollegeStudentTable.jsx
+src\components\college\support\CollegeSupportTickets.jsx
+src\components\college\team\CollegeRolePermissions.jsx
+src\components\college\team\CollegeTeamTable.jsx
+src\components\college\trainers\CollegeTrainerAvailability.jsx
+src\components\college\trainers\CollegeTrainerPerformance.jsx
+src\components\college\trainers\CollegeTrainerProfile.jsx
+src\components\college\trainers\CollegeTrainerTable.jsx
+src\components\common\Button.jsx
+src\components\common\Card.jsx
+src\components\common\Container.jsx
+src\components\common\SectionTitle.jsx
+src\components\home\CareersSection.jsx
+src\components\home\ContactCTA.jsx
+src\components\home\DeploymentProcess.jsx
+src\components\home\EngagementModelsSection.jsx
+src\components\home\FAQSection.jsx
+src\components\home\GuestFacultyServices.jsx
+src\components\home\HeroSection.jsx
+src\components\home\HowItWorks.jsx
+src\components\home\InstitutionPartners.jsx
+src\components\home\LearningPlatformSection.jsx
+src\components\home\ServicesSection.jsx
+src\components\home\SkillsSection.jsx
+src\components\home\StatsSection.jsx
+src\components\home\TechnologiesSection.jsx
+src\components\home\TestimonialsSection.jsx
+src\components\home\TrainerCategories.jsx
+src\components\home\TrainersSection.jsx
+src\components\home\WhoWeServeSection.jsx
+src\components\home\WhyChooseUs.jsx
+src\components\layout\AdminLayout.jsx
+src\components\layout\CollegeLayout.jsx
+src\components\layout\Footer.jsx
+src\components\layout\MainLayout.jsx
+src\components\layout\Navbar.jsx
+src\components\layout\StudentLayout.jsx
+src\components\layout\TrainerLayout.jsx
+src\components\student\AssignmentCard.jsx
+src\components\student\CertificateCard.jsx
+src\components\student\ClassCard.jsx
+src\components\student\CourseCard.jsx
+src\components\student\NotificationCard.jsx
+src\components\student\ProgressCard.jsx
+src\components\student\ResultCard.jsx
+src\components\student\StudentSidebar.jsx
+src\components\student\StudentStatCard.jsx
+src\components\student\StudentTopbar.jsx
+src\components\student\TestCard.jsx
+src\components\trainer\TrainerAssignmentCard.jsx
+src\components\trainer\TrainerCard.jsx
+src\components\trainer\TrainerClassCard.jsx
+src\components\trainer\TrainerCourseCard.jsx
+src\components\trainer\TrainerFilters.jsx
+src\components\trainer\TrainerNotificationCard.jsx
+src\components\trainer\TrainerPaymentCard.jsx
+src\components\trainer\TrainerProfileCard.jsx
+src\components\trainer\TrainerScheduleCard.jsx
+src\components\trainer\TrainerSidebar.jsx
+src\components\trainer\TrainerStatCard.jsx
+src\components\trainer\TrainerStudentCard.jsx
+src\components\trainer\TrainerTopbar.jsx
+src\data\college\collegeAnalyticsData.js
+src\data\college\collegeCourseData.js
+src\data\college\collegeDashboardData.js
+src\data\college\collegeScheduleData.js
+src\data\college\collegeStudentData.js
+src\data\college\collegeTrainerData.js
+src\data\student\assignmentsData.js
+src\data\student\coursesData.js
+src\data\student\studentData.js
+src\data\student\testsData.js
+src\data\services.js
+src\data\technologies.js
+src\data\trainers.js
+src\hooks\college\useCollegeDashboard.js
+src\hooks\college\useCollegeFilters.js
+src\pages\admin\AdminDashboardPage.jsx
+src\pages\admin\AnalyticsPage.jsx
+src\pages\admin\DemoSchedulesPage.jsx
+src\pages\admin\FeedbackPage.jsx
+src\pages\admin\ManageCollegesPage.jsx
+src\pages\admin\ManageRequestsPage.jsx
+src\pages\admin\ManageTrainersPage.jsx
+src\pages\admin\NotificationsPage.jsx
+src\pages\admin\PaymentsPage.jsx
+src\pages\admin\TrainerAssignmentsPage.jsx
+src\pages\auth\ForgotPasswordPage.jsx
+src\pages\auth\RegisterPage.jsx
+src\pages\auth\RegistrationSuccessPage.jsx
+src\pages\auth\ResetPasswordPage.jsx
+src\pages\auth\UnauthorizedPage.jsx
+src\pages\auth\VerifyEmailPage.jsx
+src\pages\college\CollegeAnalyticsPage.jsx
+src\pages\college\CollegeAnnouncementsPage.jsx
+src\pages\college\CollegeAssignmentsPage.jsx
+src\pages\college\CollegeAttendancePage.jsx
+src\pages\college\CollegeBatchesPage.jsx
+src\pages\college\CollegeCoursesPage.jsx
+src\pages\college\CollegeDashboardPage.jsx
+src\pages\college\CollegeFeedbackPage.jsx
+src\pages\college\CollegeLiveClassesPage.jsx
+src\pages\college\CollegeNotificationsPage.jsx
+src\pages\college\CollegePaymentsPage.jsx
+src\pages\college\CollegePlacementsPage.jsx
+src\pages\college\CollegeProfilePage.jsx
+src\pages\college\CollegeRequestsPage.jsx
+src\pages\college\CollegeSchedulePage.jsx
+src\pages\college\CollegeStudentProgressPage.jsx
+src\pages\college\CollegeStudentsPage.jsx
+src\pages\college\CollegeSupportPage.jsx
+src\pages\college\CollegeTeamPage.jsx
+src\pages\college\CollegeTrainerRequestsPage.jsx
+src\pages\college\CollegeTrainersPage.jsx
+src\pages\college\DemoSchedulePage.jsx
+src\pages\college\FindTrainersPage.jsx
+src\pages\public\AboutPage.jsx
+src\pages\public\ContactPage.jsx
+src\pages\public\HomePage.jsx
+src\pages\public\InstitutionsPage.jsx
+src\pages\public\LoginPage.jsx
+src\pages\public\RequestGuestFacultyPage.jsx
+src\pages\public\ServicesPage.jsx
+src\pages\public\TrainerDetailsPage.jsx
+src\pages\public\TrainersPage.jsx
+src\pages\student\AssignmentDetailsPage.jsx
+src\pages\student\AssignmentsPage.jsx
+src\pages\student\CertificatesPage.jsx
+src\pages\student\CodingTestsPage.jsx
+src\pages\student\CourseDetailsPage.jsx
+src\pages\student\LiveClassesPage.jsx
+src\pages\student\MyCoursesPage.jsx
+src\pages\student\NotificationsPage.jsx
+src\pages\student\ProgressPage.jsx
+src\pages\student\ResourcesPage.jsx
+src\pages\student\ResultsPage.jsx
+src\pages\student\SchedulePage.jsx
+src\pages\student\SettingsPage.jsx
+src\pages\student\StudentDashboardPage.jsx
+src\pages\student\StudentProfilePage.jsx
+src\pages\student\SupportPage.jsx
+src\pages\student\TestDetailsPage.jsx
+src\pages\student\TestResultPage.jsx
+src\pages\trainer\TrainerAssignmentDetailsPage.jsx
+src\pages\trainer\TrainerAssignmentsPage.jsx
+src\pages\trainer\TrainerAvailabilityPage.jsx
+src\pages\trainer\TrainerCoursesPage.jsx
+src\pages\trainer\TrainerDashboardPage.jsx
+src\pages\trainer\TrainerHelpSupportPage.jsx
+src\pages\trainer\TrainerLiveClassesPage.jsx
+src\pages\trainer\TrainerNotificationsPage.jsx
+src\pages\trainer\TrainerPaymentsPage.jsx
+src\pages\trainer\TrainerProfilePage.jsx
+src\pages\trainer\TrainerSchedulePage.jsx
+src\pages\trainer\TrainerSettingsPage.jsx
+src\pages\trainer\TrainerStudentProgressPage.jsx
+src\pages\NotFoundPage.jsx
+src\routes\AppRoutes.jsx
+src\services\auth\authApi.js
+src\services\student\assignmentApi.js
+src\services\student\courseApi.js
+src\services\student\studentApi.js
+src\services\student\testApi.js
+src\utils\helpers.js
+src\App.jsx
+src\main.jsx
+
+========== PAGE FILES AND EXPORTS ==========
+
+FILE: src\pages\admin\AdminDashboardPage.jsx
+  LINE 97: export default function AdminDashboardPage() {
+
+FILE: src\pages\admin\AnalyticsPage.jsx
+  LINE 31: export default function AnalyticsPage() {
+
+FILE: src\pages\admin\DemoSchedulesPage.jsx
+  LINE 60: export default function DemoSchedulesPage() {
+
+FILE: src\pages\admin\FeedbackPage.jsx
+  LINE 49: export default function FeedbackPage() {
+
+FILE: src\pages\admin\ManageCollegesPage.jsx
+  LINE 61: export default function ManageCollegesPage() {
+
+FILE: src\pages\admin\ManageRequestsPage.jsx
+  LINE 64: export default function ManageRequestsPage() {
+
+FILE: src\pages\admin\ManageTrainersPage.jsx
+  LINE 60: export default function ManageTrainersPage() {
+
+FILE: src\pages\admin\NotificationsPage.jsx
+  LINE 59: export default function NotificationsPage() {
+
+FILE: src\pages\admin\PaymentsPage.jsx
+  LINE 52: export default function PaymentsPage() {
+
+FILE: src\pages\admin\TrainerAssignmentsPage.jsx
+  LINE 48: export default function TrainerAssignmentsPage() {
+
+FILE: src\pages\auth\ForgotPasswordPage.jsx
+  LINE 11: export default function ForgotPasswordPage() {
+
+FILE: src\pages\auth\RegisterPage.jsx
+  LINE 35: export default function RegisterPage() {
+
+FILE: src\pages\auth\RegistrationSuccessPage.jsx
+  LINE 9: export default function RegistrationSuccessPage() {
+
+FILE: src\pages\auth\ResetPasswordPage.jsx
+  LINE 17: export default function ResetPasswordPage() {
+
+FILE: src\pages\auth\UnauthorizedPage.jsx
+  LINE 10: export default function UnauthorizedPage() {
+
+FILE: src\pages\auth\VerifyEmailPage.jsx
+  LINE 14: export default function VerifyEmailPage() {
+
+FILE: src\pages\college\CollegeAnalyticsPage.jsx
+  LINE 536: export default function CollegeAnalyticsPage() {
+
+FILE: src\pages\college\CollegeAnnouncementsPage.jsx
+  LINE 4: export default function CollegeAnnouncementsPage() {
+
+FILE: src\pages\college\CollegeAssignmentsPage.jsx
+  LINE 52: export default function CollegeAssignmentsPage() {
+
+FILE: src\pages\college\CollegeAttendancePage.jsx
+  LINE 4: export default function CollegeAttendancePage() {
+
+FILE: src\pages\college\CollegeBatchesPage.jsx
+  LINE 4: export default function CollegeBatchesPage() {
+
+FILE: src\pages\college\CollegeCoursesPage.jsx
+  LINE 4: export default function CollegeCoursesPage() {
+
+FILE: src\pages\college\CollegeDashboardPage.jsx
+  LINE 451: export default function CollegeDashboardPage() {
+
+FILE: src\pages\college\CollegeFeedbackPage.jsx
+  LINE 22: export default function CollegeFeedbackPage() {
+
+FILE: src\pages\college\CollegeLiveClassesPage.jsx
+  LINE 4: export default function CollegeLiveClassesPage() {
+
+FILE: src\pages\college\CollegeNotificationsPage.jsx
+  LINE 57: export default function CollegeNotificationsPage() {
+
+FILE: src\pages\college\CollegePaymentsPage.jsx
+  LINE 41: export default function CollegePaymentsPage() {
+
+FILE: src\pages\college\CollegePlacementsPage.jsx
+  LINE 4: export default function CollegePlacementsPage() {
+
+FILE: src\pages\college\CollegeProfilePage.jsx
+  LINE 28: export default function CollegeProfilePage() {
+
+FILE: src\pages\college\CollegeRequestsPage.jsx
+  LINE 38: export default function CollegeRequestsPage() {
+
+FILE: src\pages\college\CollegeSchedulePage.jsx
+  LINE 864: export default function CollegeSchedulePage() {
+
+FILE: src\pages\college\CollegeStudentProgressPage.jsx
+  LINE 4: export default function CollegeStudentProgressPage() {
+
+FILE: src\pages\college\CollegeStudentsPage.jsx
+  LINE 915: export default function CollegeStudentsPage() {
+
+FILE: src\pages\college\CollegeSupportPage.jsx
+  LINE 4: export default function CollegeSupportPage() {
+
+FILE: src\pages\college\CollegeTeamPage.jsx
+  LINE 4: export default function CollegeTeamPage() {
+
+FILE: src\pages\college\CollegeTrainerRequestsPage.jsx
+  NO SIMPLE EXPORT DECLARATION FOUND
+
+FILE: src\pages\college\CollegeTrainersPage.jsx
+  NO SIMPLE EXPORT DECLARATION FOUND
+
+FILE: src\pages\college\DemoSchedulePage.jsx
+  LINE 49: export default function DemoSchedulePage() {
+
+FILE: src\pages\college\FindTrainersPage.jsx
+  NO SIMPLE EXPORT DECLARATION FOUND
+
+FILE: src\pages\public\AboutPage.jsx
+  LINE 46: export default function AboutPage() {
+
+FILE: src\pages\public\ContactPage.jsx
+  LINE 14: export default function ContactPage() {
+
+FILE: src\pages\public\HomePage.jsx
+  LINE 14: export default function HomePage() {
+
+FILE: src\pages\public\InstitutionsPage.jsx
+  LINE 49: export default function InstitutionsPage() {
+
+FILE: src\pages\public\LoginPage.jsx
+  LINE 42: export default function LoginPage() {
+
+FILE: src\pages\public\RequestGuestFacultyPage.jsx
+  LINE 27: export default function RequestGuestFacultyPage() {
+
+FILE: src\pages\public\ServicesPage.jsx
+  LINE 60: export default function ServicesPage() {
+
+FILE: src\pages\public\TrainerDetailsPage.jsx
+  LINE 124: export default function TrainerDetailsPage() {
+
+FILE: src\pages\public\TrainersPage.jsx
+  LINE 93: export default function TrainersPage() {
+
+FILE: src\pages\student\AssignmentDetailsPage.jsx
+  LINE 16: export default function AssignmentDetailsPage() {
+
+FILE: src\pages\student\AssignmentsPage.jsx
+  LINE 8: export default function AssignmentsPage() {
+
+FILE: src\pages\student\CertificatesPage.jsx
+  LINE 4: export default function CertificatesPage() {
+
+FILE: src\pages\student\CodingTestsPage.jsx
+  LINE 8: export default function CodingTestsPage() {
+
+FILE: src\pages\student\CourseDetailsPage.jsx
+  LINE 13: export default function CourseDetailsPage() {
+
+FILE: src\pages\student\LiveClassesPage.jsx
+  LINE 8: export default function LiveClassesPage() {
+
+FILE: src\pages\student\MyCoursesPage.jsx
+  LINE 8: export default function MyCoursesPage() {
+
+FILE: src\pages\student\NotificationsPage.jsx
+  LINE 8: export default function NotificationsPage() {
+
+FILE: src\pages\student\ProgressPage.jsx
+  LINE 16: export default function ProgressPage() {
+
+FILE: src\pages\student\ResourcesPage.jsx
+  LINE 16: export default function ResourcesPage() {
+
+FILE: src\pages\student\ResultsPage.jsx
+  LINE 57: export default function ResultsPage() {
+
+FILE: src\pages\student\SchedulePage.jsx
+  LINE 17: export default function SchedulePage() {
+
+FILE: src\pages\student\SettingsPage.jsx
+  LINE 14: export default function SettingsPage() {
+
+FILE: src\pages\student\StudentDashboardPage.jsx
+  LINE 20: export default function StudentDashboardPage() {
+
+FILE: src\pages\student\StudentProfilePage.jsx
+  LINE 41: export default function StudentProfilePage() {
+
+FILE: src\pages\student\SupportPage.jsx
+  LINE 37: export default function SupportPage() {
+
+FILE: src\pages\student\TestDetailsPage.jsx
+  LINE 16: export default function TestDetailsPage() {
+
+FILE: src\pages\student\TestResultPage.jsx
+  LINE 13: export default function TestResultPage() {
+
+FILE: src\pages\trainer\TrainerAssignmentDetailsPage.jsx
+  LINE 697: export default function TrainerAssignmentDetailsPage() {
+
+FILE: src\pages\trainer\TrainerAssignmentsPage.jsx
+  LINE 1136: export default function TrainerAssignmentsPage() {
+
+FILE: src\pages\trainer\TrainerAvailabilityPage.jsx
+  LINE 1127: export default function TrainerAvailabilityPage() {
+
+FILE: src\pages\trainer\TrainerCoursesPage.jsx
+  LINE 1022: export default function TrainerAssignmentsPage() {
+
+FILE: src\pages\trainer\TrainerDashboardPage.jsx
+  LINE 681: export default function TrainerDashboardPage() {
+
+FILE: src\pages\trainer\TrainerHelpSupportPage.jsx
+  LINE 528: export default function TrainerHelpSupportPage() {
+
+FILE: src\pages\trainer\TrainerLiveClassesPage.jsx
+  LINE 707: export default function TrainerLiveClassesPage() {
+
+FILE: src\pages\trainer\TrainerNotificationsPage.jsx
+  LINE 403: export default function TrainerNotificationsPage() {
+
+FILE: src\pages\trainer\TrainerPaymentsPage.jsx
+  LINE 721: export default function TrainerPaymentsPage() {
+
+FILE: src\pages\trainer\TrainerProfilePage.jsx
+  LINE 257: export default function TrainerProfilePage() {
+
+FILE: src\pages\trainer\TrainerSchedulePage.jsx
+  LINE 1468: export default function TrainerSchedulePage() {
+
+FILE: src\pages\trainer\TrainerSettingsPage.jsx
+  LINE 156: export default function TrainerSettingsPage() {
+
+FILE: src\pages\trainer\TrainerStudentProgressPage.jsx
+  LINE 625: export default function TrainerStudentProgressPage() {
+
+FILE: src\pages\NotFoundPage.jsx
+  LINE 10: export default function NotFoundPage() {
+
+========== ROUTES, PAGE IMPORTS AND ROUTER FILES ==========
+
+FILE: src\routes\AppRoutes.jsx
+  LINE 1: import { Route, Routes } from "react-router";
+  LINE 4: import MainLayout from "../components/layout/MainLayout";
+  LINE 5: import AdminLayout from "../components/layout/AdminLayout";
+  LINE 6: import TrainerLayout from "../components/layout/TrainerLayout";
+  LINE 7: import CollegeLayout from "../components/layout/CollegeLayout";
+  LINE 8: import StudentLayout from "../components/layout/StudentLayout";
+  LINE 11: import HomePage from "../pages/public/HomePage";
+  LINE 12: import AboutPage from "../pages/public/AboutPage";
+  LINE 13: import ServicesPage from "../pages/public/ServicesPage";
+  LINE 14: import TrainersPage from "../pages/public/TrainersPage";
+  LINE 15: import TrainerDetailsPage from "../pages/public/TrainerDetailsPage";
+  LINE 16: import InstitutionsPage from "../pages/public/InstitutionsPage";
+  LINE 17: import RequestGuestFacultyPage from "../pages/public/RequestGuestFacultyPage";
+  LINE 18: import ContactPage from "../pages/public/ContactPage";
+  LINE 19: import LoginPage from "../pages/public/LoginPage";
+  LINE 22: import RegisterPage from "../pages/auth/RegisterPage";
+  LINE 23: import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
+  LINE 24: import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
+  LINE 25: import VerifyEmailPage from "../pages/auth/VerifyEmailPage";
+  LINE 26: import RegistrationSuccessPage from "../pages/auth/RegistrationSuccessPage";
+  LINE 27: import UnauthorizedPage from "../pages/auth/UnauthorizedPage";
+  LINE 30: import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
+  LINE 31: import AnalyticsPage from "../pages/admin/AnalyticsPage";
+  LINE 32: import DemoSchedulesPage from "../pages/admin/DemoSchedulesPage";
+  LINE 33: import FeedbackPage from "../pages/admin/FeedbackPage";
+  LINE 34: import ManageCollegesPage from "../pages/admin/ManageCollegesPage";
+  LINE 35: import ManageRequestsPage from "../pages/admin/ManageRequestsPage";
+  LINE 36: import ManageTrainersPage from "../pages/admin/ManageTrainersPage";
+  LINE 37: import NotificationsPage from "../pages/admin/NotificationsPage";
+  LINE 38: import PaymentsPage from "../pages/admin/PaymentsPage";
+  LINE 39: import AdminTrainerAssignmentsPage from "../pages/admin/TrainerAssignmentsPage";
+  LINE 42: import TrainerDashboardPage from "../pages/trainer/TrainerDashboardPage";
+  LINE 43: import TrainerProfilePage from "../pages/trainer/TrainerProfilePage";
+  LINE 44: import TrainerAvailabilityPage from "../pages/trainer/TrainerAvailabilityPage";
+  LINE 45: import TrainerAssignmentsPage from "../pages/trainer/TrainerAssignmentsPage";
+  LINE 46: import TrainerAssignmentDetailsPage from "../pages/trainer/TrainerAssignmentDetailsPage";
+  LINE 47: import TrainerSchedulePage from "../pages/trainer/TrainerSchedulePage";
+  LINE 48: import TrainerNotificationsPage from "../pages/trainer/TrainerNotificationsPage";
+  LINE 49: import TrainerPaymentsPage from "../pages/trainer/TrainerPaymentsPage";
+  LINE 52: import TrainerCoursesPage from "../pages/trainer/TrainerCoursesPage";
+  LINE 53: import TrainerLiveClassesPage from "../pages/trainer/TrainerLiveClassesPage";
+  LINE 54: import TrainerStudentProgressPage from "../pages/trainer/TrainerStudentProgressPage";
+  LINE 55: import TrainerHelpSupportPage from "../pages/trainer/TrainerHelpSupportPage";
+  LINE 56: import TrainerSettingsPage from "../pages/trainer/TrainerSettingsPage";
+  LINE 59: import CollegeDashboardPage from "../pages/college/CollegeDashboardPage";
+  LINE 60: import CollegeProfilePage from "../pages/college/CollegeProfilePage";
+  LINE 61: import FindTrainersPage from "../pages/college/FindTrainersPage";
+  LINE 62: import CollegeRequestsPage from "../pages/college/CollegeRequestsPage";
+  LINE 63: import CollegeAssignmentsPage from "../pages/college/CollegeAssignmentsPage";
+  LINE 64: import DemoSchedulePage from "../pages/college/DemoSchedulePage";
+  LINE 65: import CollegeNotificationsPage from "../pages/college/CollegeNotificationsPage";
+  LINE 66: import CollegePaymentsPage from "../pages/college/CollegePaymentsPage";
+  LINE 67: import CollegeFeedbackPage from "../pages/college/CollegeFeedbackPage";
+  LINE 69: import CollegeStudentsPage from "../pages/college/CollegeStudentsPage";
+  LINE 70: import CollegeBatchesPage from "../pages/college/CollegeBatchesPage";
+  LINE 71: import CollegeStudentProgressPage from "../pages/college/CollegeStudentProgressPage";
+  LINE 72: import CollegeCoursesPage from "../pages/college/CollegeCoursesPage";
+  LINE 73: import CollegeSchedulePage from "../pages/college/CollegeSchedulePage";
+  LINE 74: import CollegeLiveClassesPage from "../pages/college/CollegeLiveClassesPage";
+  LINE 75: import CollegeAttendancePage from "../pages/college/CollegeAttendancePage";
+  LINE 76: import CollegePlacementsPage from "../pages/college/CollegePlacementsPage";
+  LINE 77: import CollegeAnalyticsPage from "../pages/college/CollegeAnalyticsPage";
+  LINE 78: import CollegeAnnouncementsPage from "../pages/college/CollegeAnnouncementsPage";
+  LINE 79: import CollegeTeamPage from "../pages/college/CollegeTeamPage";
+  LINE 80: import CollegeSupportPage from "../pages/college/CollegeSupportPage";
+  LINE 83: import StudentDashboardPage from "../pages/student/StudentDashboardPage";
+  LINE 84: import StudentProfilePage from "../pages/student/StudentProfilePage";
+  LINE 85: import MyCoursesPage from "../pages/student/MyCoursesPage";
+  LINE 86: import CourseDetailsPage from "../pages/student/CourseDetailsPage";
+  LINE 87: import LiveClassesPage from "../pages/student/LiveClassesPage";
+  LINE 88: import SchedulePage from "../pages/student/SchedulePage";
+  LINE 89: import AssignmentsPage from "../pages/student/AssignmentsPage";
+  LINE 90: import AssignmentDetailsPage from "../pages/student/AssignmentDetailsPage";
+  LINE 91: import CodingTestsPage from "../pages/student/CodingTestsPage";
+  LINE 92: import TestDetailsPage from "../pages/student/TestDetailsPage";
+  LINE 93: import TestResultPage from "../pages/student/TestResultPage";
+  LINE 94: import ProgressPage from "../pages/student/ProgressPage";
+  LINE 95: import ResultsPage from "../pages/student/ResultsPage";
+  LINE 96: import CertificatesPage from "../pages/student/CertificatesPage";
+  LINE 97: import StudentNotificationsPage from "../pages/student/NotificationsPage";
+  LINE 98: import ResourcesPage from "../pages/student/ResourcesPage";
+  LINE 99: import SupportPage from "../pages/student/SupportPage";
+  LINE 100: import SettingsPage from "../pages/student/SettingsPage";
+  LINE 103: import NotFoundPage from "../pages/NotFoundPage";
+  LINE 109: <Route element={<MainLayout />}>
+  LINE 110: <Route path="/" element={<HomePage />} />
+  LINE 111: <Route path="/about" element={<AboutPage />} />
+  LINE 112: <Route path="/services" element={<ServicesPage />} />
+  LINE 113: <Route path="/trainers" element={<TrainersPage />} />
+  LINE 115: <Route
+  LINE 116: path="/trainers/:trainerId"
+  LINE 117: element={<TrainerDetailsPage />}
+  LINE 120: <Route path="/institutions" element={<InstitutionsPage />} />
+  LINE 122: <Route
+  LINE 123: path="/request-guest-faculty"
+  LINE 124: element={<RequestGuestFacultyPage />}
+  LINE 127: <Route path="/contact" element={<ContactPage />} />
+  LINE 128: </Route>
+  LINE 131: <Route path="/login" element={<LoginPage />} />
+  LINE 132: <Route path="/register" element={<RegisterPage />} />
+  LINE 133: <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+  LINE 134: <Route path="/reset-password" element={<ResetPasswordPage />} />
+  LINE 135: <Route path="/verify-email" element={<VerifyEmailPage />} />
+  LINE 137: <Route
+  LINE 138: path="/registration-success"
+  LINE 139: element={<RegistrationSuccessPage />}
+  LINE 142: <Route path="/unauthorized" element={<UnauthorizedPage />} />
+  LINE 145: <Route path="/admin" element={<AdminLayout />}>
+  LINE 146: <Route index element={<AdminDashboardPage />} />
+  LINE 147: <Route path="trainers" element={<ManageTrainersPage />} />
+  LINE 148: <Route path="colleges" element={<ManageCollegesPage />} />
+  LINE 149: <Route path="requests" element={<ManageRequestsPage />} />
+  LINE 151: <Route
+  LINE 152: path="assignments"
+  LINE 153: element={<AdminTrainerAssignmentsPage />}
+  LINE 156: <Route path="demos" element={<DemoSchedulesPage />} />
+  LINE 157: <Route path="notifications" element={<NotificationsPage />} />
+  LINE 158: <Route path="payments" element={<PaymentsPage />} />
+  LINE 159: <Route path="feedback" element={<FeedbackPage />} />
+  LINE 160: <Route path="analytics" element={<AnalyticsPage />} />
+  LINE 161: </Route>
+  LINE 164: <Route path="/trainer" element={<TrainerLayout />}>
+  LINE 165: <Route index element={<TrainerDashboardPage />} />
+  LINE 167: <Route path="profile" element={<TrainerProfilePage />} />
+  LINE 168: <Route path="availability" element={<TrainerAvailabilityPage />} />
+  LINE 170: <Route
+  LINE 171: path="assignments"
+  LINE 172: element={<TrainerAssignmentsPage />}
+  LINE 176: <Route
+  LINE 177: path="assignments/:assignmentId"
+  LINE 178: element={<TrainerAssignmentDetailsPage />}
+  LINE 181: <Route path="schedule" element={<TrainerSchedulePage />} />
+  LINE 183: <Route
+  LINE 184: path="notifications"
+  LINE 185: element={<TrainerNotificationsPage />}
+  LINE 188: <Route path="payments" element={<TrainerPaymentsPage />} />
+  LINE 191: <Route path="courses" element={<TrainerCoursesPage />} />
+  LINE 192: <Route path="live-classes" element={<TrainerLiveClassesPage />} />
+  LINE 194: <Route
+  LINE 195: path="student-progress"
+  LINE 196: element={<TrainerStudentProgressPage />}
+  LINE 200: <Route
+  LINE 201: path="help"
+  LINE 202: element={<TrainerHelpSupportPage />}
+  LINE 206: <Route
+  LINE 207: path="settings"
+  LINE 208: element={<TrainerSettingsPage />}
+  LINE 210: </Route>
+  LINE 215: <Route path="/college" element={<CollegeLayout />}>
+  LINE 216: <Route index element={<CollegeDashboardPage />} />
+  LINE 219: <Route path="profile" element={<CollegeProfilePage />} />
+  LINE 222: <Route path="students" element={<CollegeStudentsPage />} />
+  LINE 223: <Route path="batches" element={<CollegeBatchesPage />} />
+  LINE 224: <Route path="student-progress" element={<CollegeStudentProgressPage />} />
+  LINE 227: <Route path="trainers" element={<FindTrainersPage />} />
+  LINE 228: <Route path="requests" element={<CollegeRequestsPage />} />
+  LINE 229: <Route path="assignments" element={<CollegeAssignmentsPage />} />
+  LINE 232: <Route path="courses" element={<CollegeCoursesPage />} />
+  LINE 233: <Route path="class-schedule" element={<CollegeSchedulePage />} />
+  LINE 234: <Route path="live-classes" element={<CollegeLiveClassesPage />} />
+  LINE 235: <Route path="assignments-tests" element={<CollegeAssignmentsPage />} />
+  LINE 236: <Route path="attendance" element={<CollegeAttendancePage />} />
+  LINE 239: <Route path="demo-schedule" element={<DemoSchedulePage />} />
+  LINE 240: <Route path="payments" element={<CollegePaymentsPage />} />
+  LINE 241: <Route path="placements" element={<CollegePlacementsPage />} />
+  LINE 244: <Route path="analytics" element={<CollegeAnalyticsPage />} />
+  LINE 245: <Route path="notifications" element={<CollegeNotificationsPage />} />
+  LINE 246: <Route path="announcements" element={<CollegeAnnouncementsPage />} />
+  LINE 247: <Route path="team" element={<CollegeTeamPage />} />
+  LINE 248: <Route path="support" element={<CollegeSupportPage />} />
+  LINE 249: <Route path="feedback" element={<CollegeFeedbackPage />} />
+  LINE 250: </Route>
+  LINE 254: <Route path="/student" element={<StudentLayout />}>
+  LINE 255: <Route index element={<StudentDashboardPage />} />
+  LINE 256: <Route path="profile" element={<StudentProfilePage />} />
+  LINE 257: <Route path="courses" element={<MyCoursesPage />} />
+  LINE 259: <Route
+  LINE 260: path="courses/:courseId"
+  LINE 261: element={<CourseDetailsPage />}
+  LINE 264: <Route path="live-classes" element={<LiveClassesPage />} />
+  LINE 265: <Route path="schedule" element={<SchedulePage />} />
+  LINE 266: <Route path="assignments" element={<AssignmentsPage />} />
+  LINE 268: <Route
+  LINE 269: path="assignments/:assignmentId"
+  LINE 270: element={<AssignmentDetailsPage />}
+  LINE 273: <Route path="tests" element={<CodingTestsPage />} />
+  LINE 274: <Route path="tests/:testId" element={<TestDetailsPage />} />
+  LINE 276: <Route
+  LINE 277: path="tests/:testId/result"
+  LINE 278: element={<TestResultPage />}
+  LINE 281: <Route path="progress" element={<ProgressPage />} />
+  LINE 282: <Route path="results" element={<ResultsPage />} />
+  LINE 283: <Route path="certificates" element={<CertificatesPage />} />
+  LINE 285: <Route
+  LINE 286: path="notifications"
+  LINE 287: element={<StudentNotificationsPage />}
+  LINE 290: <Route path="resources" element={<ResourcesPage />} />
+  LINE 291: <Route path="support" element={<SupportPage />} />
+  LINE 292: <Route path="settings" element={<SettingsPage />} />
+  LINE 293: </Route>
+  LINE 296: <Route path="*" element={<NotFoundPage />} />
+
+FILE: src\App.jsx
+  LINE 1: import AppRoutes from "./routes/AppRoutes";
+
+FILE: src\main.jsx
+  LINE 1: import { StrictMode } from "react";
+  LINE 2: import { createRoot } from "react-dom/client";
+  LINE 3: import { BrowserRouter } from "react-router";
+  LINE 5: import App from "./App";
+  LINE 6: import "./index.css";
+  LINE 8: import Lenis from "lenis";
+  LINE 9: import "lenis/dist/lenis.css";
+
+========== FIND TRAINERS / COLLEGE TRAINERS REFERENCES ==========
+src\components\college\layout\CollegeSidebar.jsx | LINE 54 | label: "Find Trainers",
+src\pages\college\CollegeDashboardPage.jsx | LINE 613 | Find Trainers
+src\pages\college\CollegeSchedulePage.jsx | LINE 864 | export default function CollegeSchedulePage() {
+src\routes\AppRoutes.jsx | LINE 61 | import FindTrainersPage from "../pages/college/FindTrainersPage";
+src\routes\AppRoutes.jsx | LINE 73 | import CollegeSchedulePage from "../pages/college/CollegeSchedulePage";
+src\routes\AppRoutes.jsx | LINE 227 | <Route path="trainers" element={<FindTrainersPage />} />
+src\routes\AppRoutes.jsx | LINE 233 | <Route path="class-schedule" element={<CollegeSchedulePage />} />

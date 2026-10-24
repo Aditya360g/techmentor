@@ -58,8 +58,9 @@ import TrainerSettingsPage from "../pages/trainer/TrainerSettingsPage";
 /* COLLEGE */
 import CollegeDashboardPage from "../pages/college/CollegeDashboardPage";
 import CollegeProfilePage from "../pages/college/CollegeProfilePage";
-import FindTrainersPage from "../pages/college/FindTrainersPage";
+import CollegeTrainersPage from "../pages/college/CollegeTrainersPage";
 import CollegeRequestsPage from "../pages/college/CollegeRequestsPage";
+import CollegeTrainerRequestsPage from "../pages/college/CollegeTrainerRequestsPage";
 import CollegeAssignmentsPage from "../pages/college/CollegeAssignmentsPage";
 import DemoSchedulePage from "../pages/college/DemoSchedulePage";
 import CollegeNotificationsPage from "../pages/college/CollegeNotificationsPage";
@@ -224,7 +225,7 @@ export default function AppRoutes() {
         <Route path="student-progress" element={<CollegeStudentProgressPage />} />
 
         {/* Trainer management - existing routes preserved */}
-        <Route path="trainers" element={<FindTrainersPage />} />
+        <Route path="trainers" element={<CollegeTrainersPage />} />
         <Route path="requests" element={<CollegeRequestsPage />} />
         <Route path="assignments" element={<CollegeAssignmentsPage />} />
 
@@ -247,6 +248,9 @@ export default function AppRoutes() {
         <Route path="team" element={<CollegeTeamPage />} />
         <Route path="support" element={<CollegeSupportPage />} />
         <Route path="feedback" element={<CollegeFeedbackPage />} />
+        <Route path="trainer-requests" element={<CollegeTrainerRequestsPage />} />
+        <Route path="programs" element={<CollegeCoursesPage />} />
+        <Route path="reports" element={<CollegeAnalyticsPage />} />
       </Route>
 
 
