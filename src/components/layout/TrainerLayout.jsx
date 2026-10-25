@@ -1,195 +1,281 @@
 ﻿
-import { useCallback, useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router";
 
-import CollegeSidebar from "../college/layout/CollegeSidebar";
-import CollegeTopbar from "../college/layout/CollegeTopbar";
+import TrainerSidebar from "../trainer/TrainerSidebar";
+import TrainerTopbar from "../trainer/TrainerTopbar";
 
 const SIDEBAR_WIDTH = 272;
 const DESKTOP_BREAKPOINT = 1024;
 
-export default function CollegeLayout() {
+export default function TrainerLayout() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [open, setOpen] = useState(false);
-  const [desktopView, setDesktopView] = useState(
+  const mainRef = useRef(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(
     () =>
       typeof window !== "undefined" &&
       window.innerWidth >= DESKTOP_BREAKPOINT
   );
 
-  const openSidebar = useCallback(() => {
-    setOpen(true);
-  }, []);
-
-  const closeSidebar = useCallback(() => {
-    setOpen(false);
-  }, []);
+  const openSidebar = useCallback(() => setSidebarOpen(true), []);
+  const closeSidebar = useCallback(() => setSidebarOpen(false), []);
 
   const handleLogout = useCallback(() => {
-    setOpen(false);
+    setSidebarOpen(false);
     navigate("/login", { replace: true });
   }, [navigate]);
 
-  // Responsive sidebar
+  // Correct desktop/mobile detection.
   useEffect(() => {
-    const mediaQuery = window.matchMedia(
-      `(min - width: ${DESKTOP_BREAKPOINT}px)`
+    const media = window.matchMedia(
+      `(min-width: ${DESKTOP_BREAKPOINT}px)`
     );
 
-    const updateViewport = (event) => {
-      setDesktopView(event.matches);
-
-      if (event.matches) {
-        setOpen(false);
-      }
+    const update = (event) => {
+      setIsDesktop(event.matches);
+      if (event.matches) setSidebarOpen(false);
     };
 
-    setDesktopView(mediaQuery.matches);
-    mediaQuery.addEventListener("change", updateViewport);
+    setIsDesktop(media.matches);
+    media.addEventListener("change", update);
 
-    return () => {
-      mediaQuery.removeEventListener("change", updateViewport);
-    };
+    return () => media.removeEventListener("change", update);
   }, []);
 
-  // Close mobile sidebar and reset scroll after navigation
+  // Close mobile menu and reset page scroll after navigation.
   useEffect(() => {
-    setOpen(false);
+    setSidebarOpen(false);
 
-    const main = document.getElementById("college-main-content");
-
-    if (main) {
-      main.scrollTop = 0;
+    if (mainRef.current) {
+      mainRef.current.scrollTo({ top: 0, behavior: "auto" });
     }
   }, [location.pathname]);
 
-  // Lock background scroll while mobile navigation is open
+  // Prevent background scrolling while the mobile menu is open.
   useEffect(() => {
-    if (!open || desktopView) return;
+    if (!sidebarOpen || isDesktop) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    const handleKeyDown = (event) => {
-      if (event.key === "Escape") {
-        setOpen(false);
-      }
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") closeSidebar();
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", onKeyDown);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("keydown", onKeyDown);
     };
-  }, [open, desktopView]);
+  }, [sidebarOpen, isDesktop, closeSidebar]);
+
+  // Smooth wheel animation for the main page.
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main) return;
+
+    let current = main.scrollTop;
+    let target = main.scrollTop;
+    let frame = null;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    const animate = () => {
+      const distance = target - current;
+
+      if (Math.abs(distance) < 0.7) {
+        current = target;
+        main.scrollTop = target;
+        frame = null;
+        return;
+      }
+
+      current += distance * 0.16;
+      main.scrollTop = current;
+      frame = requestAnimationFrame(animate);
+    };
+
+    const canScroll = (element, delta) => {
+      const max = element.scrollHeight - element.clientHeight;
+      if (max <= 1) return false;
+
+      return delta > 0
+        ? element.scrollTop < max - 1
+        : element.scrollTop > 1;
+    };
+
+    const onWheel = (event) => {
+      if (event.ctrlKey || event.metaKey || !event.deltaY) return;
+
+      const multiplier =
+        event.deltaMode === 1
+          ? 16
+          : event.deltaMode === 2
+            ? main.clientHeight
+            : 1;
+
+      const delta = event.deltaY * multiplier;
+      const node = event.target;
+
+      if (node instanceof Element) {
+        if (
+          node.closest(
+            "input, textarea, select, [contenteditable='true']"
+          )
+        ) {
+          return;
+        }
+
+        const inner = node.closest(
+          [
+            "[data-wheel-scroll]",
+            "[data-native-scroll]",
+            ".trainer-sidebar-scroll",
+            ".overflow-y-auto",
+            ".overflow-auto",
+          ].join(",")
+        );
+
+        if (inner && inner !== main && canScroll(inner, delta)) {
+          return;
+        }
+      }
+
+      const max = main.scrollHeight - main.clientHeight;
+      if (max <= 1) return;
+
+      if (
+        (delta < 0 && main.scrollTop <= 0) ||
+        (delta > 0 && main.scrollTop >= max - 1)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (reducedMotion) {
+        main.scrollTop = Math.max(
+          0,
+          Math.min(max, main.scrollTop + delta)
+        );
+        current = target = main.scrollTop;
+        return;
+      }
+
+      if (frame === null) {
+        current = main.scrollTop;
+        target = main.scrollTop;
+      }
+
+      target = Math.max(0, Math.min(max, target + delta * 1.1));
+
+      if (frame === null) {
+        frame = requestAnimationFrame(animate);
+      }
+    };
+
+    main.addEventListener("wheel", onWheel, { passive: false });
+
+    return () => {
+      main.removeEventListener("wheel", onWheel);
+
+      if (frame !== null) {
+        cancelAnimationFrame(frame);
+      }
+    };
+  }, []);
 
   return (
-    <div className="college-theme fixed inset-0 flex h-screen h-dvh w-full overflow-hidden bg-[#f7f9fc] text-slate-900">
-      {/* Desktop Sidebar */}
-      {desktopView && (
+    <div
+      className="trainer-theme fixed inset-0 flex w-full flex-col overflow-hidden bg-[#f6f9fc] text-slate-900"
+      style={{ height: "100dvh" }}
+    >
+      {/* Desktop sidebar: always visible on desktop */}
+      {isDesktop && (
         <aside
-          className="fixed inset-y-0 left-0 z-40 flex flex-col border-r border-white/[0.07] bg-[#0b1220]"
-          style={{ width: `${SIDEBAR_WIDTH} px` }}
+          className="fixed inset-y-0 left-0 z-40 flex flex-col overflow-hidden border-r border-slate-200 bg-white"
+          style={{ width: SIDEBAR_WIDTH }}
         >
-          <CollegeSidebar onLogout={handleLogout} />
+          <TrainerSidebar onLogout={handleLogout} />
         </aside>
       )}
 
-      {/* Mobile Overlay */}
-      <AnimatePresence>
-        {open && !desktopView && (
-          <motion.button
-            type="button"
-            aria-label="Close college navigation"
-            onClick={closeSidebar}
-            className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm lg:hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-          />
-        )}
-      </AnimatePresence>
+      {/* Mobile backdrop */}
+      {!isDesktop && sidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close navigation"
+          onClick={closeSidebar}
+          className="fixed inset-0 z-40 bg-slate-950/40"
+        />
+      )}
 
-      {/* Mobile Sidebar */}
-      {!desktopView && (
+      {/* Mobile sidebar */}
+      {!isDesktop && (
         <aside
-          id="college-mobile-sidebar"
           className={[
-            "fixed inset-y-0 left-0 z-50 flex w-[272px] max-w-[88vw] flex-col",
-            "border-r border-white/[0.07] bg-[#0b1220] shadow-2xl",
-            "transition-transform duration-300 ease-in-out lg:hidden",
-            open ? "translate-x-0" : "-translate-x-full",
+            "fixed inset-y-0 left-0 z-50 flex w-[272px] max-w-[88vw]",
+            "flex-col overflow-hidden border-r border-slate-200 bg-white shadow-2xl",
+            "transition-transform duration-300 ease-in-out",
+            sidebarOpen ? "translate-x-0" : "-translate-x-full",
           ].join(" ")}
-          aria-hidden={!open}
-          inert={!open}
+          aria-hidden={!sidebarOpen}
+          inert={!sidebarOpen}
         >
-          <CollegeSidebar
-            mobileOpen={open}
-            setMobileOpen={setOpen}
+          <TrainerSidebar
+            onNavigate={closeSidebar}
             onLogout={handleLogout}
           />
         </aside>
       )}
 
-      {/* Main Content */}
+      {/* Main layout */}
       <div
-        className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+        className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
         style={{
-          marginLeft: desktopView ? `${SIDEBAR_WIDTH} px` : "0px",
-          width: desktopView
-            ? `calc(100 % - ${SIDEBAR_WIDTH}px)`
+          marginLeft: isDesktop ? SIDEBAR_WIDTH : 0,
+          width: isDesktop
+            ? `calc(100% - ${SIDEBAR_WIDTH}px)`
             : "100%",
         }}
       >
-        {/* College Topbar */}
-        <header className="relative z-30 shrink-0 border-b border-slate-200/80 bg-white shadow-sm">
-          <CollegeTopbar
-            mobileOpen={open}
-            onMenuClick={openSidebar}
-            onLogout={handleLogout}
-          />
+        {/* Topbar */}
+        <header className="relative z-30 shrink-0 border-b border-slate-200 bg-white shadow-sm">
+          <TrainerTopbar onMenuClick={openSidebar} />
         </header>
 
-        {/* Scrollable Page Content */}
+        {/* Scrollable page content */}
         <main
-          id="college-main-content"
-          tabIndex={0}
-          className="college-main-scroll relative min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto bg-[#f7f9fc] p-4 sm:p-6 lg:p-8"
+          ref={mainRef}
+          id="trainer-main-content"
+          tabIndex={-1}
+          className="trainer-content min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto bg-[#f6f9fc] p-4 sm:p-6 lg:p-8"
           style={{
             WebkitOverflowScrolling: "touch",
             overscrollBehaviorY: "contain",
-            touchAction: "pan-y",
-            scrollbarGutter: "stable",
+            scrollbarWidth: "thin",
+            scrollbarColor: "#a7e8cc transparent",
           }}
         >
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={location.pathname}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="relative z-10 mx-auto w-full max-w-[1600px]"
-            >
-              <Outlet />
-            </motion.div>
-          </AnimatePresence>
+          <div className="mx-auto w-full max-w-[1600px]">
+            <Outlet />
+          </div>
 
-          {/* Footer */}
-          <footer className="relative z-10 mx-auto mt-8 flex w-full max-w-[1600px] flex-col gap-3 border-t border-slate-200 py-5 text-[11px] text-slate-400 sm:flex-row sm:items-center sm:justify-between">
+          <footer className="mx-auto mt-8 flex w-full max-w-[1600px] flex-col gap-3 border-t border-slate-200 py-5 text-[11px] text-slate-400 sm:flex-row sm:items-center sm:justify-between">
             <p>
-              © {new Date().getFullYear()} CodeFaculty. College Workspace.
+              © {new Date().getFullYear()} CodeFaculty. Trainer Workspace.
             </p>
 
             <button
               type="button"
-              onClick={() => navigate("/college/settings")}
-              className="w-fit font-semibold text-slate-500 transition-colors hover:text-sky-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+              onClick={() => navigate("/trainer/settings")}
+              className="w-fit font-semibold text-slate-500 transition-colors hover:text-emerald-800"
             >
               Workspace settings
             </button>
@@ -197,44 +283,45 @@ export default function CollegeLayout() {
         </main>
       </div>
 
-      {/* Scrollbar Styles */}
       <style>{`
-  .college - theme {
-  isolation: isolate;
-}
+        .trainer-content {
+          scrollbar-gutter: stable;
+        }
 
-        .college - main - scroll {
-  scrollbar - width: thin;
-  scrollbar - color: #cbd5e1 transparent;
-}
+        .trainer-content::-webkit-scrollbar {
+          width: 8px;
+        }
 
-        .college - main - scroll:: -webkit - scrollbar {
-  width: 8px;
-}
+        .trainer-content::-webkit-scrollbar-track {
+          background: transparent;
+        }
 
-        .college - main - scroll:: -webkit - scrollbar - track {
-  background: transparent;
-}
+        .trainer-content::-webkit-scrollbar-thumb {
+          background: #a7e8cc;
+          border-radius: 999px;
+        }
 
-        .college - main - scroll:: -webkit - scrollbar - thumb {
-  background: #cbd5e1;
-  border: 2px solid transparent;
-  background - clip: padding - box;
-  border - radius: 999px;
-}
+        .trainer-content::-webkit-scrollbar-thumb:hover {
+          background: #6ed7ac;
+        }
 
-        .college - main - scroll:: -webkit - scrollbar - thumb:hover {
-  background: #94a3b8;
-  border: 2px solid transparent;
-  background - clip: padding - box;
-}
+        .trainer-sidebar-scroll {
+          min-height: 0;
+          overscroll-behavior-y: contain;
+          -webkit-overflow-scrolling: touch;
+          scrollbar-width: thin;
+          scrollbar-color: #a7e8cc transparent;
+        }
 
-@media(prefers - reduced - motion: reduce) {
-          .college - main - scroll {
-    scroll - behavior: auto;
-  }
-}
-`}</style>
+        .trainer-sidebar-scroll::-webkit-scrollbar {
+          width: 6px;
+        }
+
+        .trainer-sidebar-scroll::-webkit-scrollbar-thumb {
+          background: #a7e8cc;
+          border-radius: 999px;
+        }
+      `}</style>
     </div>
   );
 }
