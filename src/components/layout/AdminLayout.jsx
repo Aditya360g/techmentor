@@ -6,7 +6,7 @@ import {
   useNavigate,
 } from "react-router";
 
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 
 import {
   Activity,
@@ -213,6 +213,30 @@ export default function AdminLayout() {
 
   const [globalSearch, setGlobalSearch] = useState("");
 
+  /* STRICT SIDEBAR WHEEL LOCK */
+  useEffect(() => {
+    const handleSidebarWheel = (event) => {
+      if (event.ctrlKey) return;
+
+      const target = event.target;
+
+      if (!(target instanceof Element)) return;
+
+      if (target.closest(".admin-sidebar-root")) {
+        event.preventDefault();
+      }
+    };
+
+    document.addEventListener("wheel", handleSidebarWheel, {
+      capture: true,
+      passive: false,
+    });
+
+    return () => {
+      document.removeEventListener("wheel", handleSidebarWheel, true);
+    };
+  }, []);
+
   const { title, description } = getPageInformation(
     location.pathname
   );
@@ -225,48 +249,7 @@ export default function AdminLayout() {
     setGlobalSearch("");
   }, [location.pathname]);
 
-  /* ===================================================
-     FIX SIDEBAR SCROLL CHAINING
-
-     While the mouse is over the sidebar navigation,
-     prevent the wheel event from scrolling the document.
-
-     AdminSidebar's own smooth-wheel handler continues
-     to move the navigation.
-  =================================================== */
-
-  useEffect(() => {
-    const handleSidebarWheel = (event) => {
-      const target = event.target;
-
-      if (!(target instanceof Element)) {
-        return;
-      }
-
-      const sidebarScroller = target.closest(
-        ".admin-sidebar-scroll"
-      );
-
-      if (sidebarScroller) {
-        event.preventDefault();
-      }
-    };
-
-    document.addEventListener("wheel", handleSidebarWheel, {
-      capture: true,
-      passive: false,
-    });
-
-    return () => {
-      document.removeEventListener(
-        "wheel",
-        handleSidebarWheel,
-        true
-      );
-    };
-  }, []);
-
-  /* ===================================================
+/* ===================================================
      TOPBAR SEARCH
   =================================================== */
 
@@ -441,18 +424,15 @@ export default function AdminLayout() {
         <main className="min-h-[calc(100vh-68px)] min-w-0 p-4 sm:p-5 lg:p-6">
           <div className="mx-auto min-w-0 w-full max-w-[1800px]">
 
-            <AnimatePresence
-              mode="wait"
-              initial={false}
-            >
-              <motion.div
-                key={location.pathname}
-                {...pageTransition}
-                className="min-w-0"
-              >
-                <Outlet />
-              </motion.div>
-            </AnimatePresence>
+            <motion.div
+  key={location.pathname}
+  initial={pageTransition.initial}
+  animate={pageTransition.animate}
+  transition={pageTransition.transition}
+  className="min-w-0"
+>
+  <Outlet />
+</motion.div>
 
           </div>
         </main>

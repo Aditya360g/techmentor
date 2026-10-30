@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 import { Link, NavLink } from "react-router";
 import { AnimatePresence, motion } from "motion/react";
 
@@ -190,6 +190,9 @@ function useSmoothWheel(scrollRef, enabled = true) {
         const handleWheel = (event) => {
             if (event.ctrlKey) return;
 
+            // Always block browser/page scrolling over sidebar.
+            event.preventDefault();
+
             const maxScroll = Math.max(
                 0,
                 element.scrollHeight - element.clientHeight
@@ -204,24 +207,6 @@ function useSmoothWheel(scrollRef, enabled = true) {
             } else if (event.deltaMode === 2) {
                 delta *= element.clientHeight;
             }
-
-            const atTop =
-                element.scrollTop <= 0 && targetScroll <= 0;
-
-            const atBottom =
-                element.scrollTop >= maxScroll - 1 &&
-                targetScroll >= maxScroll - 1;
-
-            // Allow the outer page to scroll when the sidebar
-            // has actually reached the top or the bottom.
-            if (
-                (atTop && delta < 0) ||
-                (atBottom && delta > 0)
-            ) {
-                return;
-            }
-
-            event.preventDefault();
 
             targetScroll = Math.max(
                 0,
@@ -520,7 +505,7 @@ export default function AdminSidebar() {
         .admin-sidebar-scroll {
           scrollbar-width: none;
           -ms-overflow-style: none;
-          overscroll-behavior: contain;
+          overscroll-behavior: none !important;
         }
 
         .admin-sidebar-scroll::-webkit-scrollbar {
@@ -552,7 +537,7 @@ export default function AdminSidebar() {
 
             {/* DESKTOP SIDEBAR */}
 
-            <aside className="fixed inset-y-0 left-0 z-40 hidden w-[252px] border-r border-[#EEEEEE] bg-white lg:block">
+            <aside className="admin-sidebar-root fixed inset-y-0 left-0 z-40 hidden w-[252px] border-r border-[#EEEEEE] bg-white lg:block">
                 {renderSidebarContent(desktopScrollRef)}
             </aside>
 
@@ -577,7 +562,7 @@ export default function AdminSidebar() {
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
                             transition={sidebarTransition}
-                            className="fixed inset-y-0 left-0 z-50 w-[280px] max-w-[88vw] border-r border-[#EEEEEE] bg-white shadow-2xl lg:hidden"
+                            className="admin-sidebar-root fixed inset-y-0 left-0 z-50 w-[280px] max-w-[88vw] border-r border-[#EEEEEE] bg-white shadow-2xl lg:hidden"
                         >
                             {renderSidebarContent(mobileScrollRef, true)}
                         </motion.aside>
